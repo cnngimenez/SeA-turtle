@@ -21,6 +21,8 @@
 
 with Ada.Containers.Ordered_Sets;
 with Ada.Containers.Ordered_Maps;
+with Lexical.Symbol_Sets;
+use Lexical.Symbol_Sets;
 
 --  A finite deterministic automata implementation for the turtle lexical
 --  analyzer.
@@ -113,32 +115,37 @@ private
     --  This is the set of final or acceptable states.
     package State_Set is new Ada.Containers.Ordered_Sets
       (Element_Type => State_Type);
+
     Acceptable_States : State_Set.Set;
 
     --  The state-transition function delta (S, E) -> S is represented as
-    --  an ordered map between a Transition_Type -> State.
-    --  In other words : a (S, E) tuple is represented as a Transition_Type
+    --  an ordered map between a Domain_Tuple_Type -> State.
+    --  In other words : a (S, E) tuple is represented as a Domain_Tuple_Type
     --  instance.
-    type Transition_Type is record
+    type Domain_Tuple_Type is record
         Current_State : State_Type;
-        Symbol : Wide_Wide_Character;
+        Symbols : Symbol_Set_Type;
     end record;
 
     --  The ordered map requires an order specified.
-    function "<" (Transition_A : Transition_Type;
-                  Transition_B : Transition_Type) return Boolean;
+    function "<" (Transition_A : Domain_Tuple_Type;
+                  Transition_B : Domain_Tuple_Type) return Boolean;
+    overriding function "=" (Transition_A, Transition_B : Domain_Tuple_Type)
+                            return Boolean;
 
-    Invalid_Transition : constant Transition_Type :=
+    Invalid_Domain_Tuple : constant Domain_Tuple_Type :=
       (
        Current_State => Invalid_State,
-       Symbol => ' '
+       Symbols => Invalid_Symbol_Set
       );
 
     --  The transition function type.
     package Transition_Pack is new Ada.Containers.Ordered_Maps
       (
+       Key_Type => Domain_Tuple_Type,
        Element_Type => State_Type,
-       Key_Type => Transition_Type
+       "<" => "<",
+       "=" => "="
       );
 
     --  The state-transition function. Usually associated with a delta symbol.
@@ -152,10 +159,13 @@ private
         Previous_State : State_Type;
     end record;
 
-    --  Add a (state, symbol) -> next_state association to the
+    --  Add a (state, symbol_set) -> next_state association to the
     --  transition_function.
     procedure Add_Delta (Current_State : State_Type;
                          Symbol : Wide_Wide_Character;
+                         Next_State : State_Type);
+    procedure Add_Delta (Current_State : State_Type;
+                         Set_Name : Symbol_Set_Name_Type;
                          Next_State : State_Type);
 
     --  A set of symbols are grouped and labelled. For instance, symbols
@@ -173,14 +183,16 @@ private
     --  reason, there should not be one symbol and state associated with
     --  multiple resulting states. If there is such sitation, only the
     --  first association is used.
-    function Get_Symbol_Group (Symbol : Wide_Wide_Character)
-                              return Wide_Wide_String;
 
     --  Get the transition that correspond to the current state and the symbol.
     --  The symbol provided is not the symbol group.
+    --  This transition is (State, Symbol) tuple that is in the domain of the
+    --  state-transition function of the automata and is mapped to a state
+    --  different from the blocked one.
     --
     --  Return an Invalid_Transition if the (state, symbol) is not mapped
     --  which it means that the automata is blocked.
-    function Get_Transition (State : State_Type; Symbol : Wide_Wide_Character)
-                            return Transition_Type;
+    function Get_Domain_Tuple (State : State_Type;
+                               Symbol : Wide_Wide_Character)
+                              return Domain_Tuple_Type;
 end Lexical.Finite_Automata;

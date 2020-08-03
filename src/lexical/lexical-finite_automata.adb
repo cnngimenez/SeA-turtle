@@ -1,5 +1,4 @@
 --  lexical-finite_automata.adb ---
-
 --  Copyright 2020 cnngimenez
 --
 --  Author: cnngimenez
@@ -19,26 +18,44 @@
 
 -------------------------------------------------------------------------
 
-with Ada.Strings.Wide_Wide_Unbounded;
-use Ada.Strings.Wide_Wide_Unbounded;
-
 package body Lexical.Finite_Automata is
 
-    function "<" (Transition_A : Transition_Type;
-                  Transition_B : Transition_Type) return Boolean is
+    function "<" (Transition_A : Domain_Tuple_Type;
+                  Transition_B : Domain_Tuple_Type) return Boolean is
     begin
         return Transition_A.Current_State < Transition_B.Current_State or else
-          Transition_A.Symbol < Transition_B.Symbol;
+          Transition_A.Symbols < Transition_B.Symbols;
     end "<";
+
+    overriding function "=" (Transition_A, Transition_B : Domain_Tuple_Type)
+                 return Boolean is
+    begin
+        return Transition_A.Current_State = Transition_B.Current_State
+          and then Transition_A.Symbols = Transition_B.Symbols;
+    end "=";
 
     procedure Add_Delta (Current_State : State_Type;
                          Symbol : Wide_Wide_Character;
                          Next_State : State_Type) is
-        Transition : Transition_Type;
+        Domain_Tuple : Domain_Tuple_Type;
+        Set : Symbol_Set_Type;
     begin
-        Transition.Current_State := Current_State;
-        Transition.Symbol := Symbol;
-        Transition_Function.Insert (Transition, Next_State);
+        Set.Initialize (Symbol);
+        Domain_Tuple.Current_State := Current_State;
+        Domain_Tuple.Symbols := Set;
+        Transition_Function.Insert (Domain_Tuple, Next_State);
+    end Add_Delta;
+
+    procedure Add_Delta (Current_State : State_Type;
+                         Set_Name : Symbol_Set_Name_Type;
+                         Next_State : State_Type) is
+        Domain_Tuple : Domain_Tuple_Type;
+        Set : Symbol_Set_Type;
+    begin
+        Set.Initialize (Set_Name);
+        Domain_Tuple.Current_State := Current_State;
+        Domain_Tuple.Symbols := Set;
+        Transition_Function.Insert (Domain_Tuple, Next_State);
     end Add_Delta;
 
     function Get_Current_State (Automata : Automata_Type) return State_Type is
@@ -46,82 +63,50 @@ package body Lexical.Finite_Automata is
         return Automata.Current_State;
     end Get_Current_State;
 
-    function Get_Symbol_Group (Symbol : Wide_Wide_Character)
-                              return Wide_Wide_String is
-        Possible_Reductions : Unbounded_Wide_Wide_String;
-        Tab_Char : constant Wide_Wide_Character :=
-          Wide_Wide_Character'Val (9);
-        Carriage_Char : constant Wide_Wide_Character :=
-          Wide_Wide_Character'Val (13);
-        New_Line_Char : constant Wide_Wide_Character :=
-          Wide_Wide_Character'Val (10);
-        Null_Char : constant Wide_Wide_Character :=
-          Wide_Wide_Character'Val (0);
-        Space_Char : constant Wide_Wide_Character :=
-          Wide_Wide_Character'Val (16#20#);
+    function Get_Domain_Tuple (State : State_Type; Symbol : Wide_Wide_Character)
+                              return Domain_Tuple_Type is
+
+        --  Test if the given group with the current state is in the domain
+        --  of the state-transition function.
+        --
+        --  Set is a symbol group where the Symbol is in.
+        function Test_Set (Symbol_Set : Symbol_Set_Type) return Boolean;
+
+        function Test_Set (Symbol_Set : Symbol_Set_Type) return Boolean is
+            Tuple : Domain_Tuple_Type;
+        begin
+            Tuple.Current_State := State;
+            Tuple.Symbols := Symbol_Set;
+            return Transition_Function.Contains (Tuple);
+        end Test_Set;
+
+        Possible_Sets : constant Possible_Symbol_Sets_Type :=
+          Get_Possible_Sets (Symbol);
+        Symbol_Set : Symbol_Set_Type;
+        Return_Domain_Tuple : Domain_Tuple_Type;
     begin
-        case Symbol is
-        when 'a' .. 'f' | 'F' .. 'F' =>
-            Append (Possible_Reductions, 'a');
-            Append (Possible_Reductions, 'x');
-        when 'g' .. 'z' | 'G' .. 'Z' =>
-            Append (Possible_Reductions, 'a');
-        when '0' .. '9' =>
-            Append (Possible_Reductions, '0');
-            Append (Possible_Reductions, 'x');
-        when ' ' | Tab_Char | New_Line_Char | Carriage_Char =>
-            Append (Possible_Reductions, ' ');
-        when others =>
-            Append (Possible_Reductions, Symbol);
-        end case;
-
-        --  It is too difficult to add a "not" in the above "case" statement.
-        if not (Symbol in Null_Char .. Space_Char or else Symbol /= '<'
-                  or else Symbol /= '>' or else Symbol /= '"'
-                  or else Symbol /= '{' or else Symbol /= '}'
-                  or else Symbol /= '|' or else Symbol /= '^'
-                  or else Symbol /= '^' or else Symbol /= '`'
-                  or else Symbol /= '\')
-        then
-            Append (Possible_Reductions, '^');
-        end if;
-
-        return To_Wide_Wide_String (Possible_Reductions);
-    end Get_Symbol_Group;
-
-    function Get_Transition (State : State_Type; Symbol : Wide_Wide_Character)
-                            return Transition_Type is
-        Transition : Transition_Type;
-        I : Natural;
-        Possible_Groups : constant Wide_Wide_String :=
-          Get_Symbol_Group (Symbol);
-    begin
-        if Possible_Groups = "" then
+        if Possible_Sets.Is_Empty then
             --  It couldn't find any possible groups, this means that there's
             --  no mapping on this symbol or just a problem in the programming.
-            return Invalid_Transition;
+            return Invalid_Domain_Tuple;
         end if;
 
-        Transition.Current_State := State;
-        I := Possible_Groups'First;
-
-        Transition.Symbol := Possible_Groups (I);
-        while I <= Possible_Groups'Length and then
-          not Transition_Function.Contains (Transition)
-        loop
-            I := I + 1;
-            if I <= Possible_Groups'Length then
-                Transition.Symbol := Possible_Groups (I);
-            end if;
-        end loop;
-
-        if I > Possible_Groups'Length then
-            return Invalid_Transition;
+        --  Search for the tuple (State, Symbol_Set_Type) that is associated
+        --  to the given symbol and the current state, and it is in the domain
+        --  of the Transition_Function.
+        Symbol_Set :=
+          Symbol_Set_Type (Possible_Sets.Find_Set (Test_Set'Access));
+    
+        if Symbol_Set = Invalid_Symbol_Set then
+            --  It searched all the transitions and found no other than
+            --  (State, Symbol_Set_Type) -> Blocked associations.
+            return Invalid_Domain_Tuple;
         else
-            return Transition;
+            Return_Domain_Tuple.Current_State := State;
+            Return_Domain_Tuple.Symbols := Symbol_Set;
+            return Return_Domain_Tuple;
         end if;
-
-    end Get_Transition;
+    end Get_Domain_Tuple;
 
     procedure Initialize (Automata : in out Automata_Type) is
     begin
@@ -141,17 +126,17 @@ package body Lexical.Finite_Automata is
 
     procedure Next (Automata : in out Automata_Type;
                     Symbol : Wide_Wide_Character) is
-        Transition : Transition_Type;
+        Domain_Tuple : Domain_Tuple_Type;
     begin
         if Automata.Current_State = Blocked then
             return;
         end if;
 
-        Transition := Get_Transition (Automata.Current_State, Symbol);
+        Domain_Tuple := Get_Domain_Tuple (Automata.Current_State, Symbol);
 
         Automata.Previous_State := Automata.Current_State;
-        if Transition /= Invalid_Transition then
-            Automata.Current_State := Transition_Function.Element (Transition);
+        if Domain_Tuple /= Invalid_Domain_Tuple then
+            Automata.Current_State := Transition_Function.Element (Domain_Tuple);
         else
             Automata.Current_State := Blocked;
         end if;
@@ -174,45 +159,37 @@ begin
     Acceptable_States.Insert (E_Iriref);
     Acceptable_States.Insert (WS);
 
-    --  Group of characters :
-    --  a := [a-zA-Z]
-    --  0 := [0-9]
-    --  x := [0-9a-fA-F] (hexadecimal digits)
-    --  ^ := [^#x00-#x20<>"{}|^`\] (#x00 and #x20 are the UTF-8
-    --       00 to 20 codes).
-    --  ' ' := [ \t\n\r] (whitespaces)
-
     Add_Delta (Start, '@', Arroba);
-    Add_Delta (Arroba, 'a', I_Langtag);
-    Add_Delta (I_Langtag, 'a', I_Langtag);
+    Add_Delta (Arroba, Letter, I_Langtag);
+    Add_Delta (I_Langtag, Letter, I_Langtag);
     Add_Delta (I_Langtag, '-', Langtag1);
-    Add_Delta (Langtag1, 'a', E_Langtag);
-    Add_Delta (Langtag1, '0', E_Langtag);
+    Add_Delta (Langtag1, Letter, E_Langtag);
+    Add_Delta (Langtag1, Decimal_Digit, E_Langtag);
     Add_Delta (E_Langtag, '-', Langtag1);
 
     Add_Delta (Start, '<', I_Iriref);
-    Add_Delta (I_Iriref, '^', I_Iriref);
+    Add_Delta (I_Iriref, Iriref_Chars, I_Iriref);
     Add_Delta (I_Iriref, '>', E_Iriref);
     Add_Delta (I_Iriref, '\', Uchar);
-    Add_Delta (Uchar_End, '^', I_Iriref);
+    Add_Delta (Uchar_End, Iriref_Chars, I_Iriref);
     Add_Delta (Uchar_End, '>', E_Iriref);
 
     Add_Delta (Uchar, 'u', Uchar1a);
-    Add_Delta (Uchar1a, 'x', Uchar1b);
-    Add_Delta (Uchar1b, 'x', Uchar1c);
-    Add_Delta (Uchar1c, 'x', Uchar1d);
-    Add_Delta (Uchar1d, 'x', Uchar_End);
+    Add_Delta (Uchar1a, Hexadecimal_Digit, Uchar1b);
+    Add_Delta (Uchar1b, Hexadecimal_Digit, Uchar1c);
+    Add_Delta (Uchar1c, Hexadecimal_Digit, Uchar1d);
+    Add_Delta (Uchar1d, Hexadecimal_Digit, Uchar_End);
 
     Add_Delta (Uchar, 'U', Uchar2a);
-    Add_Delta (Uchar2a, 'x', Uchar2b);
-    Add_Delta (Uchar2b, 'x', Uchar2c);
-    Add_Delta (Uchar2c, 'x', Uchar2d);
-    Add_Delta (Uchar2d, 'x', Uchar2e);
-    Add_Delta (Uchar2e, 'x', Uchar2f);
-    Add_Delta (Uchar2f, 'x', Uchar2g);
-    Add_Delta (Uchar2g, 'x', Uchar2h);
-    Add_Delta (Uchar2h, 'x', Uchar_End);
+    Add_Delta (Uchar2a, Hexadecimal_Digit, Uchar2b);
+    Add_Delta (Uchar2b, Hexadecimal_Digit, Uchar2c);
+    Add_Delta (Uchar2c, Hexadecimal_Digit, Uchar2d);
+    Add_Delta (Uchar2d, Hexadecimal_Digit, Uchar2e);
+    Add_Delta (Uchar2e, Hexadecimal_Digit, Uchar2f);
+    Add_Delta (Uchar2f, Hexadecimal_Digit, Uchar2g);
+    Add_Delta (Uchar2g, Hexadecimal_Digit, Uchar2h);
+    Add_Delta (Uchar2h, Hexadecimal_Digit, Uchar_End);
 
-    Add_Delta (Start, ' ', WS);
-    Add_Delta (WS, ' ', WS);
+    Add_Delta (Start, WS, WS);
+    Add_Delta (WS, WS, WS);
 end Lexical.Finite_Automata;
