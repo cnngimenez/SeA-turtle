@@ -33,7 +33,8 @@ project Turtle is
   for Main use (
                 "lexical_analizer.adb",
                 "symbol_set.adb", 
-                "lexical_automata.adb"
+                "lexical_automata.adb",
+                "automata_transition_function.adb"
                );
   
   package Compiler is 
