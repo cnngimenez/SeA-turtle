@@ -20,18 +20,21 @@
 
 package body Lexical.Finite_Automata is
 
-    function "<" (Transition_A : Domain_Tuple_Type;
-                  Transition_B : Domain_Tuple_Type) return Boolean is
+    function "<" (Tuple_A : Domain_Tuple_Type;
+                  Tuple_B : Domain_Tuple_Type) return Boolean is
     begin
-        return Transition_A.Current_State < Transition_B.Current_State or else
-          Transition_A.Symbols < Transition_B.Symbols;
+        if Tuple_A.Current_State = Tuple_B.Current_State then
+            return Tuple_A.Symbols < Tuple_B.Symbols;
+        else
+            return Tuple_A.Current_State < Tuple_B.Current_State;
+        end if;
     end "<";
 
-    overriding function "=" (Transition_A, Transition_B : Domain_Tuple_Type)
-                 return Boolean is
+    overriding function "=" (Tuple_A, Tuple_B : Domain_Tuple_Type)
+                            return Boolean is
     begin
-        return Transition_A.Current_State = Transition_B.Current_State
-          and then Transition_A.Symbols = Transition_B.Symbols;
+        return Tuple_A.Current_State = Tuple_B.Current_State
+          and then Tuple_A.Symbols = Tuple_B.Symbols;
     end "=";
 
     procedure Add_Delta (Current_State : State_Type;
@@ -63,7 +66,8 @@ package body Lexical.Finite_Automata is
         return Automata.Current_State;
     end Get_Current_State;
 
-    function Get_Domain_Tuple (State : State_Type; Symbol : Wide_Wide_Character)
+    function Get_Domain_Tuple (State : State_Type;
+                               Symbol : Wide_Wide_Character)
                               return Domain_Tuple_Type is
 
         --  Test if the given group with the current state is in the domain
@@ -74,10 +78,33 @@ package body Lexical.Finite_Automata is
 
         function Test_Set (Symbol_Set : Symbol_Set_Type) return Boolean is
             Tuple : Domain_Tuple_Type;
+
+            --  --  This is a debugging contain function... Do not use!
+            --  function Contains (Tuple : Domain_Tuple_Type) return Boolean is
+            --      Founded : Boolean := False;
+            --      Index : Transition_Pack.Cursor;
+            --      use Transition_Pack;
+            --  begin
+            --      if Transition_Function.Is_Empty then
+            --          return False;
+            --      end if;
+
+            --      Index := Transition_Function.First;
+            --      Founded := Tuple = Key (Index);
+            --      while not Founded and then
+            --        Index /= Transition_Function.Last loop
+            --          Next (Index);
+            --          Founded := Tuple = Key (Index);
+            --      end loop;
+
+            --      return Founded;
+            --  end Contains;
+
         begin
             Tuple.Current_State := State;
             Tuple.Symbols := Symbol_Set;
             return Transition_Function.Contains (Tuple);
+            --  return Contains (Tuple);
         end Test_Set;
 
         Possible_Sets : constant Possible_Symbol_Sets_Type :=
@@ -96,7 +123,7 @@ package body Lexical.Finite_Automata is
         --  of the Transition_Function.
         Symbol_Set :=
           Symbol_Set_Type (Possible_Sets.Find_Set (Test_Set'Access));
-    
+
         if Symbol_Set = Invalid_Symbol_Set then
             --  It searched all the transitions and found no other than
             --  (State, Symbol_Set_Type) -> Blocked associations.
@@ -136,7 +163,8 @@ package body Lexical.Finite_Automata is
 
         Automata.Previous_State := Automata.Current_State;
         if Domain_Tuple /= Invalid_Domain_Tuple then
-            Automata.Current_State := Transition_Function.Element (Domain_Tuple);
+            Automata.Current_State := Transition_Function.Element
+              (Domain_Tuple);
         else
             Automata.Current_State := Blocked;
         end if;
@@ -152,6 +180,33 @@ package body Lexical.Finite_Automata is
         Automata.Current_State := Start;
         Automata.Previous_State := Start;
     end Reset;
+
+    procedure Walk_Function
+      (Test_Procedure : not null access
+         procedure (From_State : State_Type; Symbol : Symbol_Set_Type;
+                    To_State : State_Type)) is
+
+        Tuple : Domain_Tuple_Type;
+        To_State : State_Type;
+        Index : Transition_Pack.Cursor;
+        use Transition_Pack;
+    begin
+        if Transition_Function.Is_Empty then
+            return;
+        end if;
+
+        Index := Transition_Function.First;
+        Tuple := Key (Index);
+        To_State := Element (Index);
+        Test_Procedure (Tuple.Current_State, Tuple.Symbols, To_State);
+
+        while Index /= Transition_Function.Last loop
+            Next (Index);
+            Tuple := Key (Index);
+            To_State := Element (Index);
+            Test_Procedure (Tuple.Current_State, Tuple.Symbols, To_State);
+        end loop;
+    end Walk_Function;
 
 begin
     Acceptable_States.Insert (E_Langtag);

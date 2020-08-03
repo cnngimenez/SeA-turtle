@@ -22,8 +22,11 @@
 package body Lexical.Symbol_Sets is
     function "<" (Symbol_A, Symbol_B : Symbol_Set_Type) return Boolean is
     begin
-        return Symbol_A.Set_Name < Symbol_B.Set_Name or else
-          Symbol_A.Symbol < Symbol_B.Symbol;
+        if Symbol_A.Unitary and then Symbol_B.Unitary then
+            return Symbol_A.Symbol < Symbol_B.Symbol;
+        else
+            return Symbol_A.Set_Name < Symbol_B.Set_Name;
+        end if;
     end "<";
 
     overriding function "=" (Symbol_A, Symbol_B : Symbol_Set_Type)
@@ -106,7 +109,7 @@ package body Lexical.Symbol_Sets is
         when others =>
             null;
         end case;
-            
+
         Symbol_Set.Initialize (Symbol);
         Possible_Sets.Set.Insert (Symbol_Set);
 

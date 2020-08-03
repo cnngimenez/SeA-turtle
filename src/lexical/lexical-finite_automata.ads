@@ -110,6 +110,10 @@ package Lexical.Finite_Automata is
     --  any entry it will change into the same non-filan state.
     function Is_Blocked (Automata : Automata_Type) return Boolean;
 
+    procedure Walk_Function
+      (Test_Procedure : not null access
+         procedure (From_State : State_Type; Symbol : Symbol_Set_Type;
+                    To_State : State_Type));
 private
 
     --  This is the set of final or acceptable states.
@@ -128,10 +132,10 @@ private
     end record;
 
     --  The ordered map requires an order specified.
-    function "<" (Transition_A : Domain_Tuple_Type;
-                  Transition_B : Domain_Tuple_Type) return Boolean;
-    overriding function "=" (Transition_A, Transition_B : Domain_Tuple_Type)
-                            return Boolean;
+    function "<" (Tuple_A : Domain_Tuple_Type;
+                  Tuple_B : Domain_Tuple_Type) return Boolean;
+    overriding function "=" (Tuple_A, Tuple_B : Domain_Tuple_Type)
+                 return Boolean;
 
     Invalid_Domain_Tuple : constant Domain_Tuple_Type :=
       (
@@ -143,9 +147,7 @@ private
     package Transition_Pack is new Ada.Containers.Ordered_Maps
       (
        Key_Type => Domain_Tuple_Type,
-       Element_Type => State_Type,
-       "<" => "<",
-       "=" => "="
+       Element_Type => State_Type
       );
 
     --  The state-transition function. Usually associated with a delta symbol.
