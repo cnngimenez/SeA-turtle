@@ -34,6 +34,9 @@ digraph tokens {
         anon [style=filled, fillcolor="#88ff88"];
         blank_node_label [style=filled, fillcolor="#88ff88"];
         comment [style=filled, fillcolor="#88ff88"];
+        dot [style=filled, fillcolor="#88ff88"];
+        bracket_open [style=filled, fillcolor="#88ff88"];
+        symbol [style=filled, fillcolor="#88ff88"];
 
         i_percent [label="i_percent\n(PLX)"];
         i_pn_local_esc [label="i_pn_local_esc\n(PLX)"];
@@ -88,7 +91,8 @@ digraph tokens {
         sign -> i_decimal2 [label="'.'"]; // [+-] '.'
         i_decimal2 -> e_decimal2 [label="[0-9]"];
         e_decimal2 -> e_decimal2 [label="[0-9]"];
-        start -> i_decimal2 [label="'.'"]; // '.'
+        // start -> i_decimal2 [label="'.'"]; // '.'
+        // ^^ Accepted by start -> dot -> e_decimal2
 
         // Case (b): [+-]? [0-9]+ '.' [0-9]+
         ie_integer -> i_decimal [label="'.'"]; // [+-]? [0-9]+ '.'
@@ -170,11 +174,6 @@ digraph tokens {
         pn_local1 -> i_percent [label="%"]; // to PLX
         pn_local1 -> i_pn_local_esc [label="\\"]; // to PLX
 
-        // [162s] ANON ::= '[' WS* ']'
-        start -> i_anon [label="'['"];
-        i_anon -> i_anon [label="WS"];
-        i_anon -> anon [label="']'"];
-
         // [169s] PLX ::= PERCENT | PN_LOCAL_ESC
         i_percent -> hex1 [label="[:HEX_DIGIT:]"];
         hex1 -> pname_ln [label="[:HEX_DIGIT:]"];
@@ -188,6 +187,18 @@ digraph tokens {
         // COMMENT ::= '#' .*
         start -> comment [label="#"];
         comment -> comment [label="[:ALL_CHARS:]"];
+
+        start -> dot [label="."];
+        dot-> e_decimal2 [label="[0-9]"];
+
+        // [162s] ANON ::= '[' WS* ']'
+        // "[" alone should be accepted too.
+        start -> bracket_open [label="["];
+        bracket_open -> bracket_open [label="WS"];
+        bracket_open -> anon [label="]"];
+        
+        // '.' accepted by dot.
+        start -> symbol [label="[;]()]"];
 }
 
 
