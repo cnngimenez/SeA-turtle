@@ -1,0 +1,56 @@
+// boolean.dot
+
+// Copyright 2020 cnngimenez
+
+// Author: cnngimenez
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+digraph booleans {
+        // rotate=90;
+        rankdir=LR;
+        node [];
+
+        boolean [style=filled, fillcolor="#88ff88"];
+        see_automata_png [shape=plaintext, label="See automata.png"];
+
+        start -> booleant1 [label="t", color="#008800"];
+        booleant1 -> pn_prefix [label="[:PN_CHARS:]-r",
+          color="#444444", fontcolor="#444444"];
+        booleant1 -> booleant2 [label="r", color="#008800"];
+        booleant2 -> pn_prefix [label="[:PN_CHARS:]-u",
+          color="#444444", fontcolor="#444444"];
+        booleant2 -> booleant3 [label="u", color="#008800"];
+        booleant3 -> pn_prefix [label="[:PN_CHARS:]-e"
+          color="#444444", fontcolor="#444444"];         
+        booleant3 -> boolean [label="e", color="#008800"];
+        boolean -> pn_prefix [label="[:PN_CHARS:]",
+          color="#444444", fontcolor="#444444"];
+
+        start -> booleanf1 [label="f", color="#008800"];
+        booleanf1 -> pn_prefix [label="[:PN_CHARS:]-a",
+          color="#444444", fontcolor="#444444"];
+        booleanf1 -> booleanf2 [label="a", color="#008800"];
+        booleanf2 -> pn_prefix [label="[:PN_CHARS:]-l",
+          color="#444444", fontcolor="#444444"];
+        booleanf2 -> booleanf3 [label="l", color="#008800"];
+        booleanf3 -> pn_prefix [label="[:PN_CHARS:]-s",
+          color="#444444", fontcolor="#444444"];
+        booleanf3 -> booleanf4 [label="s", color="#008800"];
+        booleanf4 -> pn_prefix [label="[:PN_CHARS:]-e",
+          color="#444444", fontcolor="#444444"];
+        booleanf4 -> boolean [label="e", color="#008800"];
+
+        pn_prefix -> see_automata_png [style=dashed];
+}
