@@ -1,0 +1,193 @@
+// automata.dot
+
+// Copyright 2020 cnngimenez
+
+// Author: cnngimenez
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+digraph tokens {
+        // rotate=90;
+        rankdir=LR;
+        node [];
+
+        see_string_png [shape=plaintext, label="See string.png"];
+        e_iriref [style=filled, fillcolor="#88ff88"];
+        i_langtag [style=filled, fillcolor="#88ff88"];
+        e_langtag [style=filled, fillcolor="#88ff88"];
+        ie_integer [style=filled, fillcolor="#88ff88"];
+        e_decimal [style=filled, fillcolor="#88ff88"];
+        e_decimal2 [style=filled, fillcolor="#88ff88"];
+        pname_ns [style=filled, fillcolor="#88ff88"];
+        pname_ln [style=filled, fillcolor="#88ff88"];
+        anon [style=filled, fillcolor="#88ff88"];
+        blank_node_label [style=filled, fillcolor="#88ff88"];
+        comment [style=filled, fillcolor="#88ff88"];
+
+        i_percent [label="i_percent\n(PLX)"];
+        i_pn_local_esc [label="i_pn_local_esc\n(PLX)"];
+
+        // IRIREF
+        // [18] IRIREF ::= '<' ([^#x00-#x20<>"{}|^`\] | UCHAR)* '>'
+        // /* #x00=NULL #01-#x1F=control codes #x20=space */
+        
+        start -> i_iriref [label="<"];
+        i_iriref -> i_iriref [label="[^#x00-#x20<>\"{}|^`\\]"];
+        i_iriref -> uchar [label="\\"];
+        uchar_end -> i_iriref [label="[^#x00-#x20<>\"{}|^`\\]"];
+        uchar_end -> e_iriref [label=">"];
+        i_iriref -> e_iriref [label=">"];
+
+        // BLANK_NODE_LABEL
+        // [141s] BLANK_NODE_LABEL ::=
+        //     '_:' (PN_CHARS_U | [0-9]) ((PN_CHARS | '.')* PN_CHARS)?
+               
+        start -> under [label="_"];
+        under -> i_blank_node_label [label=":"];
+        i_blank_node_label -> blank_node_label [label="([:PN_CHARS_U:]|[0-9])"];
+        blank_node_label -> blank_node_label1 [label="'.'"];
+        blank_node_label -> blank_node_label [label="[:PN_CHARS:]"];
+        blank_node_label1 -> blank_node_label [label="[:PN_CHARS:]"];
+        
+        under -> pn_prefix [label="[:PN_CHAR:]"];
+
+        // LANGTAG
+        // [144s] LANGTAG ::= '@' [a-zA-Z]+ ('-' [a-zA-Z0-9]+)*
+        
+        start -> arroba [label="@"];
+        arroba -> i_langtag -> i_langtag [label="[a-zA-Z]"] ;
+        i_langtag -> langtag1 [label="'-'"];
+        langtag1 -> e_langtag [label="[a-zA-Z0-9]"];
+        e_langtag -> langtag1 [label="'-'"];
+
+
+        // INTEGER
+        // [19] INTEGER ::= [+-]? [0-9]+
+        start -> sign [label="[+-]"];
+        sign -> ie_integer [label="[0-9]"];
+        start -> ie_integer [label="[0-9]"];
+             
+        ie_integer -> ie_integer [label="[0-9]"];
+        
+
+        // DECIMAL
+        // [20] DECIMAL ::= [+-]? [0-9]* '.' [0-9]+
+
+        // Case (a): [+-]? '.' [0-9]+
+        sign -> i_decimal2 [label="'.'"]; // [+-] '.'
+        i_decimal2 -> e_decimal2 [label="[0-9]"];
+        e_decimal2 -> e_decimal2 [label="[0-9]"];
+        start -> i_decimal2 [label="'.'"]; // '.'
+
+        // Case (b): [+-]? [0-9]+ '.' [0-9]+
+        ie_integer -> i_decimal [label="'.'"]; // [+-]? [0-9]+ '.'
+        i_decimal -> e_decimal [label="[0-9]"];
+        e_decimal -> e_decimal [label="[0-9]"];
+        
+        // DOUBLE
+        // [21] DOUBLE ::=
+        // [+-]? ([0-9]+ '.' [0-9]* EXPONENT |
+        //        '.' [0-9]+ EXPONENT |
+        //        [0-9]+ EXPONENT)
+
+        // First case (a): [+-]? [0-9]+ '.' EXPONENT
+        i_decimal -> exponent [label="[eE]"];
+
+        // First case (b): [+-]? [0-9]+ '.' [0-9]+ EXPONENT
+        e_decimal -> exponent [label="[eE]"];
+
+        // Second case [+-]? '.' [0-9]+ EXPONENT
+        e_decimal2 -> exponent [label="[eE]"];
+
+        // Third case [+-]? [0-9]+ EXPONENT
+        ie_integer -> exponent [label="[eE]"];
+
+        // EXPONENT
+        // [154s] EXPONENT ::= [eE] [+-]? [0-9]+
+        exponent -> ex_digit [label="[+-0-9]"];
+        ex_digit -> ex_digit [label="[0-9]"];
+        
+        // UCHAR
+        // [26] UCHAR ::= '\u' HEX HEX HEX HEX |
+        //                '\U' HEX HEX HEX HEX HEX HEX HEX HEX
+        uchar -> uchar_end [style=dotted, label="See uchar.png"];
+
+        // STRINGS
+        start -> doublequote [label="\""];
+        doublequote -> see_string_png [style=dotted];
+        start -> singlequote [label="'"];
+        singlequote -> see_string_png [style=dotted];
+
+        // PNAME_NS
+        // [139s] PNAME_NS ::= PN_PREFIX? ':'                      
+        start -> pname_ns [label=":"];
+        start -> pn_prefix [label="[:PN_CHAR_BASE:]"]; // when "_" go to "under".
+        pn_prefix -> pname_ns [label=":"];
+
+        // PN_PREFIX
+        // [167s] PN_PREFIX ::= PN_CHARS_BASE ((PN_CHARS | '.')* PN_CHARS)?
+
+        // PN_CHAR_BASE are the following characters:
+        // [A-Z] | [a-z] | [#x00C0-#x00D6] | [#x00D8-#x00F6] |
+        // [#x00F8-#x02FF] | [#x0370-#x037D] | [#x037F-#x1FFF] |
+        // [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] |
+        // [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] |
+        // [#x10000-#xEFFFF]
+        
+        // PN_CHARS are the following characters:
+        // PN_CHARS_U | '-' | [0-9] | #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
+        // PN_CHARS_U are: PN_CHARS_BASE | '_'
+        pn_prefix -> pn_prefix1 [label="."];
+        pn_prefix -> pn_prefix [label="[:PN_CHARS:]"];
+        pn_prefix1 -> pn_prefix [label="[:PN_CHARS:]"];
+        pn_prefix1 -> pn_prefix1 [label="."];
+
+        // PNAME_LN
+        // [140s] PNAME_LN ::= PNAME_NS PN_LOCAL
+        // [168s] PN_LOCAL ::= (PN_CHARS_U | ':' | [0-9] | PLX)
+        //   ((PN_CHARS | '.' | ':' | PLX)* (PN_CHARS | ':' | PLX))?
+        pname_ns -> pname_ln [label="([:PN_CHARS_U:] | : | [0-9])"];
+        pname_ns -> i_percent [label="%"]; // to PLX
+        pname_ns -> i_pn_local_esc [label="\\"]; // to PLX
+        
+        pname_ln -> pname_ln [label="([:PN_CHARS:] | :)"];
+        pname_ln -> pn_local1 [label="."];
+        pname_ln -> i_percent [label="%"]; // to PLX
+        pname_ln -> i_pn_local_esc [label="\\"]; // to PLX
+        
+        pn_local1 -> pname_ln [label="([:PN_CHARS:] | :)"];
+        pn_local1 -> i_percent [label="%"]; // to PLX
+        pn_local1 -> i_pn_local_esc [label="\\"]; // to PLX
+
+        // [162s] ANON ::= '[' WS* ']'
+        start -> i_anon [label="'['"];
+        i_anon -> i_anon [label="WS"];
+        i_anon -> anon [label="']'"];
+
+        // [169s] PLX ::= PERCENT | PN_LOCAL_ESC
+        i_percent -> hex1 [label="[:HEX_DIGIT:]"];
+        hex1 -> pname_ln [label="[:HEX_DIGIT:]"];
+
+        // [172s] PN_LOCAL_ESC ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&'
+        // | "'" | '(' | ')' | '*' | '+' | ',' | ';' | '=' | '/' | '?' | '#'
+        // | '@' | '%')
+        i_pn_local_esc -> pname_ln [label="[_~.-!$@'()*+,;=/?#@%]"];
+
+        // Comments
+        // COMMENT ::= '#' .*
+        start -> comment [label="#"];
+        comment -> comment [label="[:ALL_CHARS:]"];
+}
+
+
