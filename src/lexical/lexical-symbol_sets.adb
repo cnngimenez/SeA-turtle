@@ -95,16 +95,35 @@ package body Lexical.Symbol_Sets is
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Hexadecimal_Digit);
             Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
         when 'g' .. 'z' | 'G' .. 'Z' =>
             Symbol_Set.Initialize (Letter);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
         when '0' .. '9' =>
             Symbol_Set.Initialize (Decimal_Digit);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Hexadecimal_Digit);
             Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
         when ' ' | Tab_Char | New_Line_Char | Carriage_Char =>
             Symbol_Set.Initialize (WS);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        when '.' =>
+            Symbol_Set.Initialize (Dot);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        when '_' =>
+            Symbol_Set.Initialize (Pn_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        when '-' =>
+            Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
         when others =>
             null;
@@ -112,6 +131,18 @@ package body Lexical.Symbol_Sets is
 
         Symbol_Set.Initialize (Symbol);
         Possible_Sets.Set.Insert (Symbol_Set);
+
+        --  PN_CHAR_BASE - tf
+        --  [#x00C0-#x00D6] | [#x00D8-#x00F6] | [#x00F8-#x02FF]
+        --  | [#x0370-#x037D] | [#x037F-#x1FFF] | [#x200C-#x200D]
+        --  | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF]
+        --  | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
+        --  if Symbol in   then
+        --
+        --  end if;
+
+        --  PN_CHARS
+        --  #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
 
         --  It is too difficult to add a "not" in the above "case" statement.
         if not (Symbol in Null_Char .. Space_Char or else Symbol = '<'

@@ -72,6 +72,8 @@ package Lexical.Finite_Automata is
        Uchar, Uchar_End, Uchar1a, Uchar1b, Uchar1c, Uchar1d,
        Uchar2a, Uchar2b, Uchar2c, Uchar2d, Uchar2e, Uchar2f, Uchar2g, Uchar2h,
        WS,
+       Dot,
+       Pname_Ns, Pn_Prefix, Pn_Prefix1,
        I_Iriref, E_Iriref,
        Invalid_State, Blocked
       );

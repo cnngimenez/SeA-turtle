@@ -213,6 +213,8 @@ begin
     Acceptable_States.Insert (I_Langtag);
     Acceptable_States.Insert (E_Iriref);
     Acceptable_States.Insert (WS);
+    Acceptable_States.Insert (Dot);
+    Acceptable_States.Insert (Pname_Ns);
 
     Add_Delta (Start, '@', Arroba);
     Add_Delta (Arroba, Letter, I_Langtag);
@@ -247,4 +249,13 @@ begin
 
     Add_Delta (Start, WS, WS);
     Add_Delta (WS, WS, WS);
+
+    Add_Delta (Start, Dot, Dot);
+
+    Add_Delta (Start, ':', Pname_Ns);
+    Add_Delta (Start, Pn_Char_Base_Without_Tf, Pn_Prefix);
+    Add_Delta (Pn_Prefix, Pn_Chars, Pn_Prefix);
+    Add_Delta (Pn_Prefix, ':', Pname_Ns);
+    Add_Delta (Pn_Prefix, '.', Pn_Prefix1);
+    Add_Delta (Pn_Prefix1, Pn_Chars, Pn_Prefix);
 end Lexical.Finite_Automata;

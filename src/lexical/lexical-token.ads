@@ -35,6 +35,7 @@ package Lexical.Token is
                          Blank_Node_Property_List,
                          Collection,
                          WS,
+                         Reserved_Word,
                          Invalid);
 
     type Token_Type is tagged private;

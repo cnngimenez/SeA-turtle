@@ -38,9 +38,10 @@ package Lexical.Symbol_Sets is
     --  would not be defined here).
     type Symbol_Set_Name_Type is (Unitary,
                                   WS, Decimal_Digit, Hexadecimal_Digit, Letter,
-                                  Pn_Chars, Pn_Char_Base,
+                                  Pn_Chars, Pn_Char_Base_Without_Tf,
                                   --  Iriref_Chars ::= [^#x00-#x20<>"{}|^`\]
                                   Iriref_Chars,
+                                  Dot,
                                   Other,
                                   Invalid);
 
