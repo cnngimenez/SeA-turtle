@@ -23,6 +23,7 @@ digraph tokens {
         node [];
 
         see_string_png [shape=plaintext, label="See string.png"];
+        see_boolean_png [shape=plaintext, label="See boolean.png"];
         e_iriref [style=filled, fillcolor="#88ff88"];
         i_langtag [style=filled, fillcolor="#88ff88"];
         e_langtag [style=filled, fillcolor="#88ff88"];
@@ -136,9 +137,17 @@ digraph tokens {
         // PNAME_NS
         // [139s] PNAME_NS ::= PN_PREFIX? ':'                      
         start -> pname_ns [label=":"];
-        start -> pn_prefix [label="[:PN_CHAR_BASE:]"]; // when "_" go to "under".
+        start -> pn_prefix [label="[:PN_CHAR_BASE:]-tf"];
+        // ^^ when "_" go to "under". when "t" or "f" go to boolean.        
         pn_prefix -> pname_ns [label=":"];
 
+        start -> booleant1 [label="t"];
+        booleant1 -> see_boolean_png [style=dashed];
+        booleant1 -> pn_prefix [style=dashed, label="See boolean.png"];
+        start -> booleanf1 [label="f"];
+        booleanf1 -> see_boolean_png [style=dashed];
+        booleanf1 -> pn_prefix [style=dashed, label="See boolean.png"];
+        
         // PN_PREFIX
         // [167s] PN_PREFIX ::= PN_CHARS_BASE ((PN_CHARS | '.')* PN_CHARS)?
 
