@@ -21,64 +21,64 @@ digraph {
         rankdir=LR;
         node [];
 
-        e_string_literal_quote [style=bold];
-        e_string_literal_quote1 [style=bold];
-        e_string_literal_single_quote [style=bold];
-        e_string_literal_single_quote1 [style=bold];
-        e_sllsq [style=bold];
-        e_sllq [style=bold];
-
+        e_string_literal_quote [style=filled, fillcolor="#88ff88"];
+        e_string_literal_quote1 [style=filled, fillcolor="#88ff88"];
+        e_string_literal_single_quote [style=filled, fillcolor="#88ff88"];
+        e_string_literal_single_quote1 [style=filled, fillcolor="#88ff88"];
+        e_sllsq [style=filled, fillcolor="#88ff88"];
+        e_sllq [style=filled, fillcolor="#88ff88"];
+        see_automata_png [shape=plaintext, label="See automata.png"];
         
         // STRING_LITERAL_QUOTE ::= '"' ([^#x22#x5C#xA#xD] | ECHAR | UCHAR)* '"' /* #x22=" #x5C=\ #xA=new line #xD=carriage return */
-        start -> doublequote [label="'\"'"]
+        start -> doublequote [label="\""]
+        start -> singlequote [label="'"]        
+        start -> see_automata_png [style=dotted];
         
         doublequote -> i_string_literal_quote [label="[^#x22#x5C#xA#xD]"];
-        doublequote -> e_string_literal_quote1 [label="'\"'"];
-        doublequote -> slq_backslash [label="'\\'"];
+        doublequote -> e_string_literal_quote1 [label="\""];
+        doublequote -> slq_backslash [label="\\"];
 
         // '"' (...)*
         i_string_literal_quote -> i_string_literal_quote [label="[^#x22#x5C#xA#xD]"];
         slq_backslash -> slq_uchar [label="u"];       
         slq_backslash -> slq_echar [label="[tbnrf\"'\\]"];
 
-        slq_uchar -> slq_e_uchar [style="dotted"];
+        slq_uchar -> slq_e_uchar [style=dotted, label="See uchar.png"];
         
         slq_e_uchar -> i_string_literal_quote [label="[^#x22#x5C#xA#xD]"];
         slq_e_uchar -> slq_backslash [label="\\"];
-        slq_e_uchar -> e_string_literal_quote [label="'\"'"];
+        slq_e_uchar -> e_string_literal_quote [label="\""];
 
         slq_echar -> i_string_literal_quote [label="[^#x22#x5C#xA#xD]"];
         slq_echar -> slq_backslash [label="\\"];
-        slq_echar -> e_string_literal_quote [label="'\"'"];
+        slq_echar -> e_string_literal_quote [label="\""];
 
-        i_string_literal_quote -> e_string_literal_quote [label="'\"'"];
+        i_string_literal_quote -> e_string_literal_quote [label="\""];
 
-        // STRING_LITERAL_SINGLE_QUOTE ::= "'" ([^#x27#x5C#xA#xD] | ECHAR | UCHAR)* "'" /* #x27=' #x5C=\ #xA=new line #xD=carriage return */
-        start -> singlequote [label="'\\''"]
-        
-        singlequote -> i_string_literal_single_quote [label="[^#x22#x5C#xA#xD]"];
-        singlequote -> e_string_literal_single_quote1 [label="'\\''"];
-        singlequote -> slsq_backslash [label="'\\'"];
+        // STRING_LITERAL_SINGLE_QUOTE ::= "'" ([^#x27#x5C#xA#xD] | ECHAR | UCHAR)* "'" /* #x27=' #x5C=\ #xA=new line #xD=carriage return */        
+        singlequote -> i_string_literal_single_quote [label="[^#x27#x5C#xA#xD]"];
+        singlequote -> e_string_literal_single_quote1 [label="'"];
+        singlequote -> slsq_backslash [label="\\"];
 
         // '"' (...)*
-        i_string_literal_single_quote -> i_string_literal_single_quote [label="[^#x22#x5C#xA#xD]"];
+        i_string_literal_single_quote -> i_string_literal_single_quote [label="[^#x27#x5C#xA#xD]"];
         slsq_backslash -> slsq_uchar [label="u"];       
         slsq_backslash -> slsq_echar [label="[tbnrf\"'\\]"];
 
-        slsq_uchar -> slsq_e_uchar [style=dotted];
+        slsq_uchar -> slsq_e_uchar [style=dotted, label="See uchar.png"];
         
-        slsq_e_uchar -> i_string_literal_single_quote [label="[^#x22#x5C#xA#xD]"];
+        slsq_e_uchar -> i_string_literal_single_quote [label="[^#x27#x5C#xA#xD]"];
         slsq_e_uchar -> slsq_backslash [label="\\"];
-        slsq_e_uchar -> e_string_literal_single_quote [label="'\\''"];
+        slsq_e_uchar -> e_string_literal_single_quote [label="'"];
 
-        slsq_echar -> i_string_literal_single_quote [label="[^#x22#x5C#xA#xD]"];
+        slsq_echar -> i_string_literal_single_quote [label="[^#x27#x5C#xA#xD]"];
         slsq_echar -> slsq_backslash [label="\\"];
-        slsq_echar -> e_string_literal_single_quote [label="'\\''"];
+        slsq_echar -> e_string_literal_single_quote [label="'"];
 
-        i_string_literal_single_quote -> e_string_literal_single_quote [label="'\"'"];
+        i_string_literal_single_quote -> e_string_literal_single_quote [label="\""];
 
         // STRING_LITERAL_LONG_SINGLE_QUOTE ::= "'''" (("'" | "''")? ([^'\] | ECHAR | UCHAR))* "'''"
-        e_string_literal_single_quote1 -> i_sllsq [label="'\\''"];
+        e_string_literal_single_quote1 -> i_sllsq [label="'"];
 
         i_sllsq -> sllsq_quote [label="'"];
         i_sllsq -> i_sllsq [label="[^'\\]"];
@@ -105,7 +105,7 @@ digraph {
         
         
         // STRING_LITERAL_LONG_QUOTE ::= '"""' (('"' | '""')? ([^"\] | ECHAR | UCHAR))* '"""'
-        e_string_literal_quote1 -> i_sllq [label="'\"'"];
+        e_string_literal_quote1 -> i_sllq [label="\""];
 
         i_sllq -> sllq_quote [label="\""];
         i_sllq -> i_sllq [label="[^\"\\]"];

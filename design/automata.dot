@@ -30,6 +30,7 @@ digraph tokens {
         ie_integer [style=filled, fillcolor="#88ff88"];
         e_decimal [style=filled, fillcolor="#88ff88"];
         e_decimal2 [style=filled, fillcolor="#88ff88"];
+        ex_digit [style=filled, fillcolor="#88ff88"];
         pname_ns [style=filled, fillcolor="#88ff88"];
         pname_ln [style=filled, fillcolor="#88ff88"];
         anon [style=filled, fillcolor="#88ff88"];
@@ -120,7 +121,9 @@ digraph tokens {
 
         // EXPONENT
         // [154s] EXPONENT ::= [eE] [+-]? [0-9]+
-        exponent -> ex_digit [label="[+-0-9]"];
+        exponent -> exponent1 [label="[+-]"];
+        exponent -> ex_digit [label="[0-9]"];
+        exponent1 -> ex_digit [label="[0-9]"];
         ex_digit -> ex_digit [label="[0-9]"];
         
         // UCHAR
@@ -190,12 +193,12 @@ digraph tokens {
         // [172s] PN_LOCAL_ESC ::= '\' ('_' | '~' | '.' | '-' | '!' | '$' | '&'
         // | "'" | '(' | ')' | '*' | '+' | ',' | ';' | '=' | '/' | '?' | '#'
         // | '@' | '%')
-        i_pn_local_esc -> pname_ln [label="[_~.-!$@'()*+,;=/?#@%]"];
+        i_pn_local_esc -> pname_ln [label="[:PN_LOCAL_ESC:]"];
 
         // Comments
         // COMMENT ::= '#' .*
         start -> comment [label="#"];
-        comment -> comment [label="[:ALL_CHARS:]"];
+        comment -> comment [label="[:COMMENT_CHARS:]"];
 
         start -> dot [label="."];
         dot-> e_decimal2 [label="[0-9]"];

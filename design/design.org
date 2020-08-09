@@ -32,22 +32,27 @@ The following EBNF rules from the RDF 1.1 Turtle specification are considered as
 
 The following table shows the charsets used in the diagram and the name they have in the program code.
 
-| Charset              | Diagram              | Identifier        |
-|----------------------+----------------------+-------------------|
-| WS                   | WS                   | WS                |
-| PN_CHARS_BASE        | PN_CHAR_BASE         | Pn_Char_Base      |
-| PN_CHARS_U           | PN_CHARS_U           |                   |
-| PN_CHARS             | PN_CHARS             | Pn_Chars          |
-| HEX                  | HEX_DIGIT/HEX        | Hexadecimal_Digit |
-| PN_LOCAL_ESC         |                      |                   |
-| [0-9]                | [0-9]                | Decimal_Digit     |
-| [a-zA-Z]             | [a-zA-Z]             | Letter            |
-| [^#x00-#x20<>"{}^`\] | [^#x00-#x20<>"{}^`\] | Iriref_Chars      |
-|                      |                      | Unitary           |
-|                      |                      | Other             |
-|                      |                      | Invalid           |
+| Charset                | Diagram           | Identifier        |
+|------------------------+-------------------+-------------------|
+| WS                     | WS                | WS                |
+| PN_CHARS_BASE          | PN_CHAR_BASE      | Pn_Char_Base      |
+| PN_CHARS_U             | PN_CHARS_U        |                   |
+| PN_CHARS               | PN_CHARS          | Pn_Chars          |
+| HEX                    | HEX_DIGIT/HEX     | Hexadecimal_Digit |
+| PN_LOCAL_ESC           |                   |                   |
+| [0-9]                  | [0-9]             | Decimal_Digit     |
+| [a-zA-Z]               | [a-zA-Z]          | Letter            |
+| [^#x00-#x20<>"{}^`\]   | IRIREF_CHARS      | Iriref_Chars      |
+| [_~.-!$@'()*+,;=/?#@%] | PN_LOCAL_ESC      | Pn_Local_Esc      |
+| [^#xA#xD]              | COMMENT_CHARS     | Comment_Chars     |
+| [^#x22#x5C#xA#xD]      | [^#x22#x5C#xA#xD] | Non_SLQ_Chars     |
+| [^#x27#x5C#xA#xD]      | [^#x27#x5C#xA#xD] | Non_SLSQ_Chars    |
+| [tbnrf"'\]             | [tbnrf"'\]        | ECHAR_Chars       |
+|                        |                   | Unitary           |
+|                        |                   | Other             |
+|                        |                   | Invalid           |
 
-The "|" symbol is also excluded in ~Iriref_Chars~ charset.
+The "|" symbol is also excluded in ~IRIREF_CHARS~ charset.
 
 * Blocking state
 A blocking state is implicit in the diagram. This "blocking" state is reached when a char is not represented by an edge. For example, suppose that the automata reads the char "a", but on the diagram there's no edge with that letter for the current state. This means that the automata changes from the current state to the blocking state. Also, this blocking state changes into the same blocking state for any symbol readed (i.e. $\delta(B, u) = B \;\; \forall u \in \Sigma \, \land \, B \notin F$ where $B$ is the blocking state).
