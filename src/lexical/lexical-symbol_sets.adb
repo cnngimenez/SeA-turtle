@@ -88,6 +88,16 @@ package body Lexical.Symbol_Sets is
           Wide_Wide_Character'Val (0);
         Space_Char : constant Wide_Wide_Character :=
           Wide_Wide_Character'Val (16#20#);
+        Char_X22 :  constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (16#22#);
+        Char_X27 :  constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (16#27#);
+        Char_X5c :  constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (16#5C#);
+        Char_X0a :  constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (16#0A#);
+        Char_X0d :  constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (16#0D#);
     begin
         case Symbol is
         when 'a' .. 'f' | 'F' .. 'F' =>
@@ -97,12 +107,16 @@ package body Lexical.Symbol_Sets is
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
             Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars_U);
+            Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
         when 'g' .. 'z' | 'G' .. 'Z' =>
             Symbol_Set.Initialize (Letter);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars_U);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
@@ -119,11 +133,24 @@ package body Lexical.Symbol_Sets is
         when '.' =>
             Symbol_Set.Initialize (Dot);
             Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Local_Esc);
+            Possible_Sets.Set.Insert (Symbol_Set);
         when '_' =>
             Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Chars_U);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Local_Esc);
+            Possible_Sets.Set.Insert (Symbol_Set);
         when '-' =>
             Symbol_Set.Initialize (Pn_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+            Symbol_Set.Initialize (Pn_Local_Esc);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        when '~' | ''' | '!' | '$' | '&' | '('
+          | ')' | '*' | '+' | ',' | ';' | '=' | '/'
+          | '?' | '#' | '@' | '%' =>
+            Symbol_Set.Initialize (Pn_Local_Esc);
             Possible_Sets.Set.Insert (Symbol_Set);
         when others =>
             null;
@@ -153,6 +180,44 @@ package body Lexical.Symbol_Sets is
                   or else Symbol = '\')
         then
             Symbol_Set.Initialize (Iriref_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if Symbol = 't' or else Symbol = 'b' or else Symbol = 'n'
+          or else Symbol = 'r' or else Symbol = 'f'
+          or else Symbol = '"' or else Symbol = '''
+          or else Symbol = '\'
+        then
+            Symbol_Set.Initialize (ECHAR_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if Symbol /= '"' and then Symbol /= '\' then
+            Symbol_Set.Initialize (Non_Isllq_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if Symbol /= ''' and then Symbol /= '\' then
+            Symbol_Set.Initialize (Non_Isllsq_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if Symbol /= New_Line_Char and then Symbol /= Carriage_Char then
+            Symbol_Set.Initialize (Comment_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if not (Symbol = Char_X22 or else Symbol = Char_X5c
+                  or else Symbol = Char_X0a or else Symbol = Char_X0d)
+        then
+            Symbol_Set.Initialize (Non_SLQ_Chars);
+            Possible_Sets.Set.Insert (Symbol_Set);
+        end if;
+
+        if not (Symbol = Char_X27 or else Symbol = Char_X5c
+                  or else Symbol = Char_X0a or else Symbol = Char_X0d)
+        then
+            Symbol_Set.Initialize (Non_SLSQ_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
         end if;
 

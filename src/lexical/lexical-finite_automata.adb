@@ -209,35 +209,71 @@ package body Lexical.Finite_Automata is
     end Walk_Function;
 
 begin
+    Acceptable_States.Insert (E_Iriref);
     Acceptable_States.Insert (E_Langtag);
     Acceptable_States.Insert (I_Langtag);
-    Acceptable_States.Insert (E_Iriref);
-    Acceptable_States.Insert (WS);
-    Acceptable_States.Insert (Dot);
+    Acceptable_States.Insert (Ie_Integer);
+    Acceptable_States.Insert (E_Decimal);
+    Acceptable_States.Insert (E_Decimal2);
+    Acceptable_States.Insert (Ex_Digit);
     Acceptable_States.Insert (Pname_Ns);
+    Acceptable_States.Insert (Pname_Ln);
+    Acceptable_States.Insert (Anon);
+    Acceptable_States.Insert (Blank_Node_Label);
+    Acceptable_States.Insert (Comment);
+    Acceptable_States.Insert (Dot);
+    Acceptable_States.Insert (Bracket_Open);
+    Acceptable_States.Insert (Symbol);
+    Acceptable_States.Insert (I_Percent);
+    Acceptable_States.Insert (I_Pn_Local_Esc);
+    Acceptable_States.Insert (WS);
+    Acceptable_States.Insert (E_String_Literal_Quote);
+    Acceptable_States.Insert (E_String_Literal_Quote1);
+    Acceptable_States.Insert (E_Sllq);
+    Acceptable_States.Insert (E_String_Literal_Single_Quote);
+    Acceptable_States.Insert (E_String_Literal_Single_Quote1);
+    Acceptable_States.Insert (E_Sllsq);
 
     Add_Delta (Start, '@', Arroba);
+    Add_Delta (Start, '<', I_Iriref);
+    Add_Delta (Start, WS, WS);
+    Add_Delta (Start, Dot, Dot);
+    Add_Delta (Start, ':', Pname_Ns);
+    Add_Delta (Start, Pn_Char_Base_Without_Tf, Pn_Prefix);
+    Add_Delta (Start, '_', Under);
+    Add_Delta (Start, '#', Comment);
+    Add_Delta (Start, '[', Bracket_Open);
+    Add_Delta (Start, '+', Sign);
+    Add_Delta (Start, '-', Sign);
+    Add_Delta (Start, Decimal_Digit, Ie_Integer);
+    Add_Delta (Start, ''', Singlequote);
+    Add_Delta (Start, '"', Doublequote);
+
     Add_Delta (Arroba, Letter, I_Langtag);
+
     Add_Delta (I_Langtag, Letter, I_Langtag);
     Add_Delta (I_Langtag, '-', Langtag1);
+
     Add_Delta (Langtag1, Letter, E_Langtag);
     Add_Delta (Langtag1, Decimal_Digit, E_Langtag);
+
     Add_Delta (E_Langtag, '-', Langtag1);
 
-    Add_Delta (Start, '<', I_Iriref);
     Add_Delta (I_Iriref, Iriref_Chars, I_Iriref);
     Add_Delta (I_Iriref, '>', E_Iriref);
     Add_Delta (I_Iriref, '\', Uchar);
+
     Add_Delta (Uchar_End, Iriref_Chars, I_Iriref);
     Add_Delta (Uchar_End, '>', E_Iriref);
 
     Add_Delta (Uchar, 'u', Uchar1a);
+    Add_Delta (Uchar, 'U', Uchar2a);
+
     Add_Delta (Uchar1a, Hexadecimal_Digit, Uchar1b);
     Add_Delta (Uchar1b, Hexadecimal_Digit, Uchar1c);
     Add_Delta (Uchar1c, Hexadecimal_Digit, Uchar1d);
     Add_Delta (Uchar1d, Hexadecimal_Digit, Uchar_End);
 
-    Add_Delta (Uchar, 'U', Uchar2a);
     Add_Delta (Uchar2a, Hexadecimal_Digit, Uchar2b);
     Add_Delta (Uchar2b, Hexadecimal_Digit, Uchar2c);
     Add_Delta (Uchar2c, Hexadecimal_Digit, Uchar2d);
@@ -247,15 +283,204 @@ begin
     Add_Delta (Uchar2g, Hexadecimal_Digit, Uchar2h);
     Add_Delta (Uchar2h, Hexadecimal_Digit, Uchar_End);
 
-    Add_Delta (Start, WS, WS);
     Add_Delta (WS, WS, WS);
 
-    Add_Delta (Start, Dot, Dot);
+    Add_Delta (Dot, Decimal_Digit, E_Decimal2);
 
-    Add_Delta (Start, ':', Pname_Ns);
-    Add_Delta (Start, Pn_Char_Base_Without_Tf, Pn_Prefix);
+    --  Prefixes namespaces and local namespaces
     Add_Delta (Pn_Prefix, Pn_Chars, Pn_Prefix);
     Add_Delta (Pn_Prefix, ':', Pname_Ns);
     Add_Delta (Pn_Prefix, '.', Pn_Prefix1);
+
     Add_Delta (Pn_Prefix1, Pn_Chars, Pn_Prefix);
+
+    Add_Delta (Pname_Ns, Pn_Chars_U, Pname_Ln);
+    Add_Delta (Pname_Ns, ':', Pname_Ln);
+    Add_Delta (Pname_Ns, Decimal_Digit, Pname_Ln);
+    Add_Delta (Pname_Ns, '%', I_Percent);
+    Add_Delta (Pname_Ns, '\', I_Pn_Local_Esc);
+
+    Add_Delta (Pname_Ln, Pn_Chars, Pname_Ln);
+    Add_Delta (Pname_Ln, ':', Pname_Ln);
+    Add_Delta (Pname_Ln, '.', Pn_Local1);
+    Add_Delta (Pname_Ln, '%', I_Percent);
+    Add_Delta (Pname_Ln, '\', I_Pn_Local_Esc);
+
+    Add_Delta (Pn_Local1, Pn_Chars, Pname_Ln);
+    Add_Delta (Pn_Local1, ':', Pname_Ln);
+    Add_Delta (Pn_Local1, '%', I_Percent);
+    Add_Delta (Pn_Local1, '\', I_Pn_Local_Esc);
+
+    Add_Delta (I_Pn_Local_Esc, Pn_Local_Esc, Pname_Ln);
+
+    Add_Delta (I_Percent, Hexadecimal_Digit, Hex1);
+
+    Add_Delta (Hex1, Hexadecimal_Digit, Pname_Ln);
+
+    --  Blank nodes
+    Add_Delta (Under, ':', I_Blank_Node_Label);
+    Add_Delta (Under, Pn_Chars, Pn_Prefix);
+
+    Add_Delta (I_Blank_Node_Label, Pn_Chars_U, Blank_Node_Label);
+    Add_Delta (I_Blank_Node_Label, Decimal_Digit, Blank_Node_Label);
+
+    Add_Delta (Blank_Node_Label, Pn_Chars, Blank_Node_Label);
+    Add_Delta (Blank_Node_Label, '.', Blank_Node_Label1);
+
+    Add_Delta (Blank_Node_Label1, Pn_Chars, Blank_Node_Label);
+
+    --  Comments
+
+    Add_Delta (Comment, Comment_Chars, Comment);
+
+    --  Anon
+    Add_Delta (Bracket_Open, WS, Bracket_Open);
+    Add_Delta (Bracket_Open, ']', Anon);
+
+    --  Numbers
+
+    Add_Delta (Sign, Decimal_Digit, Ie_Integer);
+    Add_Delta (Sign, '.', I_Decimal2);
+
+    Add_Delta (Ie_Integer, Decimal_Digit, Ie_Integer);
+    Add_Delta (Ie_Integer, '.', I_Decimal);
+    Add_Delta (Ie_Integer, 'e', Exponent);
+    Add_Delta (Ie_Integer, 'E', Exponent);
+
+    Add_Delta (I_Decimal, Decimal_Digit, E_Decimal);
+    Add_Delta (I_Decimal, 'e', Exponent);
+    Add_Delta (I_Decimal, 'E', Exponent);
+
+    Add_Delta (E_Decimal, Decimal_Digit, E_Decimal);
+    Add_Delta (E_Decimal, 'e', Exponent);
+    Add_Delta (E_Decimal, 'E', Exponent);
+
+    Add_Delta (I_Decimal2, Decimal_Digit, E_Decimal2);
+
+    Add_Delta (E_Decimal2, Decimal_Digit, E_Decimal2);
+    Add_Delta (E_Decimal2, 'e', Exponent);
+    Add_Delta (E_Decimal2, 'E', Exponent);
+
+    Add_Delta (Exponent, Decimal_Digit, Ex_Digit);
+    Add_Delta (Exponent, '+', Exponent1);
+    Add_Delta (Exponent, '-', Exponent1);
+
+    Add_Delta (Exponent1, Decimal_Digit, Ex_Digit);
+
+    Add_Delta (Ex_Digit, Decimal_Digit, Ex_Digit);
+
+    --  Doublequoted String
+    --
+    Add_Delta (Doublequote, Non_SLQ_Chars, I_String_Literal_Quote);
+    Add_Delta (Doublequote, '\', Slq_Backslash);
+    Add_Delta (Doublequote, '"', E_String_Literal_Quote1);
+
+    Add_Delta (I_String_Literal_Quote, Non_SLQ_Chars, I_String_Literal_Quote);
+    Add_Delta (I_String_Literal_Quote, '"', E_String_Literal_Quote);
+
+    Add_Delta (Slq_Backslash, 'u', Slq_Uchar);
+    Add_Delta (Slq_Backslash, ECHAR_Chars, Slq_Echar);
+
+    Add_Delta (Slq_Echar, Non_SLQ_Chars, I_String_Literal_Quote);
+    Add_Delta (Slq_Echar, '"', E_String_Literal_Quote);
+    Add_Delta (Slq_Echar, '\', Slq_Backslash);
+
+    Add_Delta (Slq_E_Uchar, Non_SLQ_Chars, I_String_Literal_Quote);
+    Add_Delta (Slq_E_Uchar, '"', E_String_Literal_Quote);
+    Add_Delta (Slq_E_Uchar, '\', Slq_Backslash);
+
+    Add_Delta (E_String_Literal_Quote1, '"', I_Sllq);
+
+    --  Non_Isllq_Chars ::= [^"\]
+    Add_Delta (I_Sllq, Non_Isllq_Chars, I_Sllq);
+    Add_Delta (I_Sllq, '"', Sllq_Quote);
+    Add_Delta (I_Sllq, '\', Sllq_Backslash);
+
+    Add_Delta (Sllq_Quote, Non_Isllq_Chars, I_Sllq);
+    Add_Delta (Sllq_Quote, '"', Sllq_Quote2);
+    Add_Delta (Sllq_Quote, '\', Sllq_Backslash);
+
+    Add_Delta (Sllq_Quote2, Non_Isllq_Chars, I_Sllq);
+    Add_Delta (Sllq_Quote2, '"', E_Sllq);
+    Add_Delta (Sllq_Quote2, '\', Sllq_Backslash);
+
+    Add_Delta (Sllq_Backslash, ECHAR_Chars, Sllq_Echar);
+    Add_Delta (Sllq_Backslash, 'u', Sllq_Uchar);
+
+    Add_Delta (Sllq_E_Uchar, '\', Sllq_Backslash);
+    Add_Delta (Sllq_E_Uchar, '"', Sllq_Quote);
+    Add_Delta (Sllq_E_Uchar, Non_Isllq_Chars, I_Sllq);
+
+    Add_Delta (Sllq_Echar, '\', Sllq_Backslash);
+    Add_Delta (Sllq_Echar, '"', Sllq_Quote);
+    Add_Delta (Sllq_Echar, Non_Isllq_Chars, I_Sllq);
+
+    Add_Delta (Slq_Uchar, Hexadecimal_Digit, Slq_Uchar1b);
+    Add_Delta (Slq_Uchar1b, Hexadecimal_Digit, Slq_Uchar1c);
+    Add_Delta (Slq_Uchar1c, Hexadecimal_Digit, Slq_Uchar1d);
+    Add_Delta (Slq_Uchar1d, Hexadecimal_Digit, Slq_E_Uchar);
+
+    Add_Delta (Sllq_Uchar, Hexadecimal_Digit, Sllq_Uchar1b);
+    Add_Delta (Sllq_Uchar1b, Hexadecimal_Digit, Sllq_Uchar1c);
+    Add_Delta (Sllq_Uchar1c, Hexadecimal_Digit, Sllq_Uchar1d);
+    Add_Delta (Sllq_Uchar1d, Hexadecimal_Digit, Sllq_E_Uchar);
+
+    --  Singlequoted strings
+    --
+    Add_Delta (Singlequote, Non_SLSQ_Chars, I_String_Literal_Single_Quote);
+    Add_Delta (Singlequote, '\', Slsq_Backslash);
+    Add_Delta (Singlequote, ''', E_String_Literal_Single_Quote1);
+
+    Add_Delta (I_String_Literal_Single_Quote, Non_SLSQ_Chars,
+               I_String_Literal_Single_Quote);
+    Add_Delta (I_String_Literal_Single_Quote, ''',
+               E_String_Literal_Single_Quote);
+
+    Add_Delta (Slsq_Backslash, 'u', Slq_Uchar);
+    Add_Delta (Slsq_Backslash, ECHAR_Chars, Slsq_Echar);
+
+    Add_Delta (Slsq_Echar, Non_SLSQ_Chars, I_String_Literal_Single_Quote);
+    Add_Delta (Slsq_Echar, ''', E_String_Literal_Single_Quote);
+    Add_Delta (Slsq_Echar, '\', Slsq_Backslash);
+
+    Add_Delta (Slsq_E_Uchar, Non_SLSQ_Chars, I_String_Literal_Single_Quote);
+    Add_Delta (Slsq_E_Uchar, ''', E_String_Literal_Single_Quote);
+    Add_Delta (Slsq_E_Uchar, '\', Slsq_Backslash);
+
+    Add_Delta (E_String_Literal_Single_Quote1, ''', I_Sllsq);
+
+    --  Non_Isllsq_Chars ::= [^"\]
+    Add_Delta (I_Sllsq, Non_Isllsq_Chars, I_Sllsq);
+    Add_Delta (I_Sllsq, ''', Sllsq_Quote);
+    Add_Delta (I_Sllsq, '\', Sllsq_Backslash);
+
+    Add_Delta (Sllsq_Quote, Non_Isllsq_Chars, I_Sllsq);
+    Add_Delta (Sllsq_Quote, ''', Sllsq_Quote2);
+    Add_Delta (Sllsq_Quote, '\', Sllsq_Backslash);
+
+    Add_Delta (Sllsq_Quote2, Non_Isllsq_Chars, I_Sllsq);
+    Add_Delta (Sllsq_Quote2, ''', E_Sllsq);
+    Add_Delta (Sllsq_Quote2, '\', Sllsq_Backslash);
+
+    Add_Delta (Sllsq_Backslash, ECHAR_Chars, Sllsq_Echar);
+    Add_Delta (Sllsq_Backslash, 'u', Sllsq_Uchar);
+
+    Add_Delta (Sllsq_E_Uchar, '\', Sllsq_Backslash);
+    Add_Delta (Sllsq_E_Uchar, ''', Sllsq_Quote);
+    Add_Delta (Sllsq_E_Uchar, Non_Isllsq_Chars, I_Sllsq);
+
+    Add_Delta (Sllsq_Echar, '\', Sllsq_Backslash);
+    Add_Delta (Sllsq_Echar, ''', Sllsq_Quote);
+    Add_Delta (Sllsq_Echar, Non_Isllsq_Chars, I_Sllsq);
+
+    Add_Delta (Slsq_Uchar, Hexadecimal_Digit, Slsq_Uchar1b);
+    Add_Delta (Slsq_Uchar1b, Hexadecimal_Digit, Slsq_Uchar1c);
+    Add_Delta (Slsq_Uchar1c, Hexadecimal_Digit, Slsq_Uchar1d);
+    Add_Delta (Slsq_Uchar1d, Hexadecimal_Digit, Slsq_E_Uchar);
+
+    Add_Delta (Sllsq_Uchar, Hexadecimal_Digit, Sllsq_Uchar1b);
+    Add_Delta (Sllsq_Uchar1b, Hexadecimal_Digit, Sllsq_Uchar1c);
+    Add_Delta (Sllsq_Uchar1c, Hexadecimal_Digit, Sllsq_Uchar1d);
+    Add_Delta (Sllsq_Uchar1d, Hexadecimal_Digit, Sllsq_E_Uchar);
+
 end Lexical.Finite_Automata;

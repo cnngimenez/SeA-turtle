@@ -69,13 +69,56 @@ package Lexical.Finite_Automata is
       (
        Start,
        Arroba, I_Langtag, Langtag1, E_Langtag,
-       Uchar, Uchar_End, Uchar1a, Uchar1b, Uchar1c, Uchar1d,
-       Uchar2a, Uchar2b, Uchar2c, Uchar2d, Uchar2e, Uchar2f, Uchar2g, Uchar2h,
        WS,
        Dot,
        Pname_Ns, Pn_Prefix, Pn_Prefix1,
+       Pname_Ln, Pn_Local1,
+       I_Percent,
+       I_Pn_Local_Esc,
+       Hex1,
+       Under, Comment, Bracket_Open, Anon, Symbol,
+       I_Blank_Node_Label, Blank_Node_Label, Blank_Node_Label1,
+       Sign, Ie_Integer, E_Decimal, E_Decimal2, I_Decimal, I_Decimal2,
+       Exponent, Exponent1, Ex_Digit,
        I_Iriref, E_Iriref,
-       Invalid_State, Blocked
+       Invalid_State, Blocked,
+
+       --  Doublequoted string states
+       Doublequote, I_String_Literal_Quote, Slq_Backslash,
+       E_String_Literal_Quote1, E_String_Literal_Quote,
+       I_Sllq, Sllq_Quote, Sllq_Backslash, Sllq_Quote2,
+       E_Sllq, Sllq_Echar,
+
+       --  Singlequoted string states
+       Singlequote, I_String_Literal_Single_Quote, Slsq_Backslash,
+       E_String_Literal_Single_Quote1, E_String_Literal_Single_Quote,
+       I_Sllsq, Sllsq_Quote, Sllsq_Backslash, Sllsq_Quote2,
+       Sllsq_Echar, E_Sllsq,
+
+       --  UCHARs
+       Uchar, Uchar_End, Uchar1a, Uchar1b, Uchar1c, Uchar1d,
+       Uchar2a, Uchar2b, Uchar2c, Uchar2d, Uchar2e, Uchar2f, Uchar2g, Uchar2h,
+
+       Slq_Uchar, Slq_Echar, Slq_E_Uchar, Sllq_E_Uchar,
+       Slq_Uchar1b, Slq_Uchar1c, Slq_Uchar1d,
+       Slq_Uchar2a, Slq_Uchar2b, Slq_Uchar2c, Slq_Uchar2d, Slq_Uchar2e,
+       Slq_Uchar2f, Slq_Uchar2g, Slq_Uchar2h,
+
+       Sllq_Uchar,
+       Sllq_Uchar1b, Sllq_Uchar1c, Sllq_Uchar1d,
+       Sllq_Uchar2a, Sllq_Uchar2b, Sllq_Uchar2c, Sllq_Uchar2d, Sllq_Uchar2e,
+       Sllq_Uchar2f, Sllq_Uchar2g, Sllq_Uchar2h,
+
+       Slsq_Uchar, Slsq_Echar, Slsq_E_Uchar, Sllsq_E_Uchar,
+       Slsq_Uchar1b, Slsq_Uchar1c, Slsq_Uchar1d,
+       Slsq_Uchar2a, Slsq_Uchar2b, Slsq_Uchar2c, Slsq_Uchar2d, Slsq_Uchar2e,
+       Slsq_Uchar2f, Slsq_Uchar2g, Slsq_Uchar2h,
+
+       Sllsq_Uchar,
+       Sllsq_Uchar1b, Sllsq_Uchar1c, Sllsq_Uchar1d,
+       Sllsq_Uchar2a, Sllsq_Uchar2b, Sllsq_Uchar2c, Sllsq_Uchar2d,
+       Sllsq_Uchar2e, Sllsq_Uchar2f, Sllsq_Uchar2g, Sllsq_Uchar2h
+
       );
 
     type Automata_Type is tagged private;

@@ -54,11 +54,11 @@ package body Lexical.Token is
             return Langtag;
         when WS =>
             return WS;
-        when Pname_Ns => 
+        when Pname_Ns =>
             return Pname_Ns;
         when Dot =>
             return Reserved_Word;
-        when E_Iriref => 
+        when E_Iriref =>
             return Iriref;
         when others =>
             return Invalid;
