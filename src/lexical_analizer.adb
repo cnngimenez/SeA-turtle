@@ -84,7 +84,10 @@ begin
     loop
         Token := Lexer.Take_Token;
 
+        Put (Lexer.Get_Source.Get_Current_Position'Wide_Wide_Image);
+        Put (" : ");
         Print_Token (Token);
-        exit when Token = Invalid_Token;
+        exit when Token = Invalid_Token or else
+          Lexer.Get_Source.Is_End_Of_Source;
     end loop;
 end Lexical_Analizer;

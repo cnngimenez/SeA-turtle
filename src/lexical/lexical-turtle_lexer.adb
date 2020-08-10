@@ -51,6 +51,11 @@ package body Lexical.Turtle_Lexer is
     --      return Token;
     --  end Peek_Token;
 
+    function Get_Source (Lexer : Lexer_Type) return Source_Type is
+    begin
+        return Lexer.Source;
+    end Get_Source;
+
     function Reduce_Symbol (Symbol : Wide_Wide_Character)
                            return Wide_Wide_Character is
     begin
@@ -73,7 +78,8 @@ package body Lexical.Turtle_Lexer is
     begin
         Automata.Initialize;
 
-        while not End_Of_Source (Lexer.Source) and then not Automata.Is_Blocked
+        while not Is_End_Of_Source (Lexer.Source) and then
+          not Automata.Is_Blocked
         loop
             Lexer.Source.Next (Symbol);
             Token_Str.Append (Symbol);
@@ -99,7 +105,7 @@ package body Lexical.Turtle_Lexer is
     function Take_Token (Lexer : in out Lexer_Type) return Token_Type is
         Token : Token_Type;
     begin
-        if not End_Of_Source (Lexer.Source) then
+        if not Lexer.Source.Is_End_Of_Source then
             Lexer.Start (Token);
         else
             return Invalid_Token;

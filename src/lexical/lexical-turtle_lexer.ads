@@ -39,6 +39,7 @@ package Lexical.Turtle_Lexer is
     --  Peek the next token from the file without consuming it.
     --  function Peek_Token (Lexer : Lexer_Type) return Token_Type;
 
+    function Get_Source (Lexer : Lexer_Type) return Source_Type;
 private
     type Lexer_Type is tagged record
         --  Peek_Buffer : ?

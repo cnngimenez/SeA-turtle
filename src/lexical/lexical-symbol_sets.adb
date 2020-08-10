@@ -100,7 +100,7 @@ package body Lexical.Symbol_Sets is
           Wide_Wide_Character'Val (16#0D#);
     begin
         case Symbol is
-        when 'a' .. 'f' | 'F' .. 'F' =>
+        when 'a' .. 'f' | 'A' .. 'F' =>
             Symbol_Set.Initialize (Letter);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Hexadecimal_Digit);
