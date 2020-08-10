@@ -51,17 +51,31 @@ package body Lexical.Token is
     begin
         case State is
         when E_Langtag | I_Langtag =>
-            return Langtag;
+            return Language_Tag;
         when WS =>
-            return WS;
+            return Whitespace;
         when Pname_Ns =>
-            return Pname_Ns;
+            return Prefix_Namespace;
+        when Pname_Ln =>
+            return Prefix_With_Local;
         when Dot =>
             return Reserved_Word;
         when E_Iriref =>
-            return Iriref;
+            return IRI_Reference;
+        when E_String_Literal_Quote | E_String_Literal_Quote1  =>
+            return String_Literal_Quote;
+        when E_Sllq  =>
+            return String_Literal_Long_Quote;
+        when E_String_Literal_Single_Quote | E_String_Literal_Single_Quote1 =>
+            return String_Literal_Single_Quote;
+        when E_Sllsq =>
+            return String_Literal_Long_Single_Quote;
         when others =>
-            return Invalid;
+            if Is_Final_State (State) then
+                return Not_Mapped;
+            else
+                return Invalid;
+            end if;
         end case;
     end State_To_Token;
 

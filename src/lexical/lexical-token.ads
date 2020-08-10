@@ -25,17 +25,25 @@ with Lexical.Finite_Automata;
 use Lexical.Finite_Automata;
 
 package Lexical.Token is
-    type Token_Class is (Iriref, Pname_Ns, Pname_Ln,
-                         String_Lsq, String_Lq, String, Llsq, String_Llq,
-                         Langtag, Rdf_Literal,
+    type Token_Class is (IRI_Reference,
+                         Prefix_Namespace, Prefix_With_Local,
+                         String_Literal_Quote,
+                         String_Literal_Long_Quote,
+                         String_Literal_Single_Quote,
+                         String_Literal_Long_Single_Quote,
+                         Language_Tag, Rdf_Literal,
                          Integer, Decimal, Double,
                          Boolean_Literal,
                          Blank_Node_Label,
                          Anon,
                          Blank_Node_Property_List,
                          Collection,
-                         WS,
+                         Whitespace,
                          Reserved_Word,
+                         --  Not mapped state: a final state without a
+                         --  Token name
+                         Not_Mapped,
+                         --  Not a valid state (non-final state).
                          Invalid);
 
     type Token_Type is tagged private;

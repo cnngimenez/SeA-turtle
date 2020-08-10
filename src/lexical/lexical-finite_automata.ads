@@ -121,6 +121,8 @@ package Lexical.Finite_Automata is
 
       );
 
+    function Is_Final_State (State : State_Type) return Boolean;
+
     type Automata_Type is tagged private;
 
     --  Initialize the automata.

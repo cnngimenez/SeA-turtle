@@ -151,6 +151,11 @@ package body Lexical.Finite_Automata is
         return Automata.Current_State = Blocked;
     end Is_Blocked;
 
+    function Is_Final_State (State : State_Type) return Boolean is
+    begin
+        return Acceptable_States.Contains (State);
+    end Is_Final_State;
+
     procedure Next (Automata : in out Automata_Type;
                     Symbol : Wide_Wide_Character) is
         Domain_Tuple : Domain_Tuple_Type;
