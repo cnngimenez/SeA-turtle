@@ -20,10 +20,13 @@
 -------------------------------------------------------------------------
 
 package body Source is
-    function End_Of_Source (Source : Source_Type) return Boolean is
+    EOF_Char : constant Wide_Wide_Character :=
+      Wide_Wide_Character'Val (0);
+
+    function Get_Current_Position (Source : Source_Type) return Natural is
     begin
-        return Source.Current_Position >= Length (Source.Buffer);
-    end End_Of_Source;
+        return Source.Current_Position;
+    end Get_Current_Position;
 
     procedure Initialize (Source : in out Source_Type;
                          Data : Wide_Wide_String) is
@@ -32,9 +35,19 @@ package body Source is
         Source.Current_Position := 0;
     end Initialize;
 
+    function Is_End_Of_Source (Source : Source_Type) return Boolean is
+    begin
+        return Source.Current_Position >= Length (Source.Buffer);
+    end Is_End_Of_Source;
+
     procedure Next (Source : in out Source_Type;
                     Symbol : out Wide_Wide_Character) is
     begin
+        if Source.Is_End_Of_Source then
+            Symbol := EOF_Char;
+            return;
+        end if;
+
         if Source.Current_Position < Length (Source.Buffer) then
             Source.Current_Position := Source.Current_Position + 1;
         end if;
@@ -44,6 +57,11 @@ package body Source is
     procedure Previous (Source : in out Source_Type;
                         Symbol : out Wide_Wide_Character) is
     begin
+        if Source.Is_End_Of_Source then
+            Symbol := EOF_Char;
+            return;
+        end if;
+
         if Source.Current_Position > 0 then
             Source.Current_Position := Source.Current_Position - 1;
         end if;

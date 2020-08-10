@@ -31,11 +31,17 @@ package Source is
 
     procedure Initialize (Source : in out Source_Type;
                          Data : Wide_Wide_String);
+
     procedure Next (Source : in out Source_Type;
                     Symbol : out Wide_Wide_Character);
+
     procedure Previous (Source : in out Source_Type;
                         Symbol : out Wide_Wide_Character);
-    function End_Of_Source (Source : Source_Type) return Boolean;
+
+    function Is_End_Of_Source (Source : Source_Type) return Boolean;
+
+    function Get_Current_Position (Source : Source_Type) return Natural;
+
 private
     type Source_Type is tagged record
         Buffer : Unbounded_Wide_Wide_String;
