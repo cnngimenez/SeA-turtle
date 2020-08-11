@@ -19,7 +19,6 @@
 
 -------------------------------------------------------------------------
 
---  Lexical analizer package.
+--  Lexical analyser package.
 package Lexical is
-
 end Lexical;

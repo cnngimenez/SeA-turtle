@@ -37,21 +37,21 @@ package body Source is
 
     function Is_End_Of_Source (Source : Source_Type) return Boolean is
     begin
-        return Source.Current_Position >= Length (Source.Buffer);
+        return Source.Current_Position > Length (Source.Buffer);
     end Is_End_Of_Source;
 
     procedure Next (Source : in out Source_Type;
                     Symbol : out Wide_Wide_Character) is
     begin
-        if Source.Is_End_Of_Source then
+        if Source.Current_Position > Length (Source.Buffer) then
             Symbol := EOF_Char;
-            return;
-        end if;
-
-        if Source.Current_Position < Length (Source.Buffer) then
+        elsif Source.Current_Position = Length (Source.Buffer) then
             Source.Current_Position := Source.Current_Position + 1;
+            Symbol := EOF_Char;
+        else
+            Source.Current_Position := Source.Current_Position + 1;
+            Symbol := Element (Source.Buffer, Source.Current_Position);
         end if;
-        Symbol := Element (Source.Buffer, Source.Current_Position);
     end Next;
 
     procedure Previous (Source : in out Source_Type;
