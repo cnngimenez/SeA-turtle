@@ -31,44 +31,23 @@ package body Lexical.Turtle_Lexer is
     procedure Create (Lexer : in out Lexer_Type; Source : Source_Type) is
     begin
         Lexer.Source := Source;
+        Lexer.Token_Buffered := False;
     end Create;
-
-    --  function Peek_Token (Lexer : Lexer_Type) return Token_Type is
-    --      use Direct_File;
-
-    --      Current_Pos : Direct_File.Positive_Count;
-    --      Token : Token_Type;
-    --  begin
-    --      Current_Pos := Index (Lexer.File);
-
-    --      if not End_Of_File (Lexer.File) then
-    --          Token := Lexer.Start;
-    --      else
-    --          return Invalid_Token;
-    --      end if;
-
-    --      Set_Index (Lexer.File, Current_Pos);
-    --      return Token;
-    --  end Peek_Token;
 
     function Get_Source (Lexer : Lexer_Type) return Source_Type is
     begin
         return Lexer.Source;
     end Get_Source;
 
-    function Reduce_Symbol (Symbol : Wide_Wide_Character)
-                           return Wide_Wide_Character is
+    function Peek_Token (Lexer : in out Lexer_Type) return Token_Type is
     begin
-        if Symbol in 'a' .. 'z' or else Symbol in 'A' .. 'Z' then
-            return 'a';
+        if not Lexer.Token_Buffered then
+            Lexer.Token_Buffered := True;
+            Lexer.Token_Buffer := Lexer.Take_Token;
         end if;
 
-        if Symbol in '0' .. '9' then
-            return '0';
-        end if;
-
-        return Symbol;
-    end Reduce_Symbol;
+        return Lexer.Token_Buffer;
+    end Peek_Token;
 
     --  First state of the automata.
     procedure Start (Lexer : in out Lexer_Type; Token : out Token_Type) is
@@ -105,12 +84,19 @@ package body Lexical.Turtle_Lexer is
     function Take_Token (Lexer : in out Lexer_Type) return Token_Type is
         Token : Token_Type;
     begin
+        if Lexer.Token_Buffered then
+            --  Buffer is not empty, then use buffered token.
+            Lexer.Token_Buffered := False;
+            return Lexer.Token_Buffer;
+        end if;
+
         if not Lexer.Source.Is_End_Of_Source then
             Lexer.Start (Token);
         else
             return Invalid_Token;
         end if;
 
+        Lexer.Token_Buffered := False;
         return Token;
     end Take_Token;
 

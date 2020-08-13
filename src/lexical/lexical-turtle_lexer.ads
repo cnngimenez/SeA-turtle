@@ -25,28 +25,54 @@ with Lexical.Token;
 use Lexical.Token;
 
 --
---  The lexicar analizer package for a Turtle file.
+--  The lexicar analyser package for a Turtle file.
 --
 package Lexical.Turtle_Lexer is
 
+    --
+    --  A Lexical analyser type of object/record.
+    --
     type Lexer_Type is tagged private;
 
+    --
+    --  Initialize a Lexer Type.
+    --
     procedure Create (Lexer : in out Lexer_Type; Source : Source_Type);
 
+    --
     --  Take a token from the file consuming it.
+    --
+    --  If there is a token in the buffer, consume it and empty the buffer.
+    --  Else, take another token from the source.
+    --
     function Take_Token (Lexer : in out Lexer_Type) return Token_Type;
 
+    --
     --  Peek the next token from the file without consuming it.
-    --  function Peek_Token (Lexer : Lexer_Type) return Token_Type;
+    --
+    --  Use the buffered token if there exist one, if not, take the next token
+    --  and store it into the buffer for subsequent peeks.
+    --
+    function Peek_Token (Lexer : in out Lexer_Type) return Token_Type;
 
+    --
+    --  Getter: Get the associated Source_Type.
+    --
     function Get_Source (Lexer : Lexer_Type) return Source_Type;
+
 private
+
     type Lexer_Type is tagged record
-        --  Peek_Buffer : ?
+        --  The token buffered for the Peek_Token function.
+        Token_Buffer : Token_Type;
+        --  Is the token buffer being used? If it is empty this is False.
+        Token_Buffered : Boolean;
+        --  Source data (file, string, stream, etc.) to take tokens from it.
         Source : Source_Type;
     end record;
 
-    function Reduce_Symbol (Symbol : Wide_Wide_Character)
-                           return Wide_Wide_Character;
+    --
+    --  Start the finite deterministic automata to parse the next token.
+    --
     procedure Start (Lexer : in out Lexer_Type; Token : out Token_Type);
 end Lexical.Turtle_Lexer;
