@@ -31,6 +31,7 @@ with Elements.Prefixes;
 use Elements.Prefixes;
 
 generic
+    Debug_Mode : Boolean := False;
     --  This subprogram will be called every time a triple is parsed.
     with procedure Triple_Readed_Callback (Triple : Triple_Type);
     --
@@ -104,4 +105,7 @@ private
                            Token_Class : Token_Class_Type;
                            Value : Wide_Wide_String)
                           return Boolean;
+
+    procedure Put_Token (Token : Token_Type);
+    procedure Put_Rule (Rule_Name : Wide_Wide_String);
 end Syntactical.Rules;

@@ -19,8 +19,13 @@
 
 -------------------------------------------------------------------------
 
-package body Syntactical.Rules is
+with Ada.Wide_Wide_Text_IO;
+use Ada.Wide_Wide_Text_IO;
 
+package body Syntactical.Rules is
+    
+    Recursion_Level : Natural := 0;
+    
     function Accept_Token (Lexer : in out Lexer_Type;
                            Token_Class : Token_Class_Type)
                           return Boolean is
@@ -28,8 +33,19 @@ package body Syntactical.Rules is
     begin
         Token := Lexer.Peek_Token;
 
+        if Debug_Mode then
+            Put_Line ("Accept token : "
+                        & Token_Class'Wide_Wide_Image);
+            Put_Token (Token);
+        end if;
+
         if Token.Get_Class = Token_Class then
             Token := Lexer.Take_Token;
+
+            if Debug_Mode then
+                Put_Line ("--> True");
+            end if;
+
             return True;
         else
             return False;
@@ -43,11 +59,25 @@ package body Syntactical.Rules is
         Token : Token_Type;
     begin
         Token := Lexer.Peek_Token;
-
+        
+        if Debug_Mode then
+            Put_Line ("Accept token : "
+                        & Token_Class'Wide_wide_image
+                        & " with value '"
+                        & Value
+                        & "'");
+            Put_Token (Token);
+        end if;
+        
         if Token.Get_Class = Token_Class and then
           Token.Get_Value = To_Universal_String (Value)
         then
             Token := Lexer.Take_Token;
+
+            if Debug_Mode then
+                Put_Line ("--> True");
+            end if;
+
             return True;
         else
             return False;
@@ -59,6 +89,8 @@ package body Syntactical.Rules is
         Ret : Boolean;
         Token : Token_Type;
     begin
+        Put_Rule ("Base");
+
         Ret := Accept_Token (Lexer, Language_Tag, "@base")
           and then Expect_Token (Lexer, IRI_Reference, Token)
           and then Expect_Token (Lexer, Reserved_Word, ".");
@@ -90,9 +122,12 @@ package body Syntactical.Rules is
     begin
         return False;
     end Collection;
+
     --  [3] directive ::= prefixID | base | sparqlPrefix | sparqlBase
     function Directive (Lexer : in out Lexer_Type) return Boolean is
     begin
+        Put_Rule ("Directive");
+
         return Prefix_ID (Lexer)
           or else Base (Lexer)
           or else Sparql_Prefix (Lexer)
@@ -106,7 +141,17 @@ package body Syntactical.Rules is
     begin
         Token := Lexer.Take_Token;
 
+        if Debug_Mode then
+            Put_Line ("Expect token : "
+                        & Token_Class'Wide_Wide_Image);
+            Put_Token (Token);
+        end if;
+
         if Token.Get_Class = Token_Class then
+            if Debug_Mode then
+                Put_Line ("--> True");
+            end if;
+
             return True;
         else
             raise Expected_Token_Exception with
@@ -185,6 +230,8 @@ package body Syntactical.Rules is
         Prefix : Prefix_Type;
         Ret : Boolean;
     begin
+        Put_Rule ("Prefix_ID");
+
         Ret :=  Accept_Token (Lexer, Language_Tag, "@prefix")
           and then Expect_Token (Lexer, Prefix_Namespace, Token_Prefix)
           and then Expect_Token (Lexer, IRI_Reference, Token_IRI)
@@ -202,6 +249,23 @@ package body Syntactical.Rules is
     begin
         return False;
     end Prefixed_Name;
+    
+    procedure Put_Rule (Rule_Name : Wide_Wide_String) is
+    begin
+        if Debug_Mode then
+            --  Set_Col (Recursion_Level);
+            Put_Line (Rule_Name);
+        end if;
+    end Put_Rule;
+    
+    procedure Put_Token (Token : Token_Type) is
+    begin
+        Put_Line ("Token : <"
+                    & Token.Get_Class'Wide_Wide_Image
+                    & "> '"
+                    & To_Wide_Wide_String (Token.Get_Value)
+                    & "'");
+    end Put_Token;
 
     function RDF_Literal (Lexer : in out Lexer_Type) return Boolean is
     begin
@@ -221,6 +285,8 @@ package body Syntactical.Rules is
     --  [2] statement ::= directive | triples '.'
     function Statement (Lexer : in out Lexer_Type) return Boolean is
     begin
+        Put_Rule ("Statement");
+
         return
           (Directive (Lexer) or else Triples (Lexer))
           and then Accept_Token (Lexer, Reserved_Word, ".");
@@ -249,8 +315,16 @@ package body Syntactical.Rules is
     end Triples;
 
     function Turtle_Doc (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean := True;
     begin
-        return False;
+        Put_Rule ("Turtle_Doc");
+
+        loop
+            Ret := Statement (Lexer);
+            exit when not Ret;
+        end loop;
+
+        return True;
     end Turtle_Doc;
 
     function Verb (Lexer : in out Lexer_Type) return Boolean is

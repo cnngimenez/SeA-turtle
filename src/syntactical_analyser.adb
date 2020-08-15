@@ -47,6 +47,7 @@ procedure Syntactical_Analyser is
 
     package Analyser is new Syntactical.Rules
       (
+       Debug_Mode => True,
        Triple_Readed_Callback => Print_Triple,
        Prefix_Directive_Callback => Print_Prefix,
        Base_Directive_Callback => Print_Base
