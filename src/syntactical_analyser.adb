@@ -55,22 +55,21 @@ procedure Syntactical_Analyser is
 
     procedure Print_Base (Base : Universal_String) is
     begin
-        Put_Line ("Base IRI :");
+        Put_Line ("Base IRI detected:");
         Put_Line (To_Wide_Wide_String (Base));
     end Print_Base;
 
     procedure Print_Prefix (Prefix : Prefix_Type) is
     begin
-        Put_Line ("Prefix : ");
+        Put_Line ("Prefix detected: ");
         Put_Line (To_Wide_Wide_String (Prefix.Get_Name)
-               & " : <"
-               & To_Wide_Wide_String (Prefix.Get_IRI)
-                    & ">");
+               & " -> "
+               & To_Wide_Wide_String (Prefix.Get_IRI));
     end Print_Prefix;
 
     procedure Print_Triple (Triple : Triple_Type) is
     begin
-        Put_Line ("Triple : ");
+        Put_Line ("Triple detected: ");
         Put_Line ("<"
                     & To_Wide_Wide_String (Triple.Get_Subject)
                     & ">");

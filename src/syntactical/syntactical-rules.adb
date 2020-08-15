@@ -23,9 +23,9 @@ with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
 package body Syntactical.Rules is
-    
+
     Recursion_Level : Natural := 0;
-    
+
     function Accept_Token (Lexer : in out Lexer_Type;
                            Token_Class : Token_Class_Type)
                           return Boolean is
@@ -33,21 +33,19 @@ package body Syntactical.Rules is
     begin
         Token := Lexer.Peek_Token;
 
-        if Debug_Mode then
-            Put_Line ("Accept token : "
-                        & Token_Class'Wide_Wide_Image);
-            Put_Token (Token);
-        end if;
+        Debug_Put ("| Accept token : "
+                     & Token_Class'Wide_Wide_Image
+                     & ". Readed:");
+        Debug_Token (Token);
 
         if Token.Get_Class = Token_Class then
             Token := Lexer.Take_Token;
 
-            if Debug_Mode then
-                Put_Line ("--> True");
-            end if;
+            Debug_Put  ("| --> True");
 
             return True;
         else
+            Debug_Put ("| --> False");
             return False;
         end if;
     end Accept_Token;
@@ -59,27 +57,24 @@ package body Syntactical.Rules is
         Token : Token_Type;
     begin
         Token := Lexer.Peek_Token;
-        
-        if Debug_Mode then
-            Put_Line ("Accept token : "
-                        & Token_Class'Wide_wide_image
-                        & " with value '"
-                        & Value
-                        & "'");
-            Put_Token (Token);
-        end if;
-        
+
+        Debug_Put ("| Accept token : "
+                     & Token_Class'Wide_Wide_Image
+                     & " with value '"
+                     & Value
+                     & "'. Readed:");
+        Debug_Token (Token);
+
         if Token.Get_Class = Token_Class and then
           Token.Get_Value = To_Universal_String (Value)
         then
             Token := Lexer.Take_Token;
 
-            if Debug_Mode then
-                Put_Line ("--> True");
-            end if;
+            Debug_Put ("| --> True");
 
             return True;
         else
+            Debug_Put ("| --> False");
             return False;
         end if;
     end Accept_Token;
@@ -89,7 +84,7 @@ package body Syntactical.Rules is
         Ret : Boolean;
         Token : Token_Type;
     begin
-        Put_Rule ("Base");
+        Begin_Rule ("Base");
 
         Ret := Accept_Token (Lexer, Language_Tag, "@base")
           and then Expect_Token (Lexer, IRI_Reference, Token)
@@ -99,8 +94,15 @@ package body Syntactical.Rules is
             Base_Directive_Callback (Token.Get_Value);
         end if;
 
+        End_Rule;
         return Ret;
     end Base;
+
+    procedure Begin_Rule (Rule_Name : Wide_Wide_String) is
+    begin
+        Debug_Put (Rule_Name & " ->");
+        Recursion_Level := Recursion_Level + 1;
+    end Begin_Rule;
 
     function Blank_Node (Lexer : in out Lexer_Type) return Boolean is
     begin
@@ -123,16 +125,45 @@ package body Syntactical.Rules is
         return False;
     end Collection;
 
+    procedure Debug_Put (S : Wide_Wide_String) is
+    begin
+        if Debug_Mode then
+            for i in 0 .. Recursion_Level loop
+                Put ('-');
+            end loop;
+            Put (" " & Recursion_Level'Wide_Wide_Image & "| ");
+            Put_Line (S);
+        end if;
+    end Debug_Put;
+
+    procedure Debug_Token (Token : Token_Type) is
+    begin
+        Debug_Put ("| Token : <"
+                     & Token.Get_Class'Wide_Wide_Image
+                     & "> '"
+                     & To_Wide_Wide_String (Token.Get_Value)
+                     & "'");
+    end Debug_Token;
+
     --  [3] directive ::= prefixID | base | sparqlPrefix | sparqlBase
     function Directive (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        Put_Rule ("Directive");
+        Begin_Rule ("Directive");
 
-        return Prefix_ID (Lexer)
+        Ret := Prefix_ID (Lexer)
           or else Base (Lexer)
           or else Sparql_Prefix (Lexer)
           or else Sparql_Base (Lexer);
+
+        End_Rule;
+        return Ret;
     end Directive;
+
+    procedure End_Rule is
+    begin
+        Recursion_Level := Recursion_Level - 1;
+    end End_Rule;
 
     function Expect_Token (Lexer : in out Lexer_Type;
                            Token_Class : Token_Class_Type;
@@ -141,16 +172,13 @@ package body Syntactical.Rules is
     begin
         Token := Lexer.Take_Token;
 
-        if Debug_Mode then
-            Put_Line ("Expect token : "
-                        & Token_Class'Wide_Wide_Image);
-            Put_Token (Token);
-        end if;
+        Debug_Put ("| Expect token : "
+                     & Token_Class'Wide_Wide_Image
+                     & ". Readed:");
+        Debug_Token (Token);
 
         if Token.Get_Class = Token_Class then
-            if Debug_Mode then
-                Put_Line ("--> True");
-            end if;
+            Debug_Put ("| --> True");
 
             return True;
         else
@@ -178,8 +206,11 @@ package body Syntactical.Rules is
     begin
         Ret := Expect_Token (Lexer, Token_Class, Token);
 
+        Debug_Put ("| Expect token with value '" & Value & "'");
+
         if Ret and then Token.Get_Value = To_Universal_String (Value)
         then
+            Debug_Put ("| --> True");
             return True;
         else
             raise Expected_Token_Exception with
@@ -230,7 +261,7 @@ package body Syntactical.Rules is
         Prefix : Prefix_Type;
         Ret : Boolean;
     begin
-        Put_Rule ("Prefix_ID");
+        Begin_Rule ("Prefix_ID");
 
         Ret :=  Accept_Token (Lexer, Language_Tag, "@prefix")
           and then Expect_Token (Lexer, Prefix_Namespace, Token_Prefix)
@@ -242,6 +273,7 @@ package body Syntactical.Rules is
             Prefix_Directive_Callback (Prefix);
         end if;
 
+        End_Rule;
         return Ret;
     end Prefix_ID;
 
@@ -249,23 +281,6 @@ package body Syntactical.Rules is
     begin
         return False;
     end Prefixed_Name;
-    
-    procedure Put_Rule (Rule_Name : Wide_Wide_String) is
-    begin
-        if Debug_Mode then
-            --  Set_Col (Recursion_Level);
-            Put_Line (Rule_Name);
-        end if;
-    end Put_Rule;
-    
-    procedure Put_Token (Token : Token_Type) is
-    begin
-        Put_Line ("Token : <"
-                    & Token.Get_Class'Wide_Wide_Image
-                    & "> '"
-                    & To_Wide_Wide_String (Token.Get_Value)
-                    & "'");
-    end Put_Token;
 
     function RDF_Literal (Lexer : in out Lexer_Type) return Boolean is
     begin
@@ -284,12 +299,16 @@ package body Syntactical.Rules is
 
     --  [2] statement ::= directive | triples '.'
     function Statement (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        Put_Rule ("Statement");
+        Begin_Rule ("Statement");
 
-        return
-          (Directive (Lexer) or else Triples (Lexer))
-          and then Accept_Token (Lexer, Reserved_Word, ".");
+        Ret := Directive (Lexer)
+          or else (Triples (Lexer)
+                     and then Accept_Token (Lexer, Reserved_Word, "."));
+
+        End_Rule;
+        return Ret;
     end Statement;
 
     function String (Lexer : in out Lexer_Type) return Boolean is
@@ -317,13 +336,14 @@ package body Syntactical.Rules is
     function Turtle_Doc (Lexer : in out Lexer_Type) return Boolean is
         Ret : Boolean := True;
     begin
-        Put_Rule ("Turtle_Doc");
+        Begin_Rule ("Turtle_Doc");
 
         loop
             Ret := Statement (Lexer);
             exit when not Ret;
         end loop;
 
+        End_Rule;
         return True;
     end Turtle_Doc;
 

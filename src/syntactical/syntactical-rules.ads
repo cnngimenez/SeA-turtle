@@ -106,6 +106,8 @@ private
                            Value : Wide_Wide_String)
                           return Boolean;
 
-    procedure Put_Token (Token : Token_Type);
-    procedure Put_Rule (Rule_Name : Wide_Wide_String);
+    procedure Debug_Token (Token : Token_Type);
+    procedure Debug_Put (S : Wide_Wide_String);
+    procedure Begin_Rule (Rule_Name : Wide_Wide_String);
+    procedure End_Rule;
 end Syntactical.Rules;
