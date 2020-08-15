@@ -1,4 +1,4 @@
---  lexical_analizer.adb ---
+--  lexical_analyser.adb ---
 
 --  Copyright 2020 cnngimenez
 --
@@ -35,7 +35,7 @@ use Lexical.Turtle_Lexer;
 with League.Strings;
 use League.Strings;
 
-procedure Lexical_Analizer is
+procedure Lexical_Analyser is
 
     procedure Print_Token (Token : Token_Type);
     function Read_File (Path : String) return Wide_Wide_String;
@@ -73,7 +73,7 @@ procedure Lexical_Analizer is
 begin
     if Argument_Count < 1 then
         Put_Line ("Synopsis :");
-        Put_Line ("    ./lexical_analizer TURTLE_FILE");
+        Put_Line ("    ./lexical_analyser TURTLE_FILE");
         return;
     end if;
 
@@ -90,4 +90,4 @@ begin
         exit when Token = Invalid_Token or else
           Lexer.Get_Source.Is_End_Of_Source;
     end loop;
-end Lexical_Analizer;
+end Lexical_Analyser;
