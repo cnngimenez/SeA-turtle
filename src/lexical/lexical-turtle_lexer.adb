@@ -32,6 +32,7 @@ package body Lexical.Turtle_Lexer is
     begin
         Lexer.Source := Source;
         Lexer.Token_Buffered := False;
+        Lexer.Token_Buffer := Invalid_Token;
     end Create;
 
     function Get_Source (Lexer : Lexer_Type) return Source_Type is
@@ -42,8 +43,8 @@ package body Lexical.Turtle_Lexer is
     function Peek_Token (Lexer : in out Lexer_Type) return Token_Type is
     begin
         if not Lexer.Token_Buffered then
-            Lexer.Token_Buffered := True;
             Lexer.Token_Buffer := Lexer.Take_Token;
+            Lexer.Token_Buffered := True;
         end if;
 
         return Lexer.Token_Buffer;
