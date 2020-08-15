@@ -1,4 +1,4 @@
---  prefixes.ads ---
+--  elements-prefixes.ads ---
 
 --  Copyright 2020 cnngimenez
 --
@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with League.Strings;
+use League.Strings;
+
 --
 --  Prefixes Package: Representation of Prefix-IRI associations.
 --
@@ -31,21 +34,21 @@
 --  TODO: Check for well formed namespace IRI (must end in "/" or "#").
 --
 package Elements.Prefixes is
-    
+
     --
     --  The namespace prefix-IRI association type.
     --
     type Prefix_Type is tagged private;
-    
+
     --
-    --  Initialize a Prefix record. 
+    --  Initialize a Prefix record.
     --
     --  Name: The namespace prefix.
     --  IRI: The namespace IRI.
     --
     procedure Initialize (Prefix : in out Prefix_Type;
                           Name, IRI : Universal_String);
-    
+
     --
     --  Return the namespace IRI
     --

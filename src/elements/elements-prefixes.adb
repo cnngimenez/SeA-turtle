@@ -1,4 +1,4 @@
---  prefixes.adb ---
+--  elements-prefixes.adb ---
 
 --  Copyright 2020 cnngimenez
 --
@@ -20,33 +20,34 @@
 -------------------------------------------------------------------------
 
 package body Elements.Prefixes is
+
+    function Get_IRI (Prefix : Prefix_Type) return Universal_String is
+    begin
+        return Prefix.IRI;
+    end Get_IRI;
+
+    function Get_Name (Prefix : Prefix_Type) return Universal_String is
+    begin
+        return Prefix.Name;
+    end Get_Name;
+
     procedure Initialize (Prefix : in out Prefix_Type;
                           Name, IRI : Universal_String) is
     begin
         Prefix.Name := Name;
         Prefix.IRI := IRI;
     end Initialize;
-    
+
     procedure Set_IRI (Prefix : in out Prefix_Type;
-                       IRI: Universal_String) is
+                       IRI : Universal_String) is
     begin
         Prefix.IRI := IRI;
     end Set_IRI;
-    
+
     procedure Set_Name (Prefix : in out Prefix_Type;
                         Name : Universal_String) is
     begin
-        Obj.Name := Name;
+        Prefix.Name := Name;
     end Set_Name;
-    
-    function Get_IRI (Prefix : Prefix_Type) return Universal_String is
-    begin
-        return Prefix.IRI;
-    end Get_IRI;
-    
-    function Get_Name (Prefix : Prefix_Type) return Universal_String is
-    begin
-        return Prefix.Name;
-    end Get_Name;
-    
+
 end Elements.Prefixes;
