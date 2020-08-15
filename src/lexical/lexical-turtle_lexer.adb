@@ -40,10 +40,12 @@ package body Lexical.Turtle_Lexer is
         return Lexer.Source;
     end Get_Source;
 
-    function Peek_Token (Lexer : in out Lexer_Type) return Token_Type is
+    function Peek_Token (Lexer : in out Lexer_Type;
+                         Ignore_Whitespaces : Boolean := True)
+                        return Token_Type is
     begin
         if not Lexer.Token_Buffered then
-            Lexer.Token_Buffer := Lexer.Take_Token;
+            Lexer.Token_Buffer := Lexer.Take_Token (Ignore_Whitespaces);
             Lexer.Token_Buffered := True;
         end if;
 
@@ -82,7 +84,9 @@ package body Lexical.Turtle_Lexer is
         end if;
     end Start;
 
-    function Take_Token (Lexer : in out Lexer_Type) return Token_Type is
+    function Take_Token (Lexer : in out Lexer_Type;
+                        Ignore_Whitespaces : Boolean := True)
+                        return Token_Type is
         Token : Token_Type;
     begin
         if Lexer.Token_Buffered then
@@ -91,11 +95,17 @@ package body Lexical.Turtle_Lexer is
             return Lexer.Token_Buffer;
         end if;
 
-        if not Lexer.Source.Is_End_Of_Source then
-            Lexer.Start (Token);
-        else
-            return Invalid_Token;
-        end if;
+        loop
+            if not Lexer.Source.Is_End_Of_Source then
+                Lexer.Start (Token);
+            else
+                return Invalid_Token;
+            end if;
+
+            --  Repeat while Ignore_Whitespaces and Token class is whitespace.
+            exit when not (Ignore_Whitespaces
+                             and then Token.Get_Class = Whitespace);
+        end loop;
 
         Lexer.Token_Buffered := False;
         return Token;

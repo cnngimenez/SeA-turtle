@@ -45,7 +45,9 @@ package Lexical.Turtle_Lexer is
     --  If there is a token in the buffer, consume it and empty the buffer.
     --  Else, take another token from the source.
     --
-    function Take_Token (Lexer : in out Lexer_Type) return Token_Type;
+    function Take_Token (Lexer : in out Lexer_Type;
+                         Ignore_Whitespaces : Boolean := True)
+                        return Token_Type;
 
     --
     --  Peek the next token from the file without consuming it.
@@ -53,7 +55,9 @@ package Lexical.Turtle_Lexer is
     --  Use the buffered token if there exist one, if not, take the next token
     --  and store it into the buffer for subsequent peeks.
     --
-    function Peek_Token (Lexer : in out Lexer_Type) return Token_Type;
+    function Peek_Token (Lexer : in out Lexer_Type;
+                         Ignore_Whitespaces : Boolean := True)
+                        return Token_Type;
 
     --
     --  Getter: Get the associated Source_Type.
