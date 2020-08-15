@@ -21,7 +21,7 @@
 
 package body Lexical.Token is
 
-    function Get_Class (Token : Token_Type) return Token_Class is
+    function Get_Class (Token : Token_Type) return Token_Class_Type is
     begin
         return Token.Class;
     end Get_Class;
@@ -32,7 +32,7 @@ package body Lexical.Token is
     end Get_Value;
 
     procedure Initialize (Token : in out Token_Type;
-                         Class : Token_Class;
+                         Class : Token_Class_Type;
                          Value : Universal_String) is
     begin
         Token.Class := Class;
@@ -47,7 +47,7 @@ package body Lexical.Token is
         Token.Value := Value;
     end Initialize;
 
-    function State_To_Token (State : State_Type) return Token_Class is
+    function State_To_Token (State : State_Type) return Token_Class_Type is
     begin
         case State is
         when E_Langtag | I_Langtag =>

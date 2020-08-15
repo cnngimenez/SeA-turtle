@@ -25,47 +25,48 @@ with Lexical.Finite_Automata;
 use Lexical.Finite_Automata;
 
 package Lexical.Token is
-    type Token_Class is (IRI_Reference,
-                         Prefix_Namespace, Prefix_With_Local,
-                         String_Literal_Quote,
-                         String_Literal_Long_Quote,
-                         String_Literal_Single_Quote,
-                         String_Literal_Long_Single_Quote,
-                         Language_Tag, Rdf_Literal,
-                         Integer, Decimal, Double,
-                         Boolean_Literal,
-                         Blank_Node_Label,
-                         Anon,
-                         Blank_Node_Property_List,
-                         Collection,
-                         Whitespace,
-                         Reserved_Word,
-                         --  Not mapped state: a final state without a
-                         --  Token name
-                         Not_Mapped,
-                         --  Not a valid state (non-final state).
-                         Invalid);
+    type Token_Class_Type is
+      (IRI_Reference,
+       Prefix_Namespace, Prefix_With_Local,
+       String_Literal_Quote,
+       String_Literal_Long_Quote,
+       String_Literal_Single_Quote,
+       String_Literal_Long_Single_Quote,
+       Language_Tag, Rdf_Literal,
+       Integer, Decimal, Double,
+       Boolean_Literal,
+       Blank_Node_Label,
+       Anon,
+       Blank_Node_Property_List,
+       Collection,
+       Whitespace,
+       Reserved_Word,
+       --  Not mapped state: a final state without a
+       --  Token name
+       Not_Mapped,
+       --  Not a valid state (non-final state).
+       Invalid);
 
     type Token_Type is tagged private;
 
     procedure Initialize (Token : in out Token_Type;
-                          Class : Token_Class;
+                          Class : Token_Class_Type;
                           Value : Universal_String);
     procedure Initialize (Token : in out Token_Type;
                           Class : State_Type;
                           Value : Universal_String);
 
-    function Get_Class (Token : Token_Type) return Token_Class;
+    function Get_Class (Token : Token_Type) return Token_Class_Type;
     function Get_Value (Token : Token_Type) return Universal_String;
 
-    function State_To_Token (State : State_Type) return Token_Class;
+    function State_To_Token (State : State_Type) return Token_Class_Type;
 
     Invalid_Token : constant Token_Type;
 
 private
 
     type Token_Type is tagged record
-        Class : Token_Class;
+        Class : Token_Class_Type;
         Value : Universal_String;
     end record;
 
