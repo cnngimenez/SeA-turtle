@@ -513,7 +513,7 @@ package body Syntactical.Rules is
 
         loop
             Ret := Ret and then Statement (Lexer);
-            exit when not Ret;
+            exit when (not Ret) or else Lexer.Get_Source.Is_End_Of_Source;
         end loop;
 
         End_Rule;
