@@ -35,7 +35,7 @@ package body Syntactical.Rules is
 
         Debug_Put ("| Accept token : "
                      & Token_Class'Wide_Wide_Image
-                     & ". Readed:");
+                     & ". Readed :");
         Debug_Token (Token);
 
         if Token.Get_Class = Token_Class then
@@ -62,7 +62,7 @@ package body Syntactical.Rules is
                      & Token_Class'Wide_Wide_Image
                      & " with value '"
                      & Value
-                     & "'. Readed:");
+                     & "'. Readed :");
         Debug_Token (Token);
 
         if Token.Get_Class = Token_Class and then
@@ -104,25 +104,62 @@ package body Syntactical.Rules is
         Recursion_Level := Recursion_Level + 1;
     end Begin_Rule;
 
+    --  [137s] BlankNode ::= BLANK_NODE_LABEL | ANON
     function Blank_Node (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Blank_Node");
+
+        Ret := Accept_Token (Lexer, Blank_Node_Label)
+          or else Accept_Token (Lexer, Anon);
+
+        End_Rule;
+        return Ret;
     end Blank_Node;
 
+    --  [14] blankNodePropertyList ::= '[' predicateObjectList ']'
     function Blank_Node_Property_List (Lexer : in out Lexer_Type)
                                       return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Blank_Node_Property_List");
+
+        Ret := Accept_Token (Lexer, Reserved_Word, "[")
+          and then Predicate_Object_List (Lexer)
+          and then Expect_Token (Lexer, Reserved_Word, "]");
+
+        End_Rule;
+        return Ret;
     end Blank_Node_Property_List;
 
+    --  [133s] BooleanLiteral ::= 'true' | 'false'
     function Boolean_Literal (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Boolean_Literal");
+
+        Ret := Accept_Token (Lexer, Boolean_Literal);
+
+        End_Rule;
+        return Ret;
     end Boolean_Literal;
 
+    --  [15] collection ::= '(' object* ')'
     function Collection (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Collection");
+
+        Ret := Accept_Token (Lexer, Reserved_Word, "(");
+
+        while Object (Lexer) loop
+            null;
+        end loop;
+
+        Ret := Ret and then Expect_Token (Lexer, Reserved_Word, ")");
+
+        End_Rule;
+        return Ret;
     end Collection;
 
     procedure Debug_Put (S : Wide_Wide_String) is
@@ -174,7 +211,7 @@ package body Syntactical.Rules is
 
         Debug_Put ("| Expect token : "
                      & Token_Class'Wide_Wide_Image
-                     & ". Readed:");
+                     & ". Readed :");
         Debug_Token (Token);
 
         if Token.Get_Class = Token_Class then
@@ -219,40 +256,110 @@ package body Syntactical.Rules is
         end if;
     end Expect_Token;
 
+    --  [135s] iri ::= IRIREF | PrefixedName
     function IRI (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("IRI");
+
+        Ret := Accept_Token (Lexer, IRI_Reference)
+          or else Prefixed_Name (Lexer);
+
+        End_Rule;
+        return Ret;
     end IRI;
 
+    --  [13] literal ::= RDFLiteral | NumericLiteral | BooleanLiteral
     function Literal (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Literal");
+
+        Ret := RDF_Literal (Lexer)
+          or else Numeric_Literal (Lexer)
+          or else Boolean_Literal (Lexer);
+
+        End_Rule;
+        return Ret;
     end Literal;
 
+    --  [16] NumericLiteral ::= INTEGER | DECIMAL | DOUBLE
     function Numeric_Literal (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Numeric_Literal");
+
+        Ret := Accept_Token (Lexer, Lexical.Token.Integer)
+          or else Accept_Token (Lexer, Lexical.Token.Decimal)
+          or else Accept_Token (Lexer, Lexical.Token.Double);
+
+        End_Rule;
+        return Ret;
     end Numeric_Literal;
 
+    --  [12] object ::= iri | BlankNode | collection |
+    --    blankNodePropertyList | literal
     function Object (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Object");
+
+        Ret := IRI (Lexer)
+          or else Blank_Node (Lexer)
+          or else Collection (Lexer)
+          or else Blank_Node_Property_List (Lexer)
+          or else Literal (Lexer);
+
+        End_Rule;
+        return Ret;
     end Object;
 
+    --  [8] objectList ::= object (',' object)*
     function Object_List (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Object_List");
+
+        Ret := Object (Lexer);
+
+        while Accept_Token (Lexer, Reserved_Word, ",") loop
+            Ret := Ret and then Object (Lexer);
+        end loop;
+
+        End_Rule;
+        return Ret;
     end Object_List;
 
+    --  [11] predicate ::= iri
     function Predicate (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Predicate");
+
+        Ret := Accept_Token (Lexer, IRI_Reference);
+
+        End_Rule;
+        return Ret;
     end Predicate;
 
+    --  [7] predicateObjectList ::= verb objectList (';' (verb objectList)?)*
     function Predicate_Object_List (Lexer : in out Lexer_Type)
                                    return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Predicate_Object_List");
+
+        Ret := Verb (Lexer) and then Object_List (Lexer);
+
+        while Ret and then Accept_Token (Lexer, Reserved_Word, ";")
+        loop
+            if Verb (Lexer) then
+                Ret := Ret and then Object_List (Lexer);
+            end if;
+        end loop;
+
+        End_Rule;
+        return Ret;
     end Predicate_Object_List;
 
     --  [4] prefixID ::= '@prefix' PNAME_NS IRIREF '.'
@@ -277,24 +384,63 @@ package body Syntactical.Rules is
         return Ret;
     end Prefix_ID;
 
+    --  [136s] PrefixedName ::= PNAME_LN | PNAME_NS
     function Prefixed_Name (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Prefixed_Name");
+
+        Ret := Accept_Token (Lexer, Prefix_With_Local)
+          or else Accept_Token (Lexer, Prefix_Namespace);
+
+        End_Rule;
+        return Ret;
     end Prefixed_Name;
 
+    --  [128s] RDFLiteral ::= String (LANGTAG | '^^' iri)?
     function RDF_Literal (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("RDF_Literal");
+
+        Ret := String (Lexer);
+
+        if Accept_Token (Lexer, Language_Tag) then
+            End_Rule;
+            return Ret;
+        elsif Accept_Token (Lexer, Reserved_Word, "^^") then
+            Ret := Ret and then IRI (Lexer);
+        end if;
+
+        End_Rule;
+        return Ret;
     end RDF_Literal;
 
+    --  [5s] sparqlBase ::= "BASE" IRIREF
     function Sparql_Base (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Sparql_Base");
+
+        Ret := Accept_Token (Lexer, Reserved_Word, "BASE")
+          and then Expect_Token (Lexer, IRI_Reference);
+
+        End_Rule;
+        return Ret;
     end Sparql_Base;
 
+    --  [6s] sparqlPrefix ::= "PREFIX" PNAME_NS IRIREF
     function Sparql_Prefix (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Sparql_Prefix");
+
+        Ret := Accept_Token (Lexer, Reserved_Word, "PREFIX")
+          and then Expect_Token (Lexer, Prefix_Namespace)
+          and then Expect_Token (Lexer, IRI_Reference);
+
+        End_Rule;
+        return Ret;
     end Sparql_Prefix;
 
     --  [2] statement ::= directive | triples '.'
@@ -311,35 +457,62 @@ package body Syntactical.Rules is
         return Ret;
     end Statement;
 
+    --  [17] String ::= STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE
+    --    | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
     function String (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("String");
+
+        Ret := Accept_Token (Lexer, String_Literal_Quote)
+          or else Accept_Token (Lexer, String_Literal_Single_Quote)
+          or else Accept_Token (Lexer, String_Literal_Long_Single_Quote)
+          or else Accept_Token (Lexer, String_Literal_Long_Quote);
+
+        End_Rule;
+        return Ret;
     end String;
 
+    --  [10] subject ::= iri | BlankNode | collection
     function Subject (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Subject");
+
+        Ret := IRI (Lexer)
+          or else Blank_Node (Lexer)
+          or else Collection (Lexer);
+
+        End_Rule;
+        return Ret;
     end Subject;
 
     --  [6] triples ::= subject predicateObjectList
     --    | blankNodePropertyList predicateObjectList?
     function Triples (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
+        Begin_Rule ("Triples");
+
         if Subject (Lexer) then
-            return Predicate_Object_List (Lexer);
+            Ret := Predicate_Object_List (Lexer);
         else
-            return Blank_Node_Property_List (Lexer)
+            Ret := Blank_Node_Property_List (Lexer)
               and then (Predicate_Object_List (Lexer) or else True);
         end if;
+
+        End_Rule;
+        return Ret;
     end Triples;
 
+    --  [1] turtleDoc ::= statement*
     function Turtle_Doc (Lexer : in out Lexer_Type) return Boolean is
         Ret : Boolean := True;
     begin
         Begin_Rule ("Turtle_Doc");
 
         loop
-            Ret := Statement (Lexer);
+            Ret := Ret and then Statement (Lexer);
             exit when not Ret;
         end loop;
 
@@ -347,8 +520,16 @@ package body Syntactical.Rules is
         return True;
     end Turtle_Doc;
 
+    --  [9] verb ::= predicate | 'a'
     function Verb (Lexer : in out Lexer_Type) return Boolean is
+        Ret : Boolean;
     begin
-        return False;
+        Begin_Rule ("Verb");
+
+        Ret := Predicate (Lexer)
+          or else Accept_Token (Lexer, Reserved_Word, "a");
+
+        End_Rule;
+        return Ret;
     end Verb;
 end Syntactical.Rules;
