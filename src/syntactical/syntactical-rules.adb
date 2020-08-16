@@ -336,7 +336,7 @@ package body Syntactical.Rules is
     begin
         Begin_Rule ("Predicate");
 
-        Ret := Accept_Token (Lexer, IRI_Reference);
+        Ret := IRI (Lexer);
 
         End_Rule;
         return Ret;
