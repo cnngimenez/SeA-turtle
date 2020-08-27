@@ -20,44 +20,45 @@
 -------------------------------------------------------------------------
 
 with "matreshka_league.gpr";
-  
-  
+
+
 project Turtle is
-  
+
   for Source_Dirs use (
                        "src",
                        "src/lexical",
                        "src/elements",
+                       "src/turtle",
                        "src/syntactical"
                       );
   for Object_Dir use "objs";
   for Exec_Dir use "bin";
   for Main use (
                 "lexical_analyser.adb",
-                "symbol_set.adb", 
+                "symbol_set.adb",
                 "lexical_automata.adb",
                 "automata_transition_function.adb",
                 "syntactical_analyser.adb"
                );
-  
-  package Compiler is 
-      for Default_Switches ("Ada") use 
+
+  package Compiler is
+      for Default_Switches ("Ada") use
         (
          "-g", --  with Debugging symbols
          --  "-gnatc", --  Semantic checkeng
-         
+
          --  All warnings and style checkings!
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
          "-gnatyu", "-gnatyx", "-gnaty4"
         );
   end Compiler;
-  
+
   package Binder is
-      for Default_Switches ("Ada") use 
+      for Default_Switches ("Ada") use
         (
-         -- "-W8"
+         --  "-W8"
         );
   end Binder;
-  
+
 end Turtle;
