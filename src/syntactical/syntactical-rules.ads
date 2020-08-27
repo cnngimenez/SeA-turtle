@@ -21,17 +21,17 @@
 with League.Strings;
 use League.Strings;
 
+with Syntactical.Analyser;
+use Syntactical.Analyser;
+
 with Lexical.Token;
 use Lexical.Token;
-with Lexical.Turtle_Lexer;
-use Lexical.Turtle_Lexer;
 with Elements.Triples;
 use Elements.Triples;
 with Elements.Prefixes;
 use Elements.Prefixes;
 
 generic
-    Debug_Mode : Boolean := False;
     --  This subprogram will be called every time a triple is parsed.
     with procedure Triple_Readed_Callback (Triple : Triple_Type);
     --
@@ -43,32 +43,55 @@ generic
     with procedure Base_Directive_Callback (Base_IRI : Universal_String);
 package Syntactical.Rules is
     --  This is the main entry point for the syntactical analyser.
-    function Turtle_Doc (Lexer : in out Lexer_Type) return Boolean;
+    function Turtle_Doc (Analyser : in out Syntax_Analyser_Type)
+                        return Boolean;
 
-    function Statement (Lexer : in out Lexer_Type) return Boolean;
-    function Directive (Lexer : in out Lexer_Type) return Boolean;
-    function Prefix_ID (Lexer : in out Lexer_Type) return Boolean;
-    function Base (Lexer : in out Lexer_Type) return Boolean;
-    function Sparql_Base (Lexer : in out Lexer_Type) return Boolean;
-    function Sparql_Prefix (Lexer : in out Lexer_Type) return Boolean;
-    function Triples (Lexer : in out Lexer_Type) return Boolean;
-    function Predicate_Object_List (Lexer : in out Lexer_Type) return Boolean;
-    function Object_List (Lexer : in out Lexer_Type) return Boolean;
-    function Verb (Lexer : in out Lexer_Type) return Boolean;
-    function Subject (Lexer : in out Lexer_Type) return Boolean;
-    function Predicate (Lexer : in out Lexer_Type) return Boolean;
-    function Object (Lexer : in out Lexer_Type) return Boolean;
-    function Literal (Lexer : in out Lexer_Type) return Boolean;
-    function Blank_Node_Property_List (Lexer : in out Lexer_Type)
+    function Statement (Analyser : in out Syntax_Analyser_Type)
+                       return Boolean;
+    function Directive (Analyser : in out Syntax_Analyser_Type)
+                       return Boolean;
+    function Prefix_ID (Analyser : in out Syntax_Analyser_Type)
+                       return Boolean;
+    function Base (Analyser : in out Syntax_Analyser_Type)
+                  return Boolean;
+    function Sparql_Base (Analyser : in out Syntax_Analyser_Type)
+                         return Boolean;
+    function Sparql_Prefix (Analyser : in out Syntax_Analyser_Type)
+                           return Boolean;
+    function Triples (Analyser : in out Syntax_Analyser_Type)
+                     return Boolean;
+    function Predicate_Object_List (Analyser : in out Syntax_Analyser_Type)
+                                   return Boolean;
+    function Object_List (Analyser : in out Syntax_Analyser_Type)
+                         return Boolean;
+    function Verb (Analyser : in out Syntax_Analyser_Type)
+                  return Boolean;
+    function Subject (Analyser : in out Syntax_Analyser_Type)
+                     return Boolean;
+    function Predicate (Analyser : in out Syntax_Analyser_Type)
+                       return Boolean;
+    function Object (Analyser : in out Syntax_Analyser_Type)
+                    return Boolean;
+    function Literal (Analyser : in out Syntax_Analyser_Type)
+                     return Boolean;
+    function Blank_Node_Property_List (Analyser : in out Syntax_Analyser_Type)
                                       return Boolean;
-    function Collection (Lexer : in out Lexer_Type) return Boolean;
-    function Numeric_Literal (Lexer : in out Lexer_Type) return Boolean;
-    function RDF_Literal (Lexer : in out Lexer_Type) return Boolean;
-    function Boolean_Literal (Lexer : in out Lexer_Type) return Boolean;
-    function String (Lexer : in out Lexer_Type) return Boolean;
-    function IRI (Lexer : in out Lexer_Type) return Boolean;
-    function Prefixed_Name (Lexer : in out Lexer_Type) return Boolean;
-    function Blank_Node (Lexer : in out Lexer_Type) return Boolean;
+    function Collection (Analyser : in out Syntax_Analyser_Type)
+                        return Boolean;
+    function Numeric_Literal (Analyser : in out Syntax_Analyser_Type)
+                             return Boolean;
+    function RDF_Literal (Analyser : in out Syntax_Analyser_Type)
+                         return Boolean;
+    function Boolean_Literal (Analyser : in out Syntax_Analyser_Type)
+                             return Boolean;
+    function String (Analyser : in out Syntax_Analyser_Type)
+                    return Boolean;
+    function IRI (Analyser : in out Syntax_Analyser_Type)
+                 return Boolean;
+    function Prefixed_Name (Analyser : in out Syntax_Analyser_Type)
+                           return Boolean;
+    function Blank_Node (Analyser : in out Syntax_Analyser_Type)
+                        return Boolean;
 
     Expected_Token_Exception : exception;
 
@@ -78,7 +101,7 @@ private
     --  Test if the next token is the given one. If it is, consume it.
     --  If it is not the one, do nothing.
     --
-    function Accept_Token (Lexer : in out Lexer_Type;
+    function Accept_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type;
                            Value : Wide_Wide_String)
                           return Boolean;
@@ -86,28 +109,31 @@ private
     --  Test if the next token is the given one. If it is, consume it.
     --  If it is not the one, do nothing.
     --
-    function Accept_Token (Lexer : in out Lexer_Type;
-                          Token_Class : Token_Class_Type)
-                         return Boolean;
+    function Accept_Token (Analyser : in out Syntax_Analyser_Type;
+                           Token_Class : Token_Class_Type)
+                          return Boolean;
 
-    function Expect_Token (Lexer : in out Lexer_Type;
+    function Expect_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type;
                            Token : in out Token_Type)
                           return Boolean;
 
     --  The next token must be the given one, if not raise an exception.
-    function Expect_Token (Lexer : in out Lexer_Type;
+    function Expect_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type)
                           return Boolean;
 
         --  The next token must be the given one, if not raise an exception.
-    function Expect_Token (Lexer : in out Lexer_Type;
+    function Expect_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type;
                            Value : Wide_Wide_String)
                           return Boolean;
 
-    procedure Debug_Token (Token : Token_Type);
-    procedure Debug_Put (S : Wide_Wide_String);
-    procedure Begin_Rule (Rule_Name : Wide_Wide_String);
-    procedure End_Rule;
+    procedure Debug_Token (Analyser : in out Syntax_Analyser_Type;
+                           Token : Token_Type);
+    procedure Debug_Put (Analyser : in out Syntax_Analyser_Type;
+                         S : Wide_Wide_String);
+    procedure Begin_Rule (Analyser : in out Syntax_Analyser_Type;
+                          Rule_Name : Wide_Wide_String);
+    procedure End_Rule (Analyser : in out Syntax_Analyser_Type);
 end Syntactical.Rules;
