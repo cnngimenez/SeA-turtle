@@ -35,6 +35,9 @@ with Source;
 use Source;
 with Lexical.Turtle_Lexer;
 use Lexical.Turtle_Lexer;
+with Syntactical.Analyser;
+use Syntactical.Analyser;
+
 with League.Strings;
 use League.Strings;
 
@@ -47,7 +50,6 @@ procedure Syntactical_Analyser is
 
     package Analyser is new Syntactical.Rules
       (
-       Debug_Mode => True,
        Triple_Readed_Callback => Print_Triple,
        Prefix_Directive_Callback => Print_Prefix,
        Base_Directive_Callback => Print_Base
@@ -98,6 +100,7 @@ procedure Syntactical_Analyser is
         return To_Wide_Wide_String (Buffer);
     end Read_File;
 
+    Syntax_Analyser : Syntax_Analyser_Type;
     Lexer : Lexer_Type;
     Source : Source_Type;
 begin
@@ -110,8 +113,10 @@ begin
     Source.Initialize (Read_File (Argument (1)));
 
     Lexer.Create (Source);
+    Syntax_Analyser.Set_Lexer (Lexer);
+    Syntax_Analyser.Set_Debug_Mode (True);
 
-    if Analyser.Turtle_Doc (Lexer) then
+    if Analyser.Turtle_Doc (Syntax_Analyser) then
         Put_Line
           ("Syntactical analysis : This is a valid RDF/Turtle file.");
     else

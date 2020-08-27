@@ -18,27 +18,31 @@
 --  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 -------------------------------------------------------------------------
+
 package body Turtle.Namespaces is
 
     procedure Assign_Namespace (Namespaces : in out Namespaces_Type;
                                 Prefix : Universal_String;
                                 Iri : Universal_String) is
     begin
-        Namespaces.Hash.insert (Prefix, Iri);
+        Namespaces.Hash.Insert (Prefix, Iri);
     end Assign_Namespace;
 
-    function Substitute_Prefix (Namespaces : Namespace_Type;
+    function Substitute_Prefix (Namespaces : Namespaces_Type;
                                 Pname_Ns : Universal_String)
                                return Universal_String is
         Dot_Pos : Natural;
-        Prefix, Iri : Universal_String;
+        Complete_Iri, Prefix, Iri : Universal_String;
     begin
-        Dot_Pos := Pname_Ns.Index (Ww2u (":"));
+        Dot_Pos := Pname_Ns.Index (To_Universal_String (":"));
         Prefix := Pname_Ns.Head_To (Dot_Pos);
 
-        Iri := Namespaces.Element (Prefix);
+        Iri := Namespaces.Hash.Element (Prefix);
 
-        return Pname_Ns.Replace (0, Dot_Pos, Iri);
+        Complete_Iri := Pname_Ns;
+        Replace (Complete_Iri, Positive'First, Dot_Pos, Iri);
+
+        return Complete_Iri;
     end Substitute_Prefix;
 
 end Turtle.Namespaces;

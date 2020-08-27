@@ -19,6 +19,11 @@
 
 -------------------------------------------------------------------------
 
+with League.Strings;
+use League.Strings;
+
+with Turtle.Blank_Node_Labels;
+use Turtle.Blank_Node_Labels;
 with Turtle.Namespaces;
 use Turtle.Namespaces;
 
@@ -31,15 +36,15 @@ package Turtle.Parser_States is
     type Parser_State_Type is tagged private;
 
     function Get_Base_URI (Parser_State : Parser_State_Type)
-                          return Universal_State;
+                          return Universal_String;
     function Get_Namespaces (Parser_State : Parser_State_Type)
                             return Namespaces_Type;
     function Get_BnodeLabels (Parser_State : Parser_State_Type)
                              return Blank_Node_Labels_Type;
     function Get_Cur_Subject (Parser_State : Parser_State_Type)
-                             return Universal_State;
+                             return Universal_String;
     function Get_Cur_Predicate (Parser_State : Parser_State_Type)
-                               return Universal_State;
+                               return Universal_String;
 
     procedure Set_Base_URI (Parser_State : in out Parser_State_Type;
                             Base_URI : Universal_String);

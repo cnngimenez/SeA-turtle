@@ -19,6 +19,12 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Containers.Hashed_Maps;
+
+with League.Strings;
+use League.Strings;
+with League.Strings.Hash;
+
 package Turtle.Blank_Node_Labels is
 
     type Blank_Node_Labels_Type is tagged private;
