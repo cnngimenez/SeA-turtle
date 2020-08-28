@@ -68,7 +68,8 @@ package Syntactical.Rules is
                   return Boolean;
     function Subject (Analyser : in out Syntax_Analyser_Type)
                      return Boolean;
-    function Predicate (Analyser : in out Syntax_Analyser_Type)
+    function Predicate (Analyser : in out Syntax_Analyser_Type;
+                       IRI_Str : in out Universal_String)
                        return Boolean;
     function Object (Analyser : in out Syntax_Analyser_Type)
                     return Boolean;
@@ -86,9 +87,13 @@ package Syntactical.Rules is
                              return Boolean;
     function String (Analyser : in out Syntax_Analyser_Type)
                     return Boolean;
+    function IRI (Analyser : in out Syntax_Analyser_Type;
+                  IRI_Str : in out Universal_String)
+                 return Boolean;
     function IRI (Analyser : in out Syntax_Analyser_Type)
                  return Boolean;
-    function Prefixed_Name (Analyser : in out Syntax_Analyser_Type)
+    function Prefixed_Name (Analyser : in out Syntax_Analyser_Type;
+                            IRI_Str : in out Universal_String)
                            return Boolean;
     function Blank_Node (Analyser : in out Syntax_Analyser_Type)
                         return Boolean;
@@ -104,6 +109,11 @@ private
     function Accept_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type;
                            Value : Wide_Wide_String)
+                          return Boolean;
+
+    function Accept_Token (Analyser : in out Syntax_Analyser_Type;
+                           Token_Class : Token_Class_Type;
+                           Token : in out Token_Type)
                           return Boolean;
     --
     --  Test if the next token is the given one. If it is, consume it.

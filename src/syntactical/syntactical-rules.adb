@@ -25,9 +25,9 @@ use Ada.Wide_Wide_Text_IO;
 package body Syntactical.Rules is
 
     function Accept_Token (Analyser : in out Syntax_Analyser_Type;
-                           Token_Class : Token_Class_Type)
+                           Token_Class : Token_Class_Type;
+                           Token : in out Token_Type)
                           return Boolean is
-        Token : Token_Type;
     begin
         Token := Analyser.Peek_Token;
 
@@ -47,6 +47,14 @@ package body Syntactical.Rules is
             Debug_Put (Analyser, "| --> False");
             return False;
         end if;
+    end Accept_Token;
+
+    function Accept_Token (Analyser : in out Syntax_Analyser_Type;
+                           Token_Class : Token_Class_Type)
+                          return Boolean is
+        Token : Token_Type;
+    begin
+        return Accept_Token (Analyser, Token_Class, Token);
     end Accept_Token;
 
     function Accept_Token (Analyser : in out Syntax_Analyser_Type;
@@ -92,6 +100,10 @@ package body Syntactical.Rules is
           and then Expect_Token (Analyser, Reserved_Word, ".");
 
         if Ret then
+            --  According to the example in RDF 1.1 Turtle standard.
+            --  Add the base IRI into the Parser State.
+            Analyser.Assign_Base_URI (Token.Get_Value);
+
             Base_Directive_Callback (Token.Get_Value);
         end if;
 
@@ -268,17 +280,32 @@ package body Syntactical.Rules is
     end Expect_Token;
 
     --  [135s] iri ::= IRIREF | PrefixedName
-    function IRI (Analyser : in out Syntax_Analyser_Type)
+    function IRI (Analyser : in out Syntax_Analyser_Type;
+                  IRI_Str : in out Universal_String)
                  return Boolean is
-        Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "IRI");
 
-        Ret := Accept_Token (Analyser, IRI_Reference)
-          or else Prefixed_Name (Analyser);
+        if Accept_Token (Analyser, IRI_Reference, Token) then
+            IRI_Str := Token.Get_Value;
+
+            End_Rule (Analyser);
+            return True;
+        elsif Prefixed_Name (Analyser, IRI_Str) then
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
+    end IRI;
+
+    function IRI (Analyser : in out Syntax_Analyser_Type)
+                 return Boolean is
+        IRI_Str : Universal_String;
+    begin
+        return IRI (Analyser, IRI_Str);
     end IRI;
 
     --  [13] literal ::= RDFLiteral | NumericLiteral | BooleanLiteral
@@ -315,18 +342,41 @@ package body Syntactical.Rules is
     --    blankNodePropertyList | literal
     function Object (Analyser : in out Syntax_Analyser_Type)
                     return Boolean is
-        Ret : Boolean;
+        A_Triple : Triple_Type;
+        IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Object");
 
-        Ret := IRI (Analyser)
-          or else Blank_Node (Analyser)
-          or else Collection (Analyser)
-          or else Blank_Node_Property_List (Analyser)
-          or else Literal (Analyser);
+        if IRI (Analyser, IRI_Str) then
+            A_Triple := Analyser.Emit_RDF_Triple (IRI_Str);
+            Triple_Readed_Callback (A_Triple);
+
+            End_Rule (Analyser);
+            return True;
+        elsif  Blank_Node (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        elsif Collection (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        elsif Blank_Node_Property_List (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        elsif Literal (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
     end Object;
 
     --  [8] objectList ::= object (',' object)*
@@ -347,13 +397,14 @@ package body Syntactical.Rules is
     end Object_List;
 
     --  [11] predicate ::= iri
-    function Predicate (Analyser : in out Syntax_Analyser_Type)
+    function Predicate (Analyser : in out Syntax_Analyser_Type;
+                       IRI_Str : in out Universal_String)
                        return Boolean is
         Ret : Boolean;
     begin
         Begin_Rule (Analyser, "Predicate");
 
-        Ret := IRI (Analyser);
+        Ret := IRI (Analyser, IRI_Str);
 
         End_Rule (Analyser);
         return Ret;
@@ -396,6 +447,10 @@ package body Syntactical.Rules is
           and then Expect_Token (Analyser, Reserved_Word, ".");
 
         if Ret then
+            --  According to the example on the RDF 1.1 Turtle standard.
+            Analyser.Assign_Namespace (Token_Prefix.Get_Value,
+                                       Token_IRI.Get_Value);
+
             Prefix.Initialize (Token_Prefix.Get_Value, Token_IRI.Get_Value);
             Prefix_Directive_Callback (Prefix);
         end if;
@@ -405,17 +460,27 @@ package body Syntactical.Rules is
     end Prefix_ID;
 
     --  [136s] PrefixedName ::= PNAME_LN | PNAME_NS
-    function Prefixed_Name (Analyser : in out Syntax_Analyser_Type)
+    function Prefixed_Name (Analyser : in out Syntax_Analyser_Type;
+                           IRI_Str : in out Universal_String)
                            return Boolean is
-        Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "Prefixed_Name");
 
-        Ret := Accept_Token (Analyser, Prefix_With_Local)
-          or else Accept_Token (Analyser, Prefix_Namespace);
+        if Accept_Token (Analyser, Prefix_With_Local, Token) then
+            IRI_Str := Analyser.Substitute_Prefix (Token.Get_Value);
+
+            End_Rule (Analyser);
+            return True;
+        elsif Accept_Token (Analyser, Prefix_Namespace, Token) then
+            IRI_Str := Analyser.Substitute_Prefix (Token.Get_Value);
+
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
     end Prefixed_Name;
 
     --  [128s] RDFLiteral ::= String (LANGTAG | '^^' iri)?
@@ -504,16 +569,29 @@ package body Syntactical.Rules is
     --  [10] subject ::= iri | BlankNode | collection
     function Subject (Analyser : in out Syntax_Analyser_Type)
                      return Boolean is
-        Ret : Boolean;
+        IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Subject");
 
-        Ret := IRI (Analyser)
-          or else Blank_Node (Analyser)
-          or else Collection (Analyser);
+        if IRI (Analyser, IRI_Str) then
+            Analyser.Assign_Cur_Subject (IRI_Str);
+
+            End_Rule (Analyser);
+            return True;
+        elsif Blank_Node (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        elsif Collection (Analyser) then
+            --  TODO
+
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
     end Subject;
 
     --  [6] triples ::= subject predicateObjectList
@@ -555,14 +633,24 @@ package body Syntactical.Rules is
     --  [9] verb ::= predicate | 'a'
     function Verb (Analyser : in out Syntax_Analyser_Type)
                   return Boolean is
-        Ret : Boolean;
+
+        IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Verb");
 
-        Ret := Predicate (Analyser)
-          or else Accept_Token (Analyser, Reserved_Word, "a");
+        if Predicate (Analyser, IRI_Str) then
+            Analyser.Assign_Cur_Predicate (IRI_Str);
+
+            End_Rule (Analyser);
+            return True;
+        elsif Accept_Token (Analyser, Reserved_Word, "a") then
+            Analyser.Assign_Cur_Predicate (To_Universal_String ("a"));
+
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
     end Verb;
 end Syntactical.Rules;
