@@ -30,8 +30,8 @@ procedure Symbol_Set is
 
     procedure Print_Possible_Sets
       (Possible_Sets : Possible_Symbol_Sets_Type) is
-        function Test_Set (Set : Symbol_Set_Type) return Boolean;        
-        
+        function Test_Set (Set : Symbol_Set_Type) return Boolean;
+
         function Test_Set (Set : Symbol_Set_Type) return Boolean is
         begin
             Put ("Possible Set: '");
@@ -44,7 +44,7 @@ procedure Symbol_Set is
             end if;
             return False;
         end Test_Set;
-        
+
         Set : Symbol_Set_Type;
     begin
         Set := Symbol_Set_Type (Find_Set (Possible_Sets, Test_Set'Access));
