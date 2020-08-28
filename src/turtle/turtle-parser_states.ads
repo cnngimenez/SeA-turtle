@@ -57,6 +57,12 @@ package Turtle.Parser_States is
     procedure Set_Cur_Predicate (Parser_State : in out Parser_State_Type;
                                  Cur_Predicate : Universal_String);
 
+    procedure Assign_Namespace (Parser_State : in out Parser_State_Type;
+                                Prefix, Iri : Universal_String);
+
+    function Substitute_Prefix (Parser_State : in out Parser_State_Type;
+                                Pname_Ns : Universal_String)
+                               return Universal_String;
 private
 
     type Parser_State_Type is tagged record

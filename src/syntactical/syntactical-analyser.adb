@@ -27,6 +27,52 @@ package body Syntactical.Analyser is
         Syntax_Analyser.Recursion_Level := Syntax_Analyser.Recursion_Level + 1;
     end Add_Recursion_Level;
 
+    procedure Assign_Base_URI (Analyser : in out Syntax_Analyser_Type;
+                               URI : Universal_String) is
+    begin
+        Analyser.Parser_State.Set_Base_URI (URI);
+    end Assign_Base_URI;
+
+    procedure Assign_Cur_Predicate (Analyser : in out Syntax_Analyser_Type;
+                                    IRI : Universal_String) is
+    begin
+        if IRI = To_Universal_String ("a") then
+            Analyser.Parser_State.Set_Cur_Predicate
+              (To_Universal_String
+                 ("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"));
+        else
+            Analyser.Parser_State.Set_Cur_Predicate (IRI);
+        end if;
+    end Assign_Cur_Predicate;
+
+    procedure Assign_Cur_Subject (Analyser : in out Syntax_Analyser_Type;
+                                  IRI : Universal_String) is
+    begin
+        Analyser.Parser_State.Set_Cur_Subject (IRI);
+    end Assign_Cur_Subject;
+
+    procedure Assign_Namespace (Analyser : in out Syntax_Analyser_Type;
+                                Prefix : Universal_String;
+                                Iri : Universal_String) is
+    begin
+        Analyser.Parser_State.Assign_Namespace (Prefix, Iri);
+    end Assign_Namespace;
+
+    function Emit_RDF_Triple (Analyser : in out Syntax_Analyser_Type;
+                              Object_IRI : Universal_String)
+                             return Triple_Type is
+        A_Triple : Triple_Type;
+    begin
+        A_Triple.Initialize
+          (Analyser.Parser_State.Get_Cur_Subject,
+           Analyser.Parser_State.Get_Cur_Predicate,
+           Object_IRI,
+           Subject_Type => IRI,
+           Object_Type => IRI);
+
+        return A_Triple;
+    end Emit_RDF_Triple;
+
     function Get_Debug_Mode (Syntax_Analyser : Syntax_Analyser_Type)
                       return Boolean is
     begin
@@ -71,6 +117,7 @@ package body Syntactical.Analyser is
               Syntax_Analyser.Recursion_Level - 1;
         end if;
     end Remove_Recursion_Level;
+
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
                               Debug_Mode : Boolean) is
     begin
@@ -88,6 +135,13 @@ package body Syntactical.Analyser is
     begin
         Syntax_Analyser.Parser_State := Parser_State;
     end Set_Parser_State;
+
+    function Substitute_Prefix (Analyser : in out Syntax_Analyser_Type;
+                                Pname_Ns : Universal_String)
+                               return Universal_String is
+    begin
+        return Analyser.Parser_State.Substitute_Prefix (Pname_Ns);
+    end Substitute_Prefix;
 
     function Take_Token (Syntax_Analyser : in out Syntax_Analyser_Type)
                         return Token_Type is

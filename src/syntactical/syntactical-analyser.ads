@@ -19,6 +19,12 @@
 
 -------------------------------------------------------------------------
 
+with League.Strings;
+use League.Strings;
+
+with Elements.Triples;
+use Elements.Triples;
+
 with Lexical.Token;
 use Lexical.Token;
 with Lexical.Turtle_Lexer;
@@ -50,10 +56,18 @@ package Syntactical.Analyser is
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
                               Debug_Mode : Boolean);
 
+    --  --------------------
+    --  Debugging
+    --  --------------------
+
     procedure Add_Recursion_Level
       (Syntax_Analyser : in out Syntax_Analyser_Type);
     procedure Remove_Recursion_Level
       (Syntax_Analyser : in out Syntax_Analyser_Type);
+
+    --  --------------------
+    --  Lexer management
+    --  --------------------
 
     function Peek_Token (Syntax_Analyser : in out Syntax_Analyser_Type)
                         return Token_Type;
@@ -61,6 +75,36 @@ package Syntactical.Analyser is
                         return Token_Type;
     function Is_End_Of_Source (Syntax_Analyser : in out Syntax_Analyser_Type)
                               return Boolean;
+
+    --  --------------------
+    --  Parser State management
+    --  --------------------
+
+    procedure Assign_Namespace (Analyser : in out Syntax_Analyser_Type;
+                                Prefix : Universal_String;
+                                Iri : Universal_String);
+
+    procedure Assign_Base_URI (Analyser : in out Syntax_Analyser_Type;
+                               URI : Universal_String);
+
+    procedure Assign_Cur_Subject (Analyser : in out Syntax_Analyser_Type;
+                                  IRI : Universal_String);
+
+    --  Assign the Cur_Predicate to the given IRI. Considers the "a" string as
+    --  the rdf:type IRI.
+    procedure Assign_Cur_Predicate (Analyser : in out Syntax_Analyser_Type;
+                                    IRI : Universal_String);
+
+    --  Construct an RDF_Triple with the Cur_Subject, Cur_Predicate and the
+    --  given Object_IRI.
+    function Emit_RDF_Triple (Analyser : in out Syntax_Analyser_Type;
+                              Object_IRI : Universal_String)
+                             return Triple_Type;
+
+    function Substitute_Prefix (Analyser : in out Syntax_Analyser_Type;
+                                Pname_Ns : Universal_String)
+                               return Universal_String;
+
 private
 
     type Syntax_Analyser_Type is tagged record
