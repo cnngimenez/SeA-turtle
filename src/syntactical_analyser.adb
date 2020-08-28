@@ -106,7 +106,15 @@ procedure Syntactical_Analyser is
 begin
     if Argument_Count < 1 then
         Put_Line ("Synopsis :");
-        Put_Line ("    ./syntactical_analyser TURTLE_FILE");
+        Put_Line ("    ./syntactical_analyser TURTLE_FILE [DEBUG_MODE]");
+        New_Line;
+        Put_Line ("DEBUG_MODE: off | accepted | full");
+        Put_Line ("  - accepted: Show only accepted tokens.");
+        Put_Line
+          ("  - full: Show all rules applied, even those ones that failed.");
+        New_Line;
+        Put_Line
+          ("For example: ./syntactical_analyser my_turtle_file.ttl full");
         return;
     end if;
 
@@ -114,7 +122,14 @@ begin
 
     Lexer.Create (Source);
     Syntax_Analyser.Set_Lexer (Lexer);
-    Syntax_Analyser.Set_Debug_Mode (True);
+
+    if Argument_Count > 1 then
+        if Argument (2) = "full" then
+            Syntax_Analyser.Set_Debug_Mode (Full_Debug);
+        elsif Argument (2) = "accepted" then
+            Syntax_Analyser.Set_Debug_Mode (Only_Accepted_Tokens);
+        end if;
+    end if;
 
     if Analyser.Turtle_Doc (Syntax_Analyser) then
         Put_Line

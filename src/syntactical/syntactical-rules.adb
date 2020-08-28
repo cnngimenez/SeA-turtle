@@ -31,20 +31,28 @@ package body Syntactical.Rules is
     begin
         Token := Analyser.Peek_Token;
 
-        Debug_Put (Analyser,
-                   "| Accept token : "
-                     & Token_Class'Wide_Wide_Image
-                     & ". Readed :");
-        Debug_Token (Analyser, Token);
-
         if Token.Get_Class = Token_Class then
             Token := Analyser.Take_Token;
 
+            Debug_Put (Analyser,
+                       "| Accept token : "
+                         & Token_Class'Wide_Wide_Image
+                         & ". Readed :");
+            Debug_Token (Analyser, Token);
             Debug_Put  (Analyser, "| --> True");
 
             return True;
         else
-            Debug_Put (Analyser, "| --> False");
+
+            if Analyser.Get_Debug_Mode = Full_Debug then
+                Debug_Put (Analyser,
+                           "| Accept token : "
+                             & Token_Class'Wide_Wide_Image
+                             & ". Readed :");
+                Debug_Token (Analyser, Token);
+                Debug_Put (Analyser, "| --> False");
+            end if;
+
             return False;
         end if;
     end Accept_Token;
@@ -65,24 +73,34 @@ package body Syntactical.Rules is
     begin
         Token := Analyser.Peek_Token;
 
-        Debug_Put (Analyser,
-                   "| Accept token : "
-                     & Token_Class'Wide_Wide_Image
-                     & " with value '"
-                     & Value
-                     & "'. Readed :");
-        Debug_Token (Analyser, Token);
-
         if Token.Get_Class = Token_Class and then
           Token.Get_Value = To_Universal_String (Value)
         then
             Token := Analyser.Take_Token;
 
+            Debug_Put (Analyser,
+                       "| Accept token : "
+                         & Token_Class'Wide_Wide_Image
+                         & " with value '"
+                         & Value
+                         & "'. Readed :");
+            Debug_Token (Analyser, Token);
             Debug_Put (Analyser, "| --> True");
 
             return True;
         else
-            Debug_Put (Analyser, "| --> False");
+
+            if Analyser.Get_Debug_Mode = Full_Debug then
+                Debug_Put (Analyser,
+                           "| Accept token : "
+                             & Token_Class'Wide_Wide_Image
+                             & " with value '"
+                             & Value
+                             & "'. Readed :");
+                Debug_Token (Analyser, Token);
+                Debug_Put (Analyser, "| --> False");
+            end if;
+
             return False;
         end if;
     end Accept_Token;
@@ -184,7 +202,7 @@ package body Syntactical.Rules is
     procedure Debug_Put (Analyser : in out Syntax_Analyser_Type;
                          S : Wide_Wide_String) is
     begin
-        if Analyser.Get_Debug_Mode then
+        if Analyser.Get_Debug_Mode /= Off then
             for i in 0 .. Analyser.Get_Recursion_Level loop
                 Put ('-');
             end loop;

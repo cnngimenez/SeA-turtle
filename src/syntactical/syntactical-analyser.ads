@@ -39,6 +39,8 @@ use Turtle.Parser_States;
 --  should be recorded through the transition of the syntax rules.
 package Syntactical.Analyser is
 
+    type Debug_Mode_Type is (Off, Only_Accepted_Tokens, Full_Debug);
+
     type Syntax_Analyser_Type is tagged private;
 
     function Get_Lexer (Syntax_Analyser : Syntax_Analyser_Type)
@@ -46,7 +48,7 @@ package Syntactical.Analyser is
     function Get_Parser_State (Syntax_Analyser : Syntax_Analyser_Type)
                               return Parser_State_Type;
     function Get_Debug_Mode (Syntax_Analyser : Syntax_Analyser_Type)
-                            return Boolean;
+                            return Debug_Mode_Type;
     function Get_Recursion_Level (Syntax_Analyser : Syntax_Analyser_Type)
                                  return Natural;
     procedure Set_Lexer (Syntax_Analyser : in out Syntax_Analyser_Type;
@@ -54,7 +56,7 @@ package Syntactical.Analyser is
     procedure Set_Parser_State (Syntax_Analyser : in out Syntax_Analyser_Type;
                                 Parser_State : Parser_State_Type);
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
-                              Debug_Mode : Boolean);
+                              Debug_Mode : Debug_Mode_Type);
 
     --  --------------------
     --  Debugging
@@ -112,7 +114,7 @@ private
         Parser_State : Parser_State_Type;
 
         --  Should the rules be printed at standard output?
-        Debug_Mode : Boolean := False;
+        Debug_Mode : Debug_Mode_Type := Off;
         --  It is used to show the syntax tree on the standard output.
         Recursion_Level : Natural := 0;
     end record;

@@ -74,7 +74,7 @@ package body Syntactical.Analyser is
     end Emit_RDF_Triple;
 
     function Get_Debug_Mode (Syntax_Analyser : Syntax_Analyser_Type)
-                      return Boolean is
+                            return Debug_Mode_Type is
     begin
         return Syntax_Analyser.Debug_Mode;
     end Get_Debug_Mode;
@@ -119,7 +119,7 @@ package body Syntactical.Analyser is
     end Remove_Recursion_Level;
 
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
-                              Debug_Mode : Boolean) is
+                              Debug_Mode : Debug_Mode_Type) is
     begin
         Syntax_Analyser.Debug_Mode := Debug_Mode;
     end Set_Debug_Mode;
