@@ -46,13 +46,15 @@ procedure Syntactical_Analyser is
     procedure Print_Triple (Triple : Triple_Type);
     procedure Print_Prefix (Prefix : Prefix_Type);
     procedure Print_Base (Base : Universal_String);
+    procedure Print_Warning (Message : Universal_String);
     function Read_File (Path : String) return Wide_Wide_String;
 
     package Analyser is new Syntactical.Rules
       (
        Triple_Readed_Callback => Print_Triple,
        Prefix_Directive_Callback => Print_Prefix,
-       Base_Directive_Callback => Print_Base
+       Base_Directive_Callback => Print_Base,
+       Warning_Callback => Print_Warning
       );
 
     procedure Print_Base (Base : Universal_String) is
@@ -82,6 +84,12 @@ procedure Syntactical_Analyser is
                     & To_Wide_Wide_String (Triple.Get_Object)
                     & ">");
     end Print_Triple;
+
+    procedure Print_Warning (Message : Universal_String) is
+    begin
+        Put_Line ("Warning: "
+                    & To_Wide_Wide_String (Message));
+    end Print_Warning;
 
     function Read_File (Path : String) return Wide_Wide_String is
         Buffer : Unbounded_Wide_Wide_String;

@@ -60,6 +60,8 @@ package Elements.Prefixes is
     procedure Set_IRI (Prefix : in out Prefix_Type; IRI : Universal_String);
     procedure Set_Name (Prefix : in out Prefix_Type; Name : Universal_String);
 
+    function Is_IRI_Ending_Correctly (Prefix : Prefix_Type) return Boolean;
+
 private
 
     type Prefix_Type is tagged record

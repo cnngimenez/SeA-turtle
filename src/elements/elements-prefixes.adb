@@ -38,6 +38,13 @@ package body Elements.Prefixes is
         Prefix.IRI := IRI;
     end Initialize;
 
+    function Is_IRI_Ending_Correctly (Prefix : Prefix_Type)
+                                     return Boolean is
+    begin
+        return Prefix.IRI.Ends_With ("#") or else
+          Prefix.IRI.Ends_With ("/");
+    end Is_IRI_Ending_Correctly;
+
     procedure Set_IRI (Prefix : in out Prefix_Type;
                        IRI : Universal_String) is
     begin

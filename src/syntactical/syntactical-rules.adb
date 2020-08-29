@@ -297,6 +297,12 @@ package body Syntactical.Rules is
         end if;
     end Expect_Token;
 
+    function Extract_IRI (Readed_IRI : Universal_String)
+                         return Universal_String is
+    begin
+        return Readed_IRI.Slice (2, Readed_IRI.Length - 1);
+    end Extract_IRI;
+
     --  [135s] iri ::= IRIREF | PrefixedName
     function IRI (Analyser : in out Syntax_Analyser_Type;
                   IRI_Str : in out Universal_String)
@@ -456,6 +462,7 @@ package body Syntactical.Rules is
         Token_Prefix, Token_IRI : Token_Type;
         Prefix : Prefix_Type;
         Ret : Boolean;
+        IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Prefix_ID");
 
@@ -466,11 +473,15 @@ package body Syntactical.Rules is
 
         if Ret then
             --  According to the example on the RDF 1.1 Turtle standard.
-            Analyser.Assign_Namespace (Token_Prefix.Get_Value,
-                                       Token_IRI.Get_Value);
+            IRI_Str := Extract_IRI (Token_IRI.Get_Value);
 
-            Prefix.Initialize (Token_Prefix.Get_Value, Token_IRI.Get_Value);
+            Analyser.Assign_Namespace (Token_Prefix.Get_Value,
+                                       IRI_Str);
+
+            Prefix.Initialize (Token_Prefix.Get_Value, IRI_Str);
             Prefix_Directive_Callback (Prefix);
+
+            Verify_Namespace_Prefix (Prefix);
         end if;
 
         End_Rule (Analyser);
@@ -545,6 +556,12 @@ package body Syntactical.Rules is
         Ret := Accept_Token (Analyser, Reserved_Word, "PREFIX")
           and then Expect_Token (Analyser, Prefix_Namespace)
           and then Expect_Token (Analyser, IRI_Reference);
+
+        --  if Ret then
+        --  TODO add the same as @prefix (Prefix_ID) rule.
+
+        --  Verify_Namespace_Prefix (Prefix);
+        --  end if;
 
         End_Rule (Analyser);
         return Ret;
@@ -671,4 +688,17 @@ package body Syntactical.Rules is
         End_Rule (Analyser);
         return False;
     end Verb;
+
+    procedure Verify_Namespace_Prefix (Prefix : Prefix_Type) is
+    begin
+        if not Prefix.Is_IRI_Ending_Correctly then
+            Warning_Callback
+              (To_Universal_String
+                 ("The following prefix IRI should end with ""#"" or ""/"":")
+                 & Prefix.Get_Name
+                 & To_Universal_String (" -> ")
+                 & Prefix.Get_IRI);
+        end if;
+    end Verify_Namespace_Prefix;
+
 end Syntactical.Rules;

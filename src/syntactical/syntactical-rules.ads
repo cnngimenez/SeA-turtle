@@ -32,16 +32,22 @@ with Elements.Prefixes;
 use Elements.Prefixes;
 
 generic
+
     --  This subprogram will be called every time a triple is parsed.
     with procedure Triple_Readed_Callback (Triple : Triple_Type);
-    --
+
     --  This subprogram will be called every time a @prefix directive is
     --  parsed.
-    --
     with procedure Prefix_Directive_Callback (Prefix : Prefix_Type);
+
     --  This subprogram will be called every time a @base directive is parsed.
     with procedure Base_Directive_Callback (Base_IRI : Universal_String);
+
+    --  This subprogram will be called for any warning message.
+    with procedure Warning_Callback (Message : Universal_String);
+
 package Syntactical.Rules is
+
     --  This is the main entry point for the syntactical analyser.
     function Turtle_Doc (Analyser : in out Syntax_Analyser_Type)
                         return Boolean;
@@ -146,4 +152,11 @@ private
     procedure Begin_Rule (Analyser : in out Syntax_Analyser_Type;
                           Rule_Name : Wide_Wide_String);
     procedure End_Rule (Analyser : in out Syntax_Analyser_Type);
+
+    --  Remove the "<" and ">" characters from a Turtle IRI.
+    function Extract_IRI (Readed_IRI : Universal_String)
+                         return Universal_String;
+    --  Check if the prefix is correctly written. Raise errors or warnings
+    --  accordingly.
+    procedure Verify_Namespace_Prefix (Prefix : Prefix_Type);
 end Syntactical.Rules;
