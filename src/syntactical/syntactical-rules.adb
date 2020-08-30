@@ -110,6 +110,7 @@ package body Syntactical.Rules is
                   return Boolean is
         Ret : Boolean;
         Token : Token_Type;
+        IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Base");
 
@@ -120,9 +121,12 @@ package body Syntactical.Rules is
         if Ret then
             --  According to the example in RDF 1.1 Turtle standard.
             --  Add the base IRI into the Parser State.
-            Analyser.Assign_Base_URI (Token.Get_Value);
+            IRI_Str := Extract_IRI (Token.Get_Value);
+            Analyser.Assign_Base_URI (IRI_Str);
 
-            Base_Directive_Callback (Token.Get_Value);
+            Base_Directive_Callback (IRI_Str);
+
+            Verify_Base_IRI (Analyser);
         end if;
 
         End_Rule (Analyser);
@@ -312,7 +316,7 @@ package body Syntactical.Rules is
         Begin_Rule (Analyser, "IRI");
 
         if Accept_Token (Analyser, IRI_Reference, Token) then
-            IRI_Str := Token.Get_Value;
+            IRI_Str := Extract_IRI (Token.Get_Value);
 
             End_Rule (Analyser);
             return True;
@@ -688,6 +692,16 @@ package body Syntactical.Rules is
         End_Rule (Analyser);
         return False;
     end Verb;
+
+    procedure Verify_Base_IRI (Analyser : in out Syntax_Analyser_Type) is
+    begin
+        if not Analyser.Is_Base_IRI_Ending_Correctly then
+            Warning_Callback
+              (To_Universal_String
+                 ("The following base IRI should end with ""#"" or ""/"":")
+                 & Analyser.Get_Base_URI);
+        end if;
+    end Verify_Base_IRI;
 
     procedure Verify_Namespace_Prefix (Prefix : Prefix_Type) is
     begin

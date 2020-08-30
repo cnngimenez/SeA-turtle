@@ -57,6 +57,14 @@ package body Turtle.Parser_States is
         return Parser_State.Namespaces;
     end Get_Namespaces;
 
+    function Is_Base_IRI_Ending_Correctly
+      (Parser_State : in out Parser_State_Type)
+      return Boolean is
+    begin
+        return Parser_State.Base_URI.Ends_With ("#") or else
+          Parser_State.Base_URI.Ends_With ("/");
+    end Is_Base_IRI_Ending_Correctly;
+
     procedure Set_Base_URI (Parser_State : in out Parser_State_Type;
                             Base_URI : Universal_String) is
     begin

@@ -156,7 +156,12 @@ private
     --  Remove the "<" and ">" characters from a Turtle IRI.
     function Extract_IRI (Readed_IRI : Universal_String)
                          return Universal_String;
-    --  Check if the prefix is correctly written. Raise errors or warnings
-    --  accordingly.
+
+    --  Check if the prefix is correctly written. Raise exceptions or
+    --  warnings accordingly.
     procedure Verify_Namespace_Prefix (Prefix : Prefix_Type);
+
+    --  Check if the Base IRI is correctly written. Raise exceptions or
+    --  warnings if needed.
+    procedure Verify_Base_IRI (Analyser : in out Syntax_Analyser_Type);
 end Syntactical.Rules;

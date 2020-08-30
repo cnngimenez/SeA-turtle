@@ -73,6 +73,12 @@ package body Syntactical.Analyser is
         return A_Triple;
     end Emit_RDF_Triple;
 
+    function Get_Base_URI (Analyser : in out Syntax_Analyser_Type)
+                      return Universal_String is
+    begin
+        return Analyser.Parser_State.Get_Base_URI;
+    end Get_Base_URI;
+
     function Get_Debug_Mode (Syntax_Analyser : Syntax_Analyser_Type)
                             return Debug_Mode_Type is
     begin
@@ -96,6 +102,13 @@ package body Syntactical.Analyser is
     begin
         return Syntax_Analyser.Recursion_Level;
     end Get_Recursion_Level;
+
+    function Is_Base_IRI_Ending_Correctly
+      (Analyser : in out Syntax_Analyser_Type)
+      return Boolean is
+    begin
+        return Analyser.Parser_State.Is_Base_IRI_Ending_Correctly;
+    end Is_Base_IRI_Ending_Correctly;
 
     function Is_End_Of_Source (Syntax_Analyser : in out Syntax_Analyser_Type)
                               return Boolean is

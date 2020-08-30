@@ -63,6 +63,11 @@ package Turtle.Parser_States is
     function Substitute_Prefix (Parser_State : in out Parser_State_Type;
                                 Pname_Ns : Universal_String)
                                return Universal_String;
+
+    function Is_Base_IRI_Ending_Correctly
+      (Parser_State : in out Parser_State_Type)
+      return Boolean;
+
 private
 
     type Parser_State_Type is tagged record

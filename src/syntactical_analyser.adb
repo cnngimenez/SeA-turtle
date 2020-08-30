@@ -74,15 +74,11 @@ procedure Syntactical_Analyser is
     procedure Print_Triple (Triple : Triple_Type) is
     begin
         Put_Line ("Triple detected: ");
-        Put_Line ("<"
-                    & To_Wide_Wide_String (Triple.Get_Subject)
-                    & ">");
-        Put_Line ("<"
-                    & To_Wide_Wide_String (Triple.Get_Predicate)
-                    & ">");
-        Put_Line ("<"
-                    & To_Wide_Wide_String (Triple.Get_Object)
-                    & ">");
+        Put (To_Wide_Wide_String (Triple.Get_Subject));
+        Put (" ");
+        Put (To_Wide_Wide_String (Triple.Get_Predicate));
+        Put (" ");
+        Put_Line (To_Wide_Wide_String (Triple.Get_Object));
     end Print_Triple;
 
     procedure Print_Warning (Message : Universal_String) is

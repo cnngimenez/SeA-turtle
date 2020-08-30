@@ -86,6 +86,9 @@ package Syntactical.Analyser is
                                 Prefix : Universal_String;
                                 Iri : Universal_String);
 
+    function Get_Base_URI (Analyser  : in out Syntax_Analyser_Type)
+                          return Universal_String;
+
     procedure Assign_Base_URI (Analyser : in out Syntax_Analyser_Type;
                                URI : Universal_String);
 
@@ -106,6 +109,10 @@ package Syntactical.Analyser is
     function Substitute_Prefix (Analyser : in out Syntax_Analyser_Type;
                                 Pname_Ns : Universal_String)
                                return Universal_String;
+
+    function Is_Base_IRI_Ending_Correctly
+      (Analyser : in out Syntax_Analyser_Type)
+      return Boolean;
 
 private
 
