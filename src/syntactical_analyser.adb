@@ -91,15 +91,28 @@ procedure Syntactical_Analyser is
         Buffer : Unbounded_Wide_Wide_String;
         File : File_Type;
         Symbol : Wide_Wide_Character;
+        LF_Char : constant Wide_Wide_Character :=
+          Wide_Wide_Character'Val (10);
     begin
         Open (File, In_File, Path);
 
         while not End_Of_File (File) loop
+            if End_Of_Line (File) then
+                Append (Buffer, LF_Char);
+            end if;
             Get (File, Symbol);
             Append (Buffer, Symbol);
         end loop;
 
         Close (File);
+
+        --  for I in 1..Length (Buffer) loop
+        --      if Element (Buffer, I) = LF_Char then
+        --          Put ("|");
+        --      else
+        --          Put (Element (Buffer, I));
+        --      end if;
+        --  end loop;
 
         return To_Wide_Wide_String (Buffer);
     end Read_File;
