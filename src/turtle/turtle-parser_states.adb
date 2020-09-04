@@ -65,6 +65,14 @@ package body Turtle.Parser_States is
           Parser_State.Base_URI.Ends_With ("/");
     end Is_Base_IRI_Ending_Correctly;
 
+    function Is_Base_IRI_Relative
+      (Parser_State : in out Parser_State_Type)
+      return Boolean is
+    begin
+        return Parser_State.Base_URI.Index ("/.") > 0 or else
+          Parser_State.Base_URI.Index ("/..") > 0;
+    end Is_Base_IRI_Relative;
+
     procedure Set_Base_URI (Parser_State : in out Parser_State_Type;
                             Base_URI : Universal_String) is
     begin

@@ -45,6 +45,13 @@ package body Elements.Prefixes is
           Prefix.IRI.Ends_With ("/");
     end Is_IRI_Ending_Correctly;
 
+    function Is_Relative_IRI (Prefix : Prefix_Type)
+                             return Boolean is
+    begin
+        return Prefix.IRI.Index ("/.") > 0 or else
+          Prefix.IRI.Index ("/..") > 0;
+    end Is_Relative_IRI;
+
     procedure Set_IRI (Prefix : in out Prefix_Type;
                        IRI : Universal_String) is
     begin

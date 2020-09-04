@@ -114,6 +114,10 @@ package Syntactical.Analyser is
       (Analyser : in out Syntax_Analyser_Type)
       return Boolean;
 
+    function Is_Base_IRI_Relative
+      (Analyser : in out Syntax_Analyser_Type)
+      return Boolean;
+
 private
 
     type Syntax_Analyser_Type is tagged record

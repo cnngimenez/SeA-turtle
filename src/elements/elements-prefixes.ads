@@ -61,6 +61,7 @@ package Elements.Prefixes is
     procedure Set_Name (Prefix : in out Prefix_Type; Name : Universal_String);
 
     function Is_IRI_Ending_Correctly (Prefix : Prefix_Type) return Boolean;
+    function Is_Relative_IRI (Prefix : Prefix_Type) return Boolean;
 
 private
 

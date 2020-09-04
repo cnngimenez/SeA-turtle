@@ -701,6 +701,13 @@ package body Syntactical.Rules is
                  ("The following base IRI should end with ""#"" or ""/"":")
                  & Analyser.Get_Base_URI);
         end if;
+        if Analyser.Is_Base_IRI_Relative then
+            Warning_Callback
+              (To_Universal_String
+                 ("The following base IRI should not be a relative IRI "
+                    & "(Should not have ""/."" or ""/..""):")
+                 & Analyser.Get_Base_URI);
+        end if;
     end Verify_Base_IRI;
 
     procedure Verify_Namespace_Prefix (Prefix : Prefix_Type) is
@@ -709,6 +716,15 @@ package body Syntactical.Rules is
             Warning_Callback
               (To_Universal_String
                  ("The following prefix IRI should end with ""#"" or ""/"":")
+                 & Prefix.Get_Name
+                 & To_Universal_String (" -> ")
+                 & Prefix.Get_IRI);
+        end if;
+        if Prefix.Is_Relative_IRI then
+            Warning_Callback
+              (To_Universal_String
+                 ("The prefix IRI should not be a relative IRI "
+                    & "(Should not have ""/."" or ""/..""):")
                  & Prefix.Get_Name
                  & To_Universal_String (" -> ")
                  & Prefix.Get_IRI);
