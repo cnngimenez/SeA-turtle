@@ -77,7 +77,10 @@ package Syntactical.Analyser is
                         return Token_Type;
     function Is_End_Of_Source (Syntax_Analyser : in out Syntax_Analyser_Type)
                               return Boolean;
-
+    function Get_Line_Number (Syntax_Analyser : in out Syntax_Analyser_Type)
+                             return Natural;
+    function Get_Column_Number (Syntax_Analyser : in out Syntax_Analyser_Type)
+                               return Natural;
     --  --------------------
     --  Parser State management
     --  --------------------

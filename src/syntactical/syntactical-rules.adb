@@ -19,6 +19,7 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Characters.Conversions;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
@@ -203,6 +204,28 @@ package body Syntactical.Rules is
         return Ret;
     end Collection;
 
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return String is
+        Line_Number : constant Natural := Analyser.Get_Line_Number;
+        Column_Number : constant Natural  := Analyser.Get_Column_Number;
+    begin
+        return "(" & Line_Number'Image & " : "
+          & Column_Number'Image & "): ";
+    end Current_Position;
+
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return Wide_Wide_String is
+        use Ada.Characters;
+    begin
+        return Conversions.To_Wide_Wide_String (Current_Position (Analyser));
+    end Current_Position;
+
+    function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
+                              return Universal_String is
+    begin
+        return To_Universal_String (Current_Position (Analyser));
+    end Current_Position_Us;
+
     procedure Debug_Put (Analyser : in out Syntax_Analyser_Type;
                          S : Wide_Wide_String) is
     begin
@@ -265,8 +288,9 @@ package body Syntactical.Rules is
             return True;
         else
             raise Expected_Token_Exception with
-              "Expected token of class '" & Token_Class'Image &
-              "' and got '" & Token.Get_Class'Image & "'.";
+              Current_Position (Analyser)
+              & "Expected token of class '" & Token_Class'Image
+              & "' and got '" & Token.Get_Class'Image & "'.";
             --  return False;
         end if;
     end Expect_Token;
@@ -296,7 +320,8 @@ package body Syntactical.Rules is
             return True;
         else
             raise Expected_Token_Exception with
-              "Unexpected token value.";
+              Current_Position (Analyser)
+              & "Unexpected token value.";
             --  return False;
         end if;
     end Expect_Token;
@@ -485,7 +510,7 @@ package body Syntactical.Rules is
             Prefix.Initialize (Token_Prefix.Get_Value, IRI_Str);
             Prefix_Directive_Callback (Prefix);
 
-            Verify_Namespace_Prefix (Prefix);
+            Verify_Namespace_Prefix (Analyser, Prefix);
         end if;
 
         End_Rule (Analyser);
@@ -523,7 +548,7 @@ package body Syntactical.Rules is
     begin
         Begin_Rule (Analyser, "RDF_Literal");
 
-        Ret := String (Analyser);
+        Ret := String_Rule (Analyser);
 
         if Accept_Token (Analyser, Language_Tag) then
             End_Rule (Analyser);
@@ -564,7 +589,7 @@ package body Syntactical.Rules is
         --  if Ret then
         --  TODO add the same as @prefix (Prefix_ID) rule.
 
-        --  Verify_Namespace_Prefix (Prefix);
+        --  Verify_Namespace_Prefix (analyser, Prefix);
         --  end if;
 
         End_Rule (Analyser);
@@ -589,7 +614,7 @@ package body Syntactical.Rules is
 
     --  [17] String ::= STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE
     --    | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
-    function String (Analyser : in out Syntax_Analyser_Type)
+    function String_Rule (Analyser : in out Syntax_Analyser_Type)
                     return Boolean is
         Ret : Boolean;
     begin
@@ -603,7 +628,7 @@ package body Syntactical.Rules is
 
         End_Rule (Analyser);
         return Ret;
-    end String;
+    end String_Rule;
 
     --  [10] subject ::= iri | BlankNode | collection
     function Subject (Analyser : in out Syntax_Analyser_Type)
@@ -697,24 +722,28 @@ package body Syntactical.Rules is
     begin
         if not Analyser.Is_Base_IRI_Ending_Correctly then
             Warning_Callback
-              (To_Universal_String
+              (Current_Position_Us (Analyser)
+               & To_Universal_String
                  ("The following base IRI should end with ""#"" or ""/"":")
                  & Analyser.Get_Base_URI);
         end if;
         if Analyser.Is_Base_IRI_Relative then
             Warning_Callback
-              (To_Universal_String
+              (Current_Position_Us (Analyser)
+                 & To_Universal_String
                  ("The following base IRI should not be a relative IRI "
                     & "(Should not have ""/."" or ""/..""):")
                  & Analyser.Get_Base_URI);
         end if;
     end Verify_Base_IRI;
 
-    procedure Verify_Namespace_Prefix (Prefix : Prefix_Type) is
+    procedure Verify_Namespace_Prefix (Analyser : in out Syntax_Analyser_Type;
+                                       Prefix : Prefix_Type) is
     begin
         if not Prefix.Is_IRI_Ending_Correctly then
             Warning_Callback
-              (To_Universal_String
+              (Current_Position_Us (Analyser)
+                 & To_Universal_String
                  ("The following prefix IRI should end with ""#"" or ""/"":")
                  & Prefix.Get_Name
                  & To_Universal_String (" -> ")
@@ -722,7 +751,8 @@ package body Syntactical.Rules is
         end if;
         if Prefix.Is_Relative_IRI then
             Warning_Callback
-              (To_Universal_String
+              (Current_Position_Us (Analyser)
+                 & To_Universal_String
                  ("The prefix IRI should not be a relative IRI "
                     & "(Should not have ""/."" or ""/..""):")
                  & Prefix.Get_Name

@@ -41,9 +41,13 @@ package Source is
     function Is_End_Of_Source (Source : Source_Type) return Boolean;
 
     function Get_Current_Position (Source : Source_Type) return Natural;
+    function Get_Current_Column_Number (Source : Source_Type) return Natural;
+    function Get_Current_Line_Number (Source : Source_Type) return Natural;
 
 private
     type Source_Type is tagged record
+        Column_Number : Natural;
+        Line_Number : Natural;
         Buffer : Unbounded_Wide_Wide_String;
         Current_Position : Natural;
     end record;

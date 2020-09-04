@@ -35,6 +35,17 @@ package body Lexical.Turtle_Lexer is
         Lexer.Token_Buffer := Invalid_Token;
     end Create;
 
+    function Get_Column_Number (Lexer : Lexer_Type)
+                               return Natural is
+    begin
+        return Lexer.Source.Get_Current_Column_Number;
+    end Get_Column_Number;
+
+    function Get_Line_Number (Lexer : Lexer_Type) return Natural is
+    begin
+        return Lexer.Source.Get_Current_Line_Number;
+    end Get_Line_Number;
+
     function Get_Source (Lexer : Lexer_Type) return Source_Type is
     begin
         return Lexer.Source;

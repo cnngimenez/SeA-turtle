@@ -79,6 +79,12 @@ package body Syntactical.Analyser is
         return Analyser.Parser_State.Get_Base_URI;
     end Get_Base_URI;
 
+    function Get_Column_Number (Syntax_Analyser : in out Syntax_Analyser_Type)
+                               return Natural is
+    begin
+        return Syntax_Analyser.Lexer.Get_Column_Number;
+    end Get_Column_Number;
+
     function Get_Debug_Mode (Syntax_Analyser : Syntax_Analyser_Type)
                             return Debug_Mode_Type is
     begin
@@ -90,6 +96,12 @@ package body Syntactical.Analyser is
     begin
         return Syntax_Analyser.Lexer;
     end Get_Lexer;
+
+    function Get_Line_Number (Syntax_Analyser : in out Syntax_Analyser_Type)
+                             return Natural is
+    begin
+        return Syntax_Analyser.Lexer.Get_Line_Number;
+    end Get_Line_Number;
 
     function Get_Parser_State (Syntax_Analyser : Syntax_Analyser_Type)
                       return Parser_State_Type is

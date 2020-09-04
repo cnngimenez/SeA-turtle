@@ -22,6 +22,22 @@
 package body Source is
     EOF_Char : constant Wide_Wide_Character :=
       Wide_Wide_Character'Val (0);
+    LF_Char : constant Wide_Wide_Character :=
+      Wide_Wide_Character'Val (10);
+    CR_Char : constant Wide_Wide_Character :=
+      Wide_Wide_Character'Val (10);
+
+    function Get_Current_Column_Number (Source : Source_Type)
+                                       return Natural is
+    begin
+        return Source.Column_Number;
+    end Get_Current_Column_Number;
+
+    function Get_Current_Line_Number (Source : Source_Type)
+                                     return Natural is
+    begin
+        return Source.Line_Number;
+    end Get_Current_Line_Number;
 
     function Get_Current_Position (Source : Source_Type) return Natural is
     begin
@@ -33,6 +49,8 @@ package body Source is
     begin
         Source.Buffer := To_Unbounded_Wide_Wide_String (Data);
         Source.Current_Position := 0;
+        Source.Column_Number := 0;
+        Source.Line_Number := 0;
     end Initialize;
 
     function Is_End_Of_Source (Source : Source_Type) return Boolean is
@@ -52,6 +70,13 @@ package body Source is
             Source.Current_Position := Source.Current_Position + 1;
             Symbol := Element (Source.Buffer, Source.Current_Position);
         end if;
+
+        if Symbol = LF_Char or else Symbol = CR_Char then
+            Source.Line_Number := Source.Line_Number + 1;
+            Source.Column_Number := 0;
+        end if;
+
+        Source.Column_Number := Source.Column_Number + 1;
     end Next;
 
     procedure Previous (Source : in out Source_Type;
@@ -66,6 +91,12 @@ package body Source is
             Source.Current_Position := Source.Current_Position - 1;
         end if;
         Symbol := Element (Source.Buffer, Source.Current_Position);
+
+        if Symbol = LF_Char or else Symbol = CR_Char then
+            Source.Line_Number := Source.Line_Number - 1;
+            Source.Column_Number := 0;
+        end if;
+
     end Previous;
 
 end Source;

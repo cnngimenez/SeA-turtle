@@ -64,6 +64,8 @@ package Lexical.Turtle_Lexer is
     --
     function Get_Source (Lexer : Lexer_Type) return Source_Type;
 
+    function Get_Column_Number (Lexer : Lexer_Type) return Natural;
+    function Get_Line_Number (Lexer : Lexer_Type) return Natural;
 private
 
     type Lexer_Type is tagged record

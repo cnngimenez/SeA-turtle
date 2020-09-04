@@ -91,7 +91,8 @@ package Syntactical.Rules is
                          return Boolean;
     function Boolean_Literal (Analyser : in out Syntax_Analyser_Type)
                              return Boolean;
-    function String (Analyser : in out Syntax_Analyser_Type)
+    --  This is the String rule, but clashes with Ada's String type.
+    function String_Rule (Analyser : in out Syntax_Analyser_Type)
                     return Boolean;
     function IRI (Analyser : in out Syntax_Analyser_Type;
                   IRI_Str : in out Universal_String)
@@ -159,9 +160,17 @@ private
 
     --  Check if the prefix is correctly written. Raise exceptions or
     --  warnings accordingly.
-    procedure Verify_Namespace_Prefix (Prefix : Prefix_Type);
+    procedure Verify_Namespace_Prefix (Analyser : in out Syntax_Analyser_Type;
+                                       Prefix : Prefix_Type);
 
     --  Check if the Base IRI is correctly written. Raise exceptions or
     --  warnings if needed.
     procedure Verify_Base_IRI (Analyser : in out Syntax_Analyser_Type);
+
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return String;
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return Wide_Wide_String;
+    function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
+                                 return Universal_String;
 end Syntactical.Rules;
