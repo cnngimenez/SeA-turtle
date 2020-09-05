@@ -1,6 +1,6 @@
---  turtle.gpr ---
+--  turtle_lib.gpr ---  Project Manager File
 
---  Copyright 2020 cnngimenez
+--  Copyright 2020 poo
 --
 --  Author: cnngimenez
 
@@ -19,24 +19,28 @@
 
 -------------------------------------------------------------------------
 
-with "matreshka_league.gpr";
-with "turtle_lib.gpr";
+--  Use this command to build: gnatmake -P turtle_lib.gpr
 
-project Turtle is
+--  Add other projects for compiling using with:
+--
+--  with "matreshka/league.gpr";
+--  with "gtkada.gpr";
+
+library project Turtle_Lib is
+
+  for Library_Name use "turtle";
+  for Library_Dir use "lib";
+  for Object_Dir use External ("OBJECT_DIR", "library_objs");
+
+  for Library_Kind use External ("LIBRARY_KIND", "relocatable");
 
   for Source_Dirs use (
-                       "src/programs"
+                       "src",
+                       "src/lexical",
+                       "src/elements",
+                       "src/turtle",
+                       "src/syntactical"
                       );
-  for Object_Dir use "program_objs";
-  for Exec_Dir use "bin";
-  for Main use (
-                "lexical_analyser.adb",
-                "symbol_set.adb",
-                "lexical_automata.adb",
-                "automata_transition_function.adb",
-                "syntactical_analyser.adb"
-               );
-
   package Compiler is
       for Default_Switches ("Ada") use
         (
@@ -47,6 +51,8 @@ project Turtle is
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
          "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu"
+         --  Requested by the linker to generate dynamic libraries.
+         --  "-fPIC"
         );
   end Compiler;
 
@@ -57,4 +63,4 @@ project Turtle is
         );
   end Binder;
 
-end Turtle;
+end Turtle_Lib;

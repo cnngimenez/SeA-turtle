@@ -4,3 +4,8 @@ bin
 objs
 *.ali
 makefile.setup
+lib/**
+library_objs/**
+library_relocatable_objs/**
+library_static_objs/**
+program_objs/**

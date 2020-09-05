@@ -22,26 +22,75 @@
 
 ### Makefile ends here
 
+-include makefile.setup
+
 ## What type of library should I compile (dynamic, static or static-pic)?
-LIBRARY_TYPE=relocatable
+ifndef LIBRARY_KIND
+  LIBRARY_KIND=all
+endif
 ## Where are the .ads files?
-# ADA_INCLUDE_PATH=
+# ifndef ADA_INCLUDE_PATH
+#   ADA_INCLUDE_PATH=
+# endif
 ## Where are the .gpr files?
-# GPR_PROJECT_PATH=
+# ifndef GPR_PROJECT_PATH
+#   GPR_PROJECT_PATH=
+# endif
 ## Where should I install the files
 ifndef prefix
   prefix=/usr/share/local
 endif
 
--include makefile.setup
+
 
 all: compile
 
-compile:
-	gprbuild -p -P turtle.gpr 
+compile: compile_library compile_programs
 
-install:
+install: install_programs install_library 
+
+clean: clean_library clean_programs
+
+uninstall: uninstall_library uninstall_program
+
+## Programs
+
+compile_programs:
+ifeq ($(LIBRARY_KIND),all)
+	gprbuild -p -P turtle.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+else
+	gprbuild -p -P turtle.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
+endif
+
+install_programs:
 	gprinstall -p turtle.gpr --prefix=$(prefix)
+
+clean_programs:
+	gprclean turtle.gpr
+
+uninstall_programs:
+	gprinstall --uninstall --prefix=$(prefix) turtle
+
+## Library
+
+compile_library:
+ifeq ($(LIBRARY_KIND),all)
+	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
+else
+	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
+endif
+
+clean_library:
+	gprclean turtle_lib.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+	gprclean turtle_lib.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
+	gprclean turtle_lib.gpr
+
+install_library:
+	gprinstall -p -P turtle_lib.gpr --prefix=$(prefix)
+
+uninstall_library:
+	gprinstall --uninstall --prefix=$(prefix) turtle_lib
 
 ## Rules that uses no echoing
 ## .SILENT: setup
@@ -53,9 +102,10 @@ setup:
 	echo "## ## Makefile personal setup ##" > makefile.setup
 	echo "## Edit this file with your own settings" >> makefile.setup
 
-	echo "## Type of library to create:" >> makefile.setup
-	echo "## Values: relocatable or static" >> makefile.setup
-	echo "LIBRARY_TYPE=$(LIBRARY_TYPE)" >> makefile.setup
+	echo "## Type of library to create." >> makefile.setup
+	echo "## Value \"all\" = relocatable and static" >> makefile.setup
+	echo "## Values: relocatable, static, static-pic or all" >> makefile.setup
+	echo "LIBRARY_KIND=$(LIBRARY_KIND)" >> makefile.setup
 	echo "## Where are the .ads files?" >> makefile.setup
 	echo "ADA_INCLUDE_PATH=$(ADA_INCLUDE_PATH)" >> makefile.setup
 	echo "GPR_PROJECT_PATH=$(GPR_PROJECT_PATH)" >> makefile.setup
