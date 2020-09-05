@@ -62,6 +62,7 @@ package Elements.Prefixes is
 
     function Is_IRI_Ending_Correctly (Prefix : Prefix_Type) return Boolean;
     function Is_Relative_IRI (Prefix : Prefix_Type) return Boolean;
+    function Is_IRI_Valid (Prefix : Prefix_Type) return Boolean;
 
 private
 

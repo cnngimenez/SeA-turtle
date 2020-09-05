@@ -720,6 +720,13 @@ package body Syntactical.Rules is
 
     procedure Verify_Base_IRI (Analyser : in out Syntax_Analyser_Type) is
     begin
+        if not Analyser.Is_Base_IRI_Valid then
+            Warning_Callback
+              (Current_Position_Us (Analyser)
+                 & To_Universal_String
+                 ("The following base IRI is not a valid IRI: ")
+                 & Analyser.Get_Base_URI);
+        end if;
         if not Analyser.Is_Base_IRI_Ending_Correctly then
             Warning_Callback
               (Current_Position_Us (Analyser)
@@ -740,11 +747,20 @@ package body Syntactical.Rules is
     procedure Verify_Namespace_Prefix (Analyser : in out Syntax_Analyser_Type;
                                        Prefix : Prefix_Type) is
     begin
+        if not Prefix.Is_IRI_Valid then
+            Warning_Callback
+              (Current_Position_Us (Analyser)
+                 & To_Universal_String
+                 ("The following prefix has not a valid IRI: ")
+                 & Prefix.Get_Name
+                 & To_Universal_String (" -> ")
+                 & Prefix.Get_IRI);
+        end if;
         if not Prefix.Is_IRI_Ending_Correctly then
             Warning_Callback
               (Current_Position_Us (Analyser)
                  & To_Universal_String
-                 ("The following prefix IRI should end with ""#"" or ""/"":")
+                 ("The following prefix IRI should end with ""#"" or ""/"": ")
                  & Prefix.Get_Name
                  & To_Universal_String (" -> ")
                  & Prefix.Get_IRI);
@@ -754,7 +770,7 @@ package body Syntactical.Rules is
               (Current_Position_Us (Analyser)
                  & To_Universal_String
                  ("The prefix IRI should not be a relative IRI "
-                    & "(Should not have ""/."" or ""/..""):")
+                    & "(Should not have ""/."" or ""/..""): ")
                  & Prefix.Get_Name
                  & To_Universal_String (" -> ")
                  & Prefix.Get_IRI);

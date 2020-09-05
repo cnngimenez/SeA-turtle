@@ -120,6 +120,9 @@ package Syntactical.Analyser is
     function Is_Base_IRI_Relative
       (Analyser : in out Syntax_Analyser_Type)
       return Boolean;
+    function Is_Base_IRI_Valid
+      (Analyser : in out Syntax_Analyser_Type)
+      return Boolean;
 
 private
 

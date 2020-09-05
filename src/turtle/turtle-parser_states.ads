@@ -72,6 +72,10 @@ package Turtle.Parser_States is
       (Parser_State : in out Parser_State_Type)
       return Boolean;
 
+    function Is_Base_IRI_Valid
+      (Parser_State : in out Parser_State_Type)
+      return Boolean;
+
 private
 
     type Parser_State_Type is tagged record

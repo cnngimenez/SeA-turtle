@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with League.IRIs;
+use League.IRIs;
+
 package body Turtle.Parser_States is
 
     procedure Assign_Namespace (Parser_State : in out Parser_State_Type;
@@ -68,10 +71,24 @@ package body Turtle.Parser_States is
     function Is_Base_IRI_Relative
       (Parser_State : in out Parser_State_Type)
       return Boolean is
+        IRIObj : constant IRI :=
+          From_Universal_String (Parser_State.Base_URI);
     begin
         return Parser_State.Base_URI.Index ("/.") > 0 or else
-          Parser_State.Base_URI.Index ("/..") > 0;
+          not IRIObj.Is_Absolute;
     end Is_Base_IRI_Relative;
+
+    function Is_Base_IRI_Valid
+      (Parser_State : in out Parser_State_Type)
+      return Boolean is
+        --  IRIObj : constant IRI :=
+        --    From_Universal_String (Parser_State.Base_URI);
+    begin
+        pragma Compile_Time_Warning
+          (True, "Matreshka has not implemented Is_Valid!");
+        --  return IRIObj.Is_Valid;
+        return True;
+    end Is_Base_IRI_Valid;
 
     procedure Set_Base_URI (Parser_State : in out Parser_State_Type;
                             Base_URI : Universal_String) is

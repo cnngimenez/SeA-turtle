@@ -129,6 +129,13 @@ package body Syntactical.Analyser is
         return Analyser.Parser_State.Is_Base_IRI_Relative;
     end Is_Base_IRI_Relative;
 
+    function Is_Base_IRI_Valid
+      (Analyser : in out Syntax_Analyser_Type)
+      return Boolean is
+    begin
+        return Analyser.Parser_State.Is_Base_IRI_Relative;
+    end Is_Base_IRI_Valid;
+
     function Is_End_Of_Source (Syntax_Analyser : in out Syntax_Analyser_Type)
                               return Boolean is
     begin

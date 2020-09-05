@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with League.IRIs;
+use League.IRIs;
+
 package body Elements.Prefixes is
 
     function Get_IRI (Prefix : Prefix_Type) return Universal_String is
@@ -45,11 +48,24 @@ package body Elements.Prefixes is
           Prefix.IRI.Ends_With ("/");
     end Is_IRI_Ending_Correctly;
 
+    function Is_IRI_Valid (Prefix : Prefix_Type)
+                          return Boolean is
+        --  IRI_Obj : constant IRI := From_Universal_String (Prefix.IRI);
+    begin
+        pragma Compile_Time_Warning
+          (True, "Matreshka has not implemented Is_Valid!");
+        --  return IRI_Obj.Is_Valid;
+        return True;
+    end Is_IRI_Valid;
+
     function Is_Relative_IRI (Prefix : Prefix_Type)
                              return Boolean is
+        IRI_Obj : constant IRI := From_Universal_String (Prefix.IRI);
     begin
-        return Prefix.IRI.Index ("/.") > 0 or else
-          Prefix.IRI.Index ("/..") > 0;
+        return not IRI_Obj.Is_Absolute or else
+          Prefix.IRI.Index ("/.") > 0;
+        --  return Prefix.IRI.Index ("/.") > 0 or else
+        --  Prefix.IRI.Index ("/..") > 0;
     end Is_Relative_IRI;
 
     procedure Set_IRI (Prefix : in out Prefix_Type;

@@ -50,7 +50,7 @@ project Turtle is
          --  All warnings and style checkings!
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
-         "-gnatyu", "-gnatyx", "-gnaty4"
+         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu"
         );
   end Compiler;
 
