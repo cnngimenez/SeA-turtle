@@ -24,8 +24,8 @@ use League.Strings;
 
 with Turtle.Blank_Node_Labels;
 use Turtle.Blank_Node_Labels;
-with Turtle.Namespaces;
-use Turtle.Namespaces;
+with SeA.Namespaces.Namespaces;
+use SeA.Namespaces.Namespaces;
 
 --  The parser state is defined at the RDF 1.1 Turtle W3C standard (see [1]).
 --  It defines the needed items for parsing triples from turtle statements.

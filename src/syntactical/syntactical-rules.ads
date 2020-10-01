@@ -28,8 +28,8 @@ with Lexical.Token;
 use Lexical.Token;
 with SeA.RDF.Triples;
 use SeA.RDF.Triples;
-with Elements.Prefixes;
-use Elements.Prefixes;
+with SeA.Namespaces.Prefixes;
+use SeA.Namespaces.Prefixes;
 
 generic
 

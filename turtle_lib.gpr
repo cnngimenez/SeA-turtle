@@ -38,7 +38,6 @@ library project Turtle_Lib is
   for Source_Dirs use (
                        "src",
                        "src/lexical",
-                       "src/elements",
                        "src/turtle",
                        "src/syntactical"
                       );
