@@ -3,6 +3,8 @@ Parse an RDF/Turtle file to obtain the RDF tripples.
 
 The lexical and syntactical analyser are implemented according to the rules at the [W3C RDF 1.1 Turtle grammar specification](https://www.w3.org/TR/2014/REC-turtle-20140225/#sec-grammar). See the "design" folder for more information on the implementation.
 
+![GPL Licensed](https://img.shields.io/badge/License-GPLv3-informational?logo=gnu) ![Ada Version](https://img.shields.io/badge/Ada-2012-informational)
+
 ## Source
 The `Source` package and the `Source.Source_Type` type represent a data source. It could be a stream file, a random access file, a wide wide string, etc. 
 
@@ -42,9 +44,26 @@ The syntactical analyser is a [recursive descent parser](https://en.wikipedia.or
 # Compiling
 The requirements are
 
-- the Ada GNAT compiler 
-- the GPRBuild tools
-- the [Matreshka library](https://forge.ada-ru.org/matreshka)
+- The Ada GNAT compiler. 
+- The GPRBuild tools.
+- The [Matreshka library](https://forge.ada-ru.org/matreshka).
+- The [SeA library](https://github.com/cnngimenez/SeA).
+
+The usual sequence may work for your environment:
+
+```
+make
+make install
+```
+
+The Makefile can be configure at the makefile.setup file. This file can be generated with the following command:
+
+```
+make setup
+```
+
+
+## Compiling with GPRBuild
 
 Use the following commands to compile:
 
