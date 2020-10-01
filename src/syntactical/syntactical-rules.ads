@@ -26,8 +26,8 @@ use Syntactical.Analyser;
 
 with Lexical.Token;
 use Lexical.Token;
-with Elements.Triples;
-use Elements.Triples;
+with SeA.RDF.Triples;
+use SeA.RDF.Triples;
 with Elements.Prefixes;
 use Elements.Prefixes;
 

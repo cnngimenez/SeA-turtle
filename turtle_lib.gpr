@@ -25,6 +25,7 @@
 --
 --  with "matreshka/league.gpr";
 --  with "gtkada.gpr";
+with "SeA.gpr";
 
 library project Turtle_Lib is
 
@@ -50,9 +51,11 @@ library project Turtle_Lib is
          --  All warnings and style checkings!
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
-         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu"
+         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu",
          --  Requested by the linker to generate dynamic libraries.
          --  "-fPIC"
+         --  Print full path
+         "-gnatef"
         );
   end Compiler;
 

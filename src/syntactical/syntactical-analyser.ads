@@ -22,8 +22,8 @@
 with League.Strings;
 use League.Strings;
 
-with Elements.Triples;
-use Elements.Triples;
+with SeA.RDF.Triples;
+use SeA.RDF.Triples;
 
 with Lexical.Token;
 use Lexical.Token;

@@ -27,8 +27,8 @@ with Ada.Strings.Wide_Wide_Unbounded;
 use Ada.Strings.Wide_Wide_Unbounded;
 
 with Syntactical.Rules;
-with Elements.Triples;
-use Elements.Triples;
+with SeA.RDF.Triples;
+use SeA.RDF.Triples;
 with Elements.Prefixes;
 use Elements.Prefixes;
 with Source;
