@@ -1,4 +1,4 @@
---  turtle.gpr ---
+--  SeA_turtle_binaries.gpr ---
 
 --  Copyright 2020 cnngimenez
 --
@@ -20,9 +20,9 @@
 -------------------------------------------------------------------------
 
 with "matreshka_league.gpr";
-with "turtle_lib.gpr";
+with "SeA_turtle.gpr";
 
-project Turtle is
+project SeA_Turtle_binaries is
 
   for Source_Dirs use (
                        "src/programs"
@@ -57,4 +57,4 @@ project Turtle is
         );
   end Binder;
 
-end Turtle;
+end SeA_Turtle_Binaries;

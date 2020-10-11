@@ -25,11 +25,11 @@
 --
 --  with "matreshka/league.gpr";
 --  with "gtkada.gpr";
-with "SeA.gpr";
+with "SeA_common.gpr";
 
-library project Turtle_Lib is
+library project SeA_Turtle is
 
-  for Library_Name use "turtle";
+  for Library_Name use "SeA_turtle";
   for Library_Dir use "lib";
   for Object_Dir use External ("OBJECT_DIR", "library_objs");
 
@@ -65,4 +65,4 @@ library project Turtle_Lib is
         );
   end Binder;
 
-end Turtle_Lib;
+end SeA_Turtle;

@@ -57,16 +57,16 @@ uninstall: uninstall_library uninstall_program
 
 compile_programs:
 ifeq ($(LIBRARY_KIND),all)
-	gprbuild -p -P turtle.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+	gprbuild -p -P SeA_turtle_binaries.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
 else
-	gprbuild -p -P turtle.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
+	gprbuild -p -P SeA_turtle_binaries.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
 endif
 
 install_programs:
-	gprinstall -p turtle.gpr --prefix=$(prefix)
+	gprinstall -p SeA_turtle_binaries.gpr --prefix=$(prefix)
 
 clean_programs:
-	gprclean turtle.gpr
+	gprclean SeA_turtle_binaries.gpr
 
 uninstall_programs:
 	gprinstall --uninstall --prefix=$(prefix) turtle
@@ -75,19 +75,19 @@ uninstall_programs:
 
 compile_library:
 ifeq ($(LIBRARY_KIND),all)
-	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
-	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
+	gprbuild -p -P SeA_turtle.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+	gprbuild -p -P SeA_turtle.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
 else
-	gprbuild -p -P turtle_lib.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
+	gprbuild -p -P SeA_turtle.gpr -XLIBRARY_KIND=$(LIBRARY_KIND)
 endif
 
 clean_library:
-	gprclean turtle_lib.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
-	gprclean turtle_lib.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
-	gprclean turtle_lib.gpr
+	gprclean SeA_turtle.gpr -XLIBRARY_KIND=static -XOBJECT_DIR="library_static_objs"
+	gprclean SeA_turtle.gpr -XLIBRARY_KIND=relocatable -XOBJECT_DIR="library_relocatable_objs"
+	gprclean SeA_turtle.gpr
 
 install_library:
-	gprinstall -p -P turtle_lib.gpr --prefix=$(prefix)
+	gprinstall -p -P SeA_turtle.gpr --prefix=$(prefix)
 
 uninstall_library:
 	gprinstall --uninstall --prefix=$(prefix) turtle_lib
