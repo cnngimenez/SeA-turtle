@@ -70,6 +70,8 @@ package body Lexical.Token is
             return String_Literal_Single_Quote;
         when E_Sllsq =>
             return String_Literal_Long_Single_Quote;
+        when Anon =>
+            return Anon;
         when others =>
             if Is_Final_State (State) then
                 return Not_Mapped;
