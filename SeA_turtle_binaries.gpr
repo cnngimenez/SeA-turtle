@@ -46,7 +46,9 @@ project SeA_Turtle_binaries is
          --  All warnings and style checkings!
          "-Wall", "-gnatwa", "-gnatVa", "-gnatVoi", "-gnatyy", "-gnatyB",
          "-gnatyd", "-gnatyI", "-gnatyo", "-gnatyO", "-gnatyS",
-         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu"
+         "-gnatyu", "-gnatyx", "-gnaty4", "-gnatw_c", "-gnatwi", "-gnatwu",
+         --  Print full path
+         "-gnatef"
         );
   end Compiler;
 
