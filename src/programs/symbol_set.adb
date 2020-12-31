@@ -20,7 +20,11 @@
 -------------------------------------------------------------------------
 
 with Ada.Wide_Wide_Text_IO;
-use Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
+use Ada.Text_IO;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
+
 with Lexical.Symbol_Sets;
 use Lexical.Symbol_Sets;
 
@@ -36,10 +40,10 @@ procedure Symbol_Set is
         begin
             Put ("Possible Set: '");
             if Set.Is_Unitary then
-                Put (Set.Get_Symbol);
+                Ada.Wide_Wide_Text_IO.Put (Set.Get_Symbol);
                 Put_Line ("' (Unitary set).");
             else
-                Put (Set.Get_Name'Wide_Wide_Image);
+                Put (Set.Get_Name'Image);
                 Put_Line ("'");
             end if;
             return False;
@@ -50,9 +54,8 @@ procedure Symbol_Set is
         Set := Symbol_Set_Type (Find_Set (Possible_Sets, Test_Set'Access));
     end Print_Possible_Sets;
 
-    New_Line_Char : constant Wide_Wide_Character :=
-      Wide_Wide_Character'Val (13);
-    Input_Symbol : Wide_Wide_Character;
+    New_Line_Char : constant Character := Character'Val (13);
+    Input_Symbol : Character;
     Possible_Sets : Possible_Symbol_Sets_Type;
 begin
     Put_Line ("Search the symbol sets");
@@ -61,7 +64,8 @@ begin
         Put_Line ("Enter a character");
         Get (Input_Symbol);
 
-        Possible_Sets := Get_Possible_Sets (Input_Symbol);
+        Possible_Sets := Get_Possible_Sets
+          (To_Wide_Wide_Character (Input_Symbol));
         Print_Possible_Sets (Possible_Sets);
 
         exit when Input_Symbol = New_Line_Char;

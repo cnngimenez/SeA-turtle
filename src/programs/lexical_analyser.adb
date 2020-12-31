@@ -22,9 +22,12 @@
 with Ada.Command_Line;
 use Ada.Command_Line;
 with Ada.Wide_Wide_Text_IO;
-use Ada.Wide_Wide_Text_IO;
+with Ada.Text_IO;
+use Ada.Text_IO;
 with Ada.Strings.Wide_Wide_Unbounded;
 use Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
 
 with Source;
 use Source;
@@ -43,9 +46,9 @@ procedure Lexical_Analyser is
     procedure Print_Token (Token : Token_Type) is
     begin
         Put ("Token : <");
-        Put (Token.Get_Class'Wide_Wide_Image);
+        Put (Token.Get_Class'Image);
         Put ("> : '");
-        Put (To_Wide_Wide_String (Token.Get_Value));
+        Ada.Wide_Wide_Text_IO.Put (To_Wide_Wide_String (Token.Get_Value));
         Put ("'");
         New_Line;
     end Print_Token;
@@ -53,13 +56,13 @@ procedure Lexical_Analyser is
     function Read_File (Path : String) return Wide_Wide_String is
         Buffer : Unbounded_Wide_Wide_String;
         File : File_Type;
-        Symbol : Wide_Wide_Character;
+        Symbol : Character;
     begin
         Open (File, In_File, Path);
 
         while not End_Of_File (File) loop
             Get (File, Symbol);
-            Append (Buffer, Symbol);
+            Append (Buffer, To_Wide_Wide_Character (Symbol));
         end loop;
 
         Close (File);
@@ -84,7 +87,7 @@ begin
     loop
         Token := Lexer.Take_Token;
 
-        Put (Lexer.Get_Source.Get_Current_Position'Wide_Wide_Image);
+        Put (Lexer.Get_Source.Get_Current_Position'Image);
         Put (" : ");
         Print_Token (Token);
         exit when Token = Invalid_Token or else

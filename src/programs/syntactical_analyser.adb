@@ -21,10 +21,13 @@
 
 with Ada.Command_Line;
 use Ada.Command_Line;
+with Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 with Ada.Strings.Wide_Wide_Unbounded;
 use Ada.Strings.Wide_Wide_Unbounded;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
 
 with Syntactical.Rules;
 with SeA.RDF.Triples;
@@ -89,22 +92,22 @@ procedure Syntactical_Analyser is
 
     function Read_File (Path : String) return Wide_Wide_String is
         Buffer : Unbounded_Wide_Wide_String;
-        File : File_Type;
-        Symbol : Wide_Wide_Character;
+        File : Ada.Text_IO.File_Type;
+        Symbol : Character;
         LF_Char : constant Wide_Wide_Character :=
           Wide_Wide_Character'Val (10);
     begin
-        Open (File, In_File, Path);
+        Ada.Text_IO.Open (File, Ada.Text_IO.In_File, Path);
 
-        while not End_Of_File (File) loop
-            if End_Of_Line (File) then
+        while not Ada.Text_IO.End_Of_File (File) loop
+            if Ada.Text_IO.End_Of_Line (File) then
                 Append (Buffer, LF_Char);
             end if;
-            Get (File, Symbol);
-            Append (Buffer, Symbol);
+            Ada.Text_IO.Get (File, Symbol);
+            Append (Buffer, To_Wide_Wide_Character (Symbol));
         end loop;
 
-        Close (File);
+        Ada.Text_IO.Close (File);
 
         --  for I in 1..Length (Buffer) loop
         --      if Element (Buffer, I) = LF_Char then

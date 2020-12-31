@@ -19,21 +19,24 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Text_IO;
+use Ada.Text_IO;
 with Ada.Wide_Wide_Text_IO;
-use Ada.Wide_Wide_Text_IO;
+with Ada.Characters.Conversions;
+use Ada.Characters.Conversions;
 with Lexical.Finite_Automata;
 use Lexical.Finite_Automata;
 
 procedure Lexical_Automata is
     procedure Print_State;
 
-    Input_Symbol : Wide_Wide_Character;
+    Input_Symbol : Character;
     Automata : Automata_Type;
 
     procedure Print_State is
     begin
         Put ("Automata: ");
-        Put (Automata.Get_Current_State'Wide_Wide_Image);
+        Ada.Wide_Wide_Text_IO.Put (Automata.Get_Current_State'Wide_Wide_Image);
         if Automata.Is_Accepted then
             Put (" (Accepted)");
         end if;
@@ -48,7 +51,7 @@ begin
     Print_State;
     loop
         Get (Input_Symbol);
-        Automata.Next (Input_Symbol);
+        Automata.Next (To_Wide_Wide_Character (Input_Symbol));
         Print_State;
 
         exit when End_Of_File;
