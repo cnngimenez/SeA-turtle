@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Wide_Wide_Fixed;
+use Ada.Strings.Wide_Wide_Fixed;
+
 with League.IRIs;
 use League.IRIs;
 
@@ -79,12 +82,15 @@ package body Turtle.Parser_States is
         Label : Universal_String;
     begin
         Label := To_Universal_String ("anon")
-          & Parser_State.Anon_Number'Wide_Wide_Image;
+          & Trim (Parser_State.Anon_Number'Wide_Wide_Image,
+                  Ada.Strings.Both);
+
         while Parser_State.Bnode_Labels.Map.Contains (Label) loop
             --  The label "anonN" already exists, try next one.
             Parser_State.Anon_Number := Parser_State.Anon_Number + 1;
             Label := To_Universal_String ("anon")
-              & Parser_State.Anon_Number'Wide_Wide_Image;
+              & Trim (Parser_State.Anon_Number'Wide_Wide_Image,
+                      Ada.Strings.Both);
         end loop;
 
         Parser_State.Bnode_Labels.Map.Insert
