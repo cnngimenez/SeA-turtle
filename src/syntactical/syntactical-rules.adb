@@ -142,17 +142,25 @@ package body Syntactical.Rules is
     end Begin_Rule;
 
     --  [137s] BlankNode ::= BLANK_NODE_LABEL | ANON
-    function Blank_Node (Analyser : in out Syntax_Analyser_Type)
+    function Blank_Node (Analyser : in out Syntax_Analyser_Type;
+                         Value : out Universal_String)
                         return Boolean is
-        Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "Blank_Node");
 
-        Ret := Accept_Token (Analyser, Blank_Node_Label)
-          or else Accept_Token (Analyser, Anon);
+        if Accept_Token (Analyser, Blank_Node_Label, Token) then
+            Value := Token.Get_Value;
+            End_Rule (Analyser);
+            return True;
+        elsif  Accept_Token (Analyser, Anon) then
+            Value := Analyser.Get_New_Anon_Value;
+            End_Rule (Analyser);
+            return True;
+        end if;
 
         End_Rule (Analyser);
-        return Ret;
+        return False;
     end Blank_Node;
 
     --  [14] blankNodePropertyList ::= '[' predicateObjectList ']'
@@ -396,7 +404,7 @@ package body Syntactical.Rules is
     function Object (Analyser : in out Syntax_Analyser_Type)
                     return Boolean is
         A_Triple : Triple_Type;
-        IRI_Str : Universal_String;
+        Value, IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Object");
 
@@ -406,8 +414,9 @@ package body Syntactical.Rules is
 
             End_Rule (Analyser);
             return True;
-        elsif  Blank_Node (Analyser) then
-            --  TODO
+        elsif  Blank_Node (Analyser, Value) then
+            A_Triple := Analyser.Emit_RDF_Triple (Value, Blank_Node);
+            Triple_Readed_Callback (A_Triple);
 
             End_Rule (Analyser);
             return True;
@@ -633,7 +642,7 @@ package body Syntactical.Rules is
     --  [10] subject ::= iri | BlankNode | collection
     function Subject (Analyser : in out Syntax_Analyser_Type)
                      return Boolean is
-        IRI_Str : Universal_String;
+        Value, IRI_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Subject");
 
@@ -642,8 +651,8 @@ package body Syntactical.Rules is
 
             End_Rule (Analyser);
             return True;
-        elsif Blank_Node (Analyser) then
-            --  TODO
+        elsif Blank_Node (Analyser, Value) then
+            Analyser.Assign_Cur_Subject (Value, Blank_Node);
 
             End_Rule (Analyser);
             return True;

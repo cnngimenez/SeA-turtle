@@ -46,9 +46,10 @@ package body Syntactical.Analyser is
     end Assign_Cur_Predicate;
 
     procedure Assign_Cur_Subject (Analyser : in out Syntax_Analyser_Type;
-                                  IRI : Universal_String) is
+                                  Value : Universal_String;
+                                  Subject_Type : Subject_Type_Type := IRI) is
     begin
-        Analyser.Parser_State.Set_Cur_Subject (IRI);
+        Analyser.Parser_State.Set_Cur_Subject (Value, Subject_Type);
     end Assign_Cur_Subject;
 
     procedure Assign_Namespace (Analyser : in out Syntax_Analyser_Type;
@@ -59,18 +60,12 @@ package body Syntactical.Analyser is
     end Assign_Namespace;
 
     function Emit_RDF_Triple (Analyser : in out Syntax_Analyser_Type;
-                              Object_IRI : Universal_String)
+                              Object_Value : Universal_String;
+                              Object_Type : Object_Type_Type := IRI)
                              return Triple_Type is
-        A_Triple : Triple_Type;
     begin
-        A_Triple.Initialize
-          (Analyser.Parser_State.Get_Cur_Subject,
-           Analyser.Parser_State.Get_Cur_Predicate,
-           Object_IRI,
-           Subject_Type => IRI,
-           Object_Type => IRI);
-
-        return A_Triple;
+        return Analyser.Parser_State.Get_New_Triple
+          (Object_Value, Object_Type);
     end Emit_RDF_Triple;
 
     function Get_Base_URI (Analyser : in out Syntax_Analyser_Type)
@@ -102,6 +97,12 @@ package body Syntactical.Analyser is
     begin
         return Syntax_Analyser.Lexer.Get_Line_Number;
     end Get_Line_Number;
+
+    function Get_New_Anon_Value (Syntax_Analyser : in out Syntax_Analyser_Type)
+                                return Universal_String is
+    begin
+        return Syntax_Analyser.Parser_State.Get_New_Anon_Value;
+    end Get_New_Anon_Value;
 
     function Get_Parser_State (Syntax_Analyser : Syntax_Analyser_Type)
                       return Parser_State_Type is

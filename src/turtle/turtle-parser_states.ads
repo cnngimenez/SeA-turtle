@@ -22,6 +22,8 @@
 with League.Strings;
 use League.Strings;
 
+with SeA.RDF.Triples;
+use SeA.RDF.Triples;
 with Turtle.Blank_Node_Labels;
 use Turtle.Blank_Node_Labels;
 with SeA.Namespaces.Namespaces;
@@ -39,7 +41,7 @@ package Turtle.Parser_States is
                           return Universal_String;
     function Get_Namespaces (Parser_State : Parser_State_Type)
                             return Namespaces_Type;
-    function Get_BnodeLabels (Parser_State : Parser_State_Type)
+    function Get_Bnode_Labels (Parser_State : Parser_State_Type)
                              return Blank_Node_Labels_Type;
     function Get_Cur_Subject (Parser_State : Parser_State_Type)
                              return Universal_String;
@@ -50,10 +52,12 @@ package Turtle.Parser_States is
                             Base_URI : Universal_String);
     procedure Set_Namespaces (Parser_State : in out Parser_State_Type;
                               Namespaces : Namespaces_Type);
-    procedure Set_BnodeLabels (Parser_State : in out Parser_State_Type;
-                               BnodeLabels : Blank_Node_Labels_Type);
+    procedure Set_Bnode_Labels (Parser_State : in out Parser_State_Type;
+                               Bnode_Labels : Blank_Node_Labels_Type);
     procedure Set_Cur_Subject (Parser_State : in out Parser_State_Type;
-                               Cur_Subject : Universal_String);
+                               Cur_Subject : Universal_String;
+                               Cur_Subject_Type : Subject_Type_Type :=
+                                 SeA.RDF.Triples.IRI);
     procedure Set_Cur_Predicate (Parser_State : in out Parser_State_Type;
                                  Cur_Predicate : Universal_String);
 
@@ -63,6 +67,25 @@ package Turtle.Parser_States is
     function Substitute_Prefix (Parser_State : in out Parser_State_Type;
                                 Pname_Ns : Universal_String)
                                return Universal_String;
+
+    --  Add a blank node to the map.
+    --  Blanknode_Value is a Universal_String with the token value
+    --  (i.e. "_:LABEL", in RDF 1.1 TR section 3.4 the label is called
+    --  Blank node identifier).
+    --
+    --  According to section 7.2 of the Turtle TR, the key of the BNodeLabels
+    --  map is the LABEL string.
+    --
+    --  This function returns False if the blank node exists already.
+    function Add_Blanknode (Parser_State : in out Parser_State_Type;
+                            Blanknode_Value : Universal_String)
+                           return Boolean;
+
+    --  Register a new blank node label different from the one registered
+    --  before and return it. This is used to give a new label to ANON blank
+    --  nodes.
+    function Get_New_Anon_Value (Parser_State : in out Parser_State_Type)
+                                return Universal_String;
 
     function Is_Base_IRI_Ending_Correctly
       (Parser_State : in out Parser_State_Type)
@@ -76,14 +99,25 @@ package Turtle.Parser_States is
       (Parser_State : in out Parser_State_Type)
       return Boolean;
 
+    --  Return a new RDF triple Triple_Type using the current subject and
+    --  current predicate.
+    function Get_New_Triple (Parser_State : Parser_State_Type;
+                             Object_Value : Universal_String;
+                             Object_Type : Object_Type_Type :=
+                               SeA.RDF.Triples.IRI)
+                            return Triple_Type;
+
 private
 
     type Parser_State_Type is tagged record
         Base_URI : Universal_String;
         Namespaces : Namespaces_Type;
-        BnodeLabels : Blank_Node_Labels_Type;
-        Cur_Subject : Universal_String; --  What type should this be?
-        Cur_Predicate : Universal_String; --  What type should this be?
+        Bnode_Labels : Blank_Node_Labels_Type;
+        Cur_Subject : Universal_String;
+        Cur_Subject_Type : Subject_Type_Type := IRI;
+        Cur_Predicate : Universal_String;
+
+        Anon_Number : Natural := 1;
     end record;
 
 end Turtle.Parser_States;

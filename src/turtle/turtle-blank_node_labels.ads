@@ -27,9 +27,7 @@ with League.Strings.Hash;
 
 package Turtle.Blank_Node_Labels is
 
-    type Blank_Node_Labels_Type is tagged private;
-
-private
+    --  type Blank_Node_Labels_Type is tagged private;
 
     package Bnode_Labels_Package is new Ada.Containers.Hashed_Maps
       (Key_Type => Universal_String,

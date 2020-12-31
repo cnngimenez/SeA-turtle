@@ -58,6 +58,9 @@ package Syntactical.Analyser is
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
                               Debug_Mode : Debug_Mode_Type);
 
+    function Get_New_Anon_Value (Syntax_Analyser : in out Syntax_Analyser_Type)
+                                return Universal_String;
+
     --  --------------------
     --  Debugging
     --  --------------------
@@ -95,8 +98,13 @@ package Syntactical.Analyser is
     procedure Assign_Base_URI (Analyser : in out Syntax_Analyser_Type;
                                URI : Universal_String);
 
+    --  Assign the current subject to the state. New emitted triples are going
+    --  to have this subject.
+    --
+    --  Value can be an IRI or the blank node value.
     procedure Assign_Cur_Subject (Analyser : in out Syntax_Analyser_Type;
-                                  IRI : Universal_String);
+                                  Value : Universal_String;
+                                  Subject_Type : Subject_Type_Type := IRI);
 
     --  Assign the Cur_Predicate to the given IRI. Considers the "a" string as
     --  the rdf:type IRI.
@@ -106,7 +114,8 @@ package Syntactical.Analyser is
     --  Construct an RDF_Triple with the Cur_Subject, Cur_Predicate and the
     --  given Object_IRI.
     function Emit_RDF_Triple (Analyser : in out Syntax_Analyser_Type;
-                              Object_IRI : Universal_String)
+                              Object_Value : Universal_String;
+                              Object_Type : Object_Type_Type := IRI)
                              return Triple_Type;
 
     function Substitute_Prefix (Analyser : in out Syntax_Analyser_Type;

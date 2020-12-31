@@ -102,7 +102,8 @@ package Syntactical.Rules is
     function Prefixed_Name (Analyser : in out Syntax_Analyser_Type;
                             IRI_Str : in out Universal_String)
                            return Boolean;
-    function Blank_Node (Analyser : in out Syntax_Analyser_Type)
+    function Blank_Node (Analyser : in out Syntax_Analyser_Type;
+                         Value : out Universal_String)
                         return Boolean;
 
     Expected_Token_Exception : exception;
