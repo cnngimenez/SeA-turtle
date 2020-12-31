@@ -38,14 +38,30 @@ procedure Lexical_Automata is
         Put ("Automata: ");
         Ada.Wide_Wide_Text_IO.Put (Automata.Get_Current_State'Wide_Wide_Image);
         if Automata.Is_Accepted then
-            Put (" (Accepted)");
+            Put_Line (" (Accepted)");
+            Put ("Accepted states are possible token types if mapped.");
         end if;
         if Automata.Is_Blocked then
-            Put (" BLOCKED!");
+            Put_Line (" BLOCKED!");
+            Put ("A blocked state represent an invalid token if the previous"
+                   & " step is not accepted.");
         end if;
         New_Line;
     end Print_State;
 begin
+    Put_Line ("This program simmulates the finite automata used by the "
+                & "lexical analyser. Most of the automata states (State_Type) "
+                & "are mapped into a Token_Class_Type in a latter step.");
+    Put_Line ("In other words, the output represent the automata state and "
+                & "not the resulting token class type. The state may be not "
+                & "mapped in latter steps of the analyser.");
+    Put_Line ("The automata stops when blocked or when reached the end of "
+                & "file/source. If at that point, the previous step state"
+                & "determines the acceptance of the token.");
+    Put_Line ("Enter the symbols the automata should parse. Once blocked "
+                & "restart the program. The automata won't restart from the "
+                & "initial state when an accepted state is reached or when "
+                & "blocked");
     Automata.Initialize;
 
     Print_State;

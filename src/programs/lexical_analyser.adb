@@ -51,6 +51,21 @@ procedure Lexical_Analyser is
         Ada.Wide_Wide_Text_IO.Put (To_Wide_Wide_String (Token.Get_Value));
         Put ("'");
         New_Line;
+
+        case Token.Get_Class is
+        when Not_Mapped =>
+            Put ("Not_Mapped means that the automata state may return an "
+                   & "acceptable state but it is not mapped into a "
+                   & "Token_Class_Type (a token class name).");
+            New_Line;
+        when Invalid =>
+            Put ("Invalid means that the automata has rejected the token.");
+            Put (" This is a potential lexical error to be reported to the "
+                   & " user.");
+            New_Line;
+        when others =>
+            null;
+        end case;
     end Print_Token;
 
     function Read_File (Path : String) return Wide_Wide_String is
