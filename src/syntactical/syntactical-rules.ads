@@ -81,7 +81,8 @@ package Syntactical.Rules is
                     return Boolean;
     function Literal (Analyser : in out Syntax_Analyser_Type)
                      return Boolean;
-    function Blank_Node_Property_List (Analyser : in out Syntax_Analyser_Type)
+    function Blank_Node_Property_List (Analyser : in out Syntax_Analyser_Type;
+                                       Emit_First_Triple : Boolean := False)
                                       return Boolean;
     function Collection (Analyser : in out Syntax_Analyser_Type)
                         return Boolean;

@@ -165,16 +165,41 @@ package body Syntactical.Rules is
 
     --  [14] blankNodePropertyList ::= '[' predicateObjectList ']'
     function Blank_Node_Property_List
-      (Analyser : in out Syntax_Analyser_Type)
+      (Analyser : in out Syntax_Analyser_Type;
+       Emit_First_Triple : Boolean := False)
       return Boolean
     is
         Ret : Boolean;
+        Blank_Node_Value : Universal_String;
+        A_Triple : Triple_Type;
     begin
         Begin_Rule (Analyser, "Blank_Node_Property_List");
 
-        Ret := Accept_Token (Analyser, Reserved_Word, "[")
+        Ret := Accept_Token (Analyser, Reserved_Word, "[");
+        if not Ret then
+            End_Rule (Analyser);
+            return False;
+        end if;
+
+        --  Save the current subject and predicate.
+        Blank_Node_Value := Analyser.Get_New_Anon_Value;
+        if Emit_First_Triple then
+            A_Triple := Analyser.Emit_RDF_Triple (Blank_Node_Value,
+                                                  Blank_Node);
+            Triple_Readed_Callback (A_Triple);
+        end if;
+        Analyser.Save_Cursubject;
+        Analyser.Save_Curpredicate;
+        --  Assign the current subject to be the blank_node.
+        Analyser.Assign_Cur_Subject (Blank_Node_Value, Blank_Node);
+
+        Ret := Ret
           and then Predicate_Object_List (Analyser)
           and then Expect_Token (Analyser, Reserved_Word, "]");
+
+        --  Restore current subject and predicate to the last one.
+        Analyser.Restore_Cursubject;
+        Analyser.Restore_Curpredicate;
 
         End_Rule (Analyser);
         return Ret;
@@ -201,6 +226,10 @@ package body Syntactical.Rules is
         Begin_Rule (Analyser, "Collection");
 
         Ret := Accept_Token (Analyser, Reserved_Word, "(");
+        if not Ret then
+            End_Rule (Analyser);
+            return Ret;
+        end if;
 
         while Object (Analyser) loop
             null;
@@ -425,13 +454,17 @@ package body Syntactical.Rules is
 
             End_Rule (Analyser);
             return True;
-        elsif Blank_Node_Property_List (Analyser) then
+        elsif Blank_Node_Property_List (Analyser,
+                                        Emit_First_Triple => True)
+        then
             --  TODO
 
             End_Rule (Analyser);
             return True;
         elsif Literal (Analyser) then
             --  TODO
+            --  A_Triple := Analyser.Emit_RDF_Triple (Value, Literal);
+            --  Triple_Readed_Callback (A_Triple);
 
             End_Rule (Analyser);
             return True;
