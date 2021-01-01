@@ -44,7 +44,9 @@ begin
         Token_Type := State_To_Token (State);
         if With_Invalids or else Token_Type /= Invalid then
             if Is_Final_State (State) then
-                Put_Line (State'Image & " (Acceptable) -> " & Token_Type'Image);
+                Put_Line (State'Image
+                            & " (Acceptable) -> "
+                            & Token_Type'Image);
             else
                 Put_Line (State'Image & " -> " & Token_Type'Image);
             end if;

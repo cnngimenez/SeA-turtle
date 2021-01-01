@@ -158,6 +158,40 @@ package body Syntactical.Analyser is
         end if;
     end Remove_Recursion_Level;
 
+    procedure Restore_Curpredicate (Analyser : in out Syntax_Analyser_Type) is
+        Predicate : Universal_String;
+    begin
+        Predicate := Analyser.Predicate_Heap.First_Element;
+        Analyser.Predicate_Heap.Delete_First;
+
+        Analyser.Parser_State.Set_Cur_Predicate (Predicate);
+    end Restore_Curpredicate;
+
+    procedure Restore_Cursubject (Analyser : in out Syntax_Analyser_Type) is
+        Subject_Element : Subject_Element_Type;
+    begin
+        Subject_Element := Analyser.Subject_Heap.First_Element;
+        Analyser.Subject_Heap.Delete_First;
+
+        Analyser.Parser_State.Set_Cur_Subject (Subject_Element.Subject_Value,
+                                               Subject_Element.Subject_Type);
+    end Restore_Cursubject;
+
+    procedure Save_Curpredicate (Analyser : in out Syntax_Analyser_Type) is
+    begin
+        Analyser.Predicate_Heap.Prepend
+          (Analyser.Parser_State.Get_Cur_Predicate);
+    end Save_Curpredicate;
+
+    procedure Save_Cursubject (Analyser : in out Syntax_Analyser_Type) is
+        Subject_Element : Subject_Element_Type;
+    begin
+        Subject_Element.Subject_Value := Analyser.Parser_State.Get_Cur_Subject;
+        Subject_Element.Subject_Type :=
+          Analyser.Parser_State.Get_Cur_Subject_Type;
+        Analyser.Subject_Heap.Prepend (Subject_Element);
+    end Save_Cursubject;
+
     procedure Set_Debug_Mode (Syntax_Analyser : in out Syntax_Analyser_Type;
                               Debug_Mode : Debug_Mode_Type) is
     begin

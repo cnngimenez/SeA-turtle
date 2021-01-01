@@ -71,6 +71,12 @@ package body Turtle.Parser_States is
         return Parser_State.Cur_Subject;
     end Get_Cur_Subject;
 
+    function Get_Cur_Subject_Type (Parser_State : Parser_State_Type)
+                                  return Subject_Type_Type is
+    begin
+        return Parser_State.Cur_Subject_Type;
+    end Get_Cur_Subject_Type;
+
     function Get_Namespaces (Parser_State : Parser_State_Type)
                       return Namespaces_Type is
     begin

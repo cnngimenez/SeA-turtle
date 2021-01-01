@@ -45,6 +45,8 @@ package Turtle.Parser_States is
                              return Blank_Node_Labels_Type;
     function Get_Cur_Subject (Parser_State : Parser_State_Type)
                              return Universal_String;
+    function Get_Cur_Subject_Type (Parser_State : Parser_State_Type)
+                                  return Subject_Type_Type;
     function Get_Cur_Predicate (Parser_State : Parser_State_Type)
                                return Universal_String;
 

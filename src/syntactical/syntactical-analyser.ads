@@ -19,6 +19,8 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Containers.Vectors;
+
 with League.Strings;
 use League.Strings;
 
@@ -133,11 +135,39 @@ package Syntactical.Analyser is
       (Analyser : in out Syntax_Analyser_Type)
       return Boolean;
 
+    --  Subject and predicate saving.
+    --  The following proceduresa are used to save and restore the current
+    --  subject and predicate when using blank node property lists.
+    procedure Restore_Cursubject (Analyser : in out Syntax_Analyser_Type);
+    procedure Restore_Curpredicate (Analyser : in out Syntax_Analyser_Type);
+    procedure Save_Cursubject (Analyser : in out Syntax_Analyser_Type);
+    procedure Save_Curpredicate (Analyser : in out Syntax_Analyser_Type);
+
 private
+
+    type Subject_Element_Type is tagged record
+        Subject_Value : Universal_String;
+        Subject_Type : Subject_Type_Type;
+    end record;
+
+    package Subject_Heap_Package is new Ada.Containers.Vectors
+      (Index_Type => Natural,
+       Element_type => Subject_Element_Type);
+    package Predicate_Heap_Package is new Ada.Containers.Vectors
+      (Index_Type => Natural,
+       Element_Type => Universal_String);
 
     type Syntax_Analyser_Type is tagged record
         Lexer : Lexer_Type;
         Parser_State : Parser_State_Type;
+
+        --  Subject and predicate savings.
+        --  In order to restore subject and predicate when using blank node
+        --  property lists, we need a "heap" to save them.
+        Subject_Heap : Subject_Heap_Package.Vector;
+        Predicate_Heap : Predicate_Heap_Package.Vector;
+
+        --  Debugging features:
 
         --  Should the rules be printed at standard output?
         Debug_Mode : Debug_Mode_Type := Off;
