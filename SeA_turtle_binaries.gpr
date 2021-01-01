@@ -34,6 +34,7 @@ project SeA_Turtle_binaries is
                 "symbol_set.adb",
                 "lexical_automata.adb",
                 "automata_transition_function.adb",
+                "mapped_states.adb",
                 "syntactical_analyser.adb"
                );
 
