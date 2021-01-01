@@ -79,21 +79,26 @@ package Syntactical.Rules is
                        return Boolean;
     function Object (Analyser : in out Syntax_Analyser_Type)
                     return Boolean;
-    function Literal (Analyser : in out Syntax_Analyser_Type)
+    function Literal (Analyser : in out Syntax_Analyser_Type;
+                      Value : out Universal_String)
                      return Boolean;
     function Blank_Node_Property_List (Analyser : in out Syntax_Analyser_Type;
                                        Emit_First_Triple : Boolean := False)
                                       return Boolean;
     function Collection (Analyser : in out Syntax_Analyser_Type)
                         return Boolean;
-    function Numeric_Literal (Analyser : in out Syntax_Analyser_Type)
+    function Numeric_Literal (Analyser : in out Syntax_Analyser_Type;
+                             Value : out Universal_String)
                              return Boolean;
-    function RDF_Literal (Analyser : in out Syntax_Analyser_Type)
+    function RDF_Literal (Analyser : in out Syntax_Analyser_Type;
+                          Value : out Universal_String)
                          return Boolean;
-    function Boolean_Literal (Analyser : in out Syntax_Analyser_Type)
+    function Boolean_Literal (Analyser : in out Syntax_Analyser_Type;
+                              Value : out Universal_String)
                              return Boolean;
     --  This is the String rule, but clashes with Ada's String type.
-    function String_Rule (Analyser : in out Syntax_Analyser_Type)
+    function String_Rule (Analyser : in out Syntax_Analyser_Type;
+                          Value : out Universal_String)
                     return Boolean;
     function IRI (Analyser : in out Syntax_Analyser_Type;
                   IRI_Str : in out Universal_String)

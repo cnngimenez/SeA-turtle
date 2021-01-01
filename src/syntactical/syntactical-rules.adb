@@ -206,13 +206,16 @@ package body Syntactical.Rules is
     end Blank_Node_Property_List;
 
     --  [133s] BooleanLiteral ::= 'true' | 'false'
-    function Boolean_Literal (Analyser : in out Syntax_Analyser_Type)
+    function Boolean_Literal (Analyser : in out Syntax_Analyser_Type;
+                             Value : out Universal_String)
                              return Boolean is
         Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "Boolean_Literal");
 
-        Ret := Accept_Token (Analyser, Boolean_Literal);
+        Ret := Accept_Token (Analyser, Boolean_Literal, Token);
+        Value := Token.Get_Value;
 
         End_Rule (Analyser);
         return Ret;
@@ -399,30 +402,35 @@ package body Syntactical.Rules is
     end IRI;
 
     --  [13] literal ::= RDFLiteral | NumericLiteral | BooleanLiteral
-    function Literal (Analyser : in out Syntax_Analyser_Type)
+    function Literal (Analyser : in out Syntax_Analyser_Type;
+                     Value : out Universal_String)
                      return Boolean is
         Ret : Boolean;
     begin
         Begin_Rule (Analyser, "Literal");
 
-        Ret := RDF_Literal (Analyser)
-          or else Numeric_Literal (Analyser)
-          or else Boolean_Literal (Analyser);
+        Ret := RDF_Literal (Analyser, Value)
+          or else Numeric_Literal (Analyser, Value)
+          or else Boolean_Literal (Analyser, Value);
 
         End_Rule (Analyser);
         return Ret;
     end Literal;
 
     --  [16] NumericLiteral ::= INTEGER | DECIMAL | DOUBLE
-    function Numeric_Literal (Analyser : in out Syntax_Analyser_Type)
+    function Numeric_Literal (Analyser : in out Syntax_Analyser_Type;
+                              Value : out Universal_String)
                              return Boolean is
         Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "Numeric_Literal");
 
-        Ret := Accept_Token (Analyser, Lexical.Token.Integer)
-          or else Accept_Token (Analyser, Lexical.Token.Decimal)
-          or else Accept_Token (Analyser, Lexical.Token.Double);
+        Ret := Accept_Token (Analyser, Lexical.Token.Integer, Token)
+          or else Accept_Token (Analyser, Lexical.Token.Decimal, Token)
+          or else Accept_Token (Analyser, Lexical.Token.Double, Token);
+
+        Value := Token.Get_Value;
 
         End_Rule (Analyser);
         return Ret;
@@ -461,10 +469,9 @@ package body Syntactical.Rules is
 
             End_Rule (Analyser);
             return True;
-        elsif Literal (Analyser) then
-            --  TODO
-            --  A_Triple := Analyser.Emit_RDF_Triple (Value, Literal);
-            --  Triple_Readed_Callback (A_Triple);
+        elsif Literal (Analyser, Value) then
+            A_Triple := Analyser.Emit_RDF_Triple (Value, Literal);
+            Triple_Readed_Callback (A_Triple);
 
             End_Rule (Analyser);
             return True;
@@ -584,13 +591,14 @@ package body Syntactical.Rules is
     end Prefixed_Name;
 
     --  [128s] RDFLiteral ::= String (LANGTAG | '^^' iri)?
-    function RDF_Literal (Analyser : in out Syntax_Analyser_Type)
+    function RDF_Literal (Analyser : in out Syntax_Analyser_Type;
+                         Value : out Universal_String)
                          return Boolean is
         Ret : Boolean;
     begin
         Begin_Rule (Analyser, "RDF_Literal");
 
-        Ret := String_Rule (Analyser);
+        Ret := String_Rule (Analyser, Value);
 
         if Accept_Token (Analyser, Language_Tag) then
             End_Rule (Analyser);
@@ -656,17 +664,22 @@ package body Syntactical.Rules is
 
     --  [17] String ::= STRING_LITERAL_QUOTE | STRING_LITERAL_SINGLE_QUOTE
     --    | STRING_LITERAL_LONG_SINGLE_QUOTE | STRING_LITERAL_LONG_QUOTE
-    function String_Rule (Analyser : in out Syntax_Analyser_Type)
+    function String_Rule (Analyser : in out Syntax_Analyser_Type;
+                         Value : out Universal_String)
                     return Boolean is
         Ret : Boolean;
+        Token : Token_Type;
     begin
         Begin_Rule (Analyser, "String");
 
-        Ret := Accept_Token (Analyser, String_Literal_Quote)
-          or else Accept_Token (Analyser, String_Literal_Single_Quote)
+        Ret := Accept_Token (Analyser, String_Literal_Quote, Token)
+          or else Accept_Token (Analyser, String_Literal_Single_Quote, Token)
           or else Accept_Token (Analyser,
-                                String_Literal_Long_Single_Quote)
-          or else Accept_Token (Analyser, String_Literal_Long_Quote);
+                                String_Literal_Long_Single_Quote,
+                                Token)
+          or else Accept_Token (Analyser, String_Literal_Long_Quote, Token);
+
+        Value := Token.Get_Value;
 
         End_Rule (Analyser);
         return Ret;
