@@ -180,4 +180,6 @@ private
                               return Wide_Wide_String;
     function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
                                  return Universal_String;
+
+    function Wws2s (Wws : Wide_Wide_String) return String;
 end Syntactical.Rules;

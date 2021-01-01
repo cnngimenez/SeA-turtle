@@ -19,6 +19,7 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Strings.Unbounded;
 with Ada.Characters.Conversions;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
@@ -329,8 +330,10 @@ package body Syntactical.Rules is
         else
             raise Expected_Token_Exception with
               Current_Position (Analyser)
-              & "Expected token of class '" & Token_Class'Image
-              & "' and got '" & Token.Get_Class'Image & "'.";
+                & "Expected token of class '" & Token_Class'Image
+                & "' but got '" & Token.Get_Class'Image
+                & "' and value ' "
+                & Wws2s (To_Wide_Wide_String (Token.Get_Value)) & "' .";
             --  return False;
         end if;
     end Expect_Token;
@@ -361,9 +364,23 @@ package body Syntactical.Rules is
         else
             raise Expected_Token_Exception with
               Current_Position (Analyser)
-              & "Unexpected token value.";
+                & "Unexpected token value. "
+                & "Expected token of class '" & Token_Class'Image
+                & "' and value '" & Wws2s (Value)
+                & "' but got '" & Token.Get_Class'Image
+                & "' and value ' "
+                & Wws2s (To_Wide_Wide_String (Token.Get_Value)) & "' .";
             --  return False;
         end if;
+    exception
+    when Expected_Token_Exception =>
+        raise Expected_Token_Exception with
+          Current_Position (Analyser)
+            & "Expected token of class '" & Token_Class'Image
+            & "' and value '" & Wws2s (Value)
+            & "' but got '" & Token.Get_Class'Image
+            & "' and value ' "
+            & Wws2s (To_Wide_Wide_String (Token.Get_Value)) & "' .";
     end Expect_Token;
 
     function Extract_IRI (Readed_IRI : Universal_String)
@@ -655,7 +672,7 @@ package body Syntactical.Rules is
 
         Ret := Directive (Analyser)
           or else (Triples (Analyser)
-                     and then Accept_Token (Analyser,
+                     and then Expect_Token (Analyser,
                                             Reserved_Word, "."));
 
         End_Rule (Analyser);
@@ -831,5 +848,28 @@ package body Syntactical.Rules is
                  & Prefix.Get_IRI);
         end if;
     end Verify_Namespace_Prefix;
+
+    --  Convert from Wide_Wide_String to String
+    --
+    --  WARNING: Information loss. All Wide_Wide_Character values greater
+    --  than 256 (8-bits) will be ignored.
+    function Wws2s (Wws : Wide_Wide_String) return String is
+        use Ada.Strings.Unbounded;
+
+        Amount : constant Natural := Wws'Length;
+        Temp_Str : Unbounded_String;
+        Wwc : Wide_Wide_Character;
+        C : Character;
+    begin
+        for I in Natural range 1 .. Amount loop
+            Wwc := Wws (I);
+            if Wide_Wide_Character'Pos (Wwc) < 256 then
+                C := Character'Val (Wide_Wide_Character'Pos (Wwc));
+                Append (Temp_Str, C);
+            end if;
+        end loop;
+
+        return To_String (Temp_Str);
+    end Wws2s;
 
 end Syntactical.Rules;
