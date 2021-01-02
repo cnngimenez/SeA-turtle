@@ -37,6 +37,8 @@ digraph tokens {
         blank_node_label [style=filled, fillcolor="#88ff88"];
         comment [style=filled, fillcolor="#88ff88"];
         dot [style=filled, fillcolor="#88ff88"];
+	comma [style=filled, fillcolor="#88ff88"];		
+        semicolon [style=filled, fillcolor="#88ff88"];
         bracket_open [style=filled, fillcolor="#88ff88"];
 	bracket_close [style=filled, fillcolor="#88ff88"];
         symbol [style=filled, fillcolor="#88ff88"];
@@ -214,6 +216,9 @@ digraph tokens {
 	
         // '.' accepted by dot.
         start -> symbol [label="[;]()]"];
+
+	start -> semicolon [label=";"];
+	start -> comma [label=","];
 }
 
 

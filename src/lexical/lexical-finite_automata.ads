@@ -70,7 +70,7 @@ package Lexical.Finite_Automata is
        Start,
        Arroba, I_Langtag, Langtag1, E_Langtag,
        WS,
-       Dot,
+       Dot, Comma, Semicolon,
        Pname_Ns, Pn_Prefix, Pn_Prefix1,
        Pname_Ln, Pn_Local1,
        I_Percent,

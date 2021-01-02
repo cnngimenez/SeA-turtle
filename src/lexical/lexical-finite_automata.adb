@@ -227,6 +227,8 @@ begin
     Acceptable_States.Insert (Blank_Node_Label);
     Acceptable_States.Insert (Comment);
     Acceptable_States.Insert (Dot);
+    Acceptable_States.Insert (Comma);
+    Acceptable_States.Insert (Semicolon);
     Acceptable_States.Insert (Bracket_Open);
     Acceptable_States.Insert (Bracket_Close);
     Acceptable_States.Insert (Symbol);
@@ -244,6 +246,8 @@ begin
     Add_Delta (Start, '<', I_Iriref);
     Add_Delta (Start, WS, WS);
     Add_Delta (Start, Dot, Dot);
+    Add_Delta (Start, ',', Comma);
+    Add_Delta (Start, ';', Semicolon);
     Add_Delta (Start, ':', Pname_Ns);
     Add_Delta (Start, Pn_Char_Base_Without_Tf, Pn_Prefix);
     Add_Delta (Start, '_', Under);
