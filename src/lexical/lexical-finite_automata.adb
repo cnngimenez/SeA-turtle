@@ -228,6 +228,7 @@ begin
     Acceptable_States.Insert (Comment);
     Acceptable_States.Insert (Dot);
     Acceptable_States.Insert (Bracket_Open);
+    Acceptable_States.Insert (Bracket_Close);
     Acceptable_States.Insert (Symbol);
     Acceptable_States.Insert (I_Percent);
     Acceptable_States.Insert (I_Pn_Local_Esc);
