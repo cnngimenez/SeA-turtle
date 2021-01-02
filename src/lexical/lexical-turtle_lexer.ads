@@ -46,7 +46,8 @@ package Lexical.Turtle_Lexer is
     --  Else, take another token from the source.
     --
     function Take_Token (Lexer : in out Lexer_Type;
-                         Ignore_Whitespaces : Boolean := True)
+                         Ignore_Whitespaces : Boolean := True;
+                         Ignore_Comments : Boolean := True)
                         return Token_Type;
 
     --
@@ -56,7 +57,8 @@ package Lexical.Turtle_Lexer is
     --  and store it into the buffer for subsequent peeks.
     --
     function Peek_Token (Lexer : in out Lexer_Type;
-                         Ignore_Whitespaces : Boolean := True)
+                         Ignore_Whitespaces : Boolean := True;
+                         Ignore_Comments : Boolean := True)
                         return Token_Type;
 
     --

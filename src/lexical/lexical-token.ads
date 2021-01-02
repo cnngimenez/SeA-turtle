@@ -39,6 +39,7 @@ package Lexical.Token is
        Anon,
        Blank_Node_Property_List,
        Collection,
+       Comment,
        Whitespace,
        Reserved_Word,
        --  Not mapped state: a final state without a

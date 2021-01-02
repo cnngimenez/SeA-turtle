@@ -52,11 +52,13 @@ package body Lexical.Turtle_Lexer is
     end Get_Source;
 
     function Peek_Token (Lexer : in out Lexer_Type;
-                         Ignore_Whitespaces : Boolean := True)
+                         Ignore_Whitespaces : Boolean := True;
+                         Ignore_Comments : Boolean := True)
                         return Token_Type is
     begin
         if not Lexer.Token_Buffered then
-            Lexer.Token_Buffer := Lexer.Take_Token (Ignore_Whitespaces);
+            Lexer.Token_Buffer := Lexer.Take_Token (Ignore_Whitespaces,
+                                                    Ignore_Comments);
             Lexer.Token_Buffered := True;
         end if;
 
@@ -96,7 +98,8 @@ package body Lexical.Turtle_Lexer is
     end Start;
 
     function Take_Token (Lexer : in out Lexer_Type;
-                        Ignore_Whitespaces : Boolean := True)
+                         Ignore_Whitespaces : Boolean := True;
+                         Ignore_Comments : Boolean := True)
                         return Token_Type is
         Token : Token_Type;
     begin
@@ -114,8 +117,11 @@ package body Lexical.Turtle_Lexer is
             end if;
 
             --  Repeat while Ignore_Whitespaces and Token class is whitespace.
-            exit when not (Ignore_Whitespaces
-                             and then Token.Get_Class = Whitespace);
+            --  Comments should be ignored too.
+            exit when not (Ignore_Whitespaces and then
+                             Token.Get_Class = Whitespace)
+              and then not (Ignore_Comments and then
+                              Token.Get_Class = Comment);
         end loop;
 
         Lexer.Token_Buffered := False;
