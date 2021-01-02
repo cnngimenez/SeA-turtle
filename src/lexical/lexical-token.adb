@@ -60,6 +60,10 @@ package body Lexical.Token is
             return Prefix_With_Local;
         when Dot =>
             return Reserved_Word;
+        when Bracket_Open =>
+            return Reserved_Word;
+        when Bracket_Close =>
+            return Reserved_Word;
         when E_Iriref =>
             return IRI_Reference;
         when E_String_Literal_Quote | E_String_Literal_Quote1  =>
