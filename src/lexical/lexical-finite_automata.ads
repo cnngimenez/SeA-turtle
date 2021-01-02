@@ -76,7 +76,7 @@ package Lexical.Finite_Automata is
        I_Percent,
        I_Pn_Local_Esc,
        Hex1,
-       Under, Comment, Bracket_Open, Anon, Symbol,
+       Under, Comment, Bracket_Open, Bracket_Close, Anon, Symbol,
        I_Blank_Node_Label, Blank_Node_Label, Blank_Node_Label1,
        Sign, Ie_Integer, E_Decimal, E_Decimal2, I_Decimal, I_Decimal2,
        Exponent, Exponent1, Ex_Digit,

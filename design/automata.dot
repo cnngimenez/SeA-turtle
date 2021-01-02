@@ -38,6 +38,7 @@ digraph tokens {
         comment [style=filled, fillcolor="#88ff88"];
         dot [style=filled, fillcolor="#88ff88"];
         bracket_open [style=filled, fillcolor="#88ff88"];
+	bracket_close [style=filled, fillcolor="#88ff88"];
         symbol [style=filled, fillcolor="#88ff88"];
 
         i_percent [label="i_percent\n(PLX)"];
@@ -208,7 +209,9 @@ digraph tokens {
         start -> bracket_open [label="["];
         bracket_open -> bracket_open [label="WS"];
         bracket_open -> anon [label="]"];
-        
+
+	start -> bracket_close [label="]"];
+	
         // '.' accepted by dot.
         start -> symbol [label="[;]()]"];
 }

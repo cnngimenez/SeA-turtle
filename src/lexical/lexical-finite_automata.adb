@@ -248,6 +248,7 @@ begin
     Add_Delta (Start, '_', Under);
     Add_Delta (Start, '#', Comment);
     Add_Delta (Start, '[', Bracket_Open);
+    Add_Delta (Start, ']', Bracket_Close);
     Add_Delta (Start, '+', Sign);
     Add_Delta (Start, '-', Sign);
     Add_Delta (Start, Decimal_Digit, Ie_Integer);
