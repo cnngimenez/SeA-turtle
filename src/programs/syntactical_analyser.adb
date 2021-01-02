@@ -103,7 +103,7 @@ procedure Syntactical_Analyser is
             if Ada.Text_IO.End_Of_Line (File) then
                 Append (Buffer, LF_Char);
             end if;
-            Ada.Text_IO.Get (File, Symbol);
+            Ada.Text_IO.Get_Immediate (File, Symbol);
             Append (Buffer, To_Wide_Wide_Character (Symbol));
         end loop;
 

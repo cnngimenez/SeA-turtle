@@ -76,7 +76,7 @@ procedure Lexical_Analyser is
         Open (File, In_File, Path);
 
         while not End_Of_File (File) loop
-            Get (File, Symbol);
+            Get_Immediate (File, Symbol);
             Append (Buffer, To_Wide_Wide_Character (Symbol));
         end loop;
 
