@@ -21,6 +21,8 @@
 
 --  with Ada.Wide_Wide_Text_IO;
 --  use Ada.Wide_Wide_Text_IO;
+with Ada.Strings.Wide_Wide_Fixed;
+
 with League.Strings;
 use League.Strings;
 with Lexical.Finite_Automata;
@@ -70,6 +72,7 @@ package body Lexical.Turtle_Lexer is
         Automata : Automata_Type;
         Symbol : Wide_Wide_Character;
         Token_Str : Universal_String := Empty_Universal_String;
+        use Ada.Strings.Wide_Wide_Fixed;
     begin
         Automata.Initialize;
 
@@ -83,6 +86,11 @@ package body Lexical.Turtle_Lexer is
 
         if Token_Str.Length > 0 then
             Token_Str := Token_Str.Head (Token_Str.Length - 1);
+            --  Some tokens can add spaces, for instance "[" ws* "]" and "["
+            --  are both recognized tokens, when parsing "[ foaf:name" the
+            --  returned Token_Str is "[ " but should be "[".
+            Token_Str := To_Universal_String
+              (Trim (To_Wide_Wide_String (Token_Str), Ada.Strings.Both));
         end if;
         Lexer.Source.Previous (Symbol);
 
