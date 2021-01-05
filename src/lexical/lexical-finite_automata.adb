@@ -241,6 +241,8 @@ begin
     Acceptable_States.Insert (E_String_Literal_Single_Quote);
     Acceptable_States.Insert (E_String_Literal_Single_Quote1);
     Acceptable_States.Insert (E_Sllsq);
+    Acceptable_States.Insert (Base_Declaration);
+    Acceptable_States.Insert (Prefix_Declaration);
 
     Add_Delta (Start, '@', Arroba);
     Add_Delta (Start, '<', I_Iriref);
@@ -249,7 +251,11 @@ begin
     Add_Delta (Start, ',', Comma);
     Add_Delta (Start, ';', Semicolon);
     Add_Delta (Start, ':', Pname_Ns);
-    Add_Delta (Start, Pn_Char_Base_Without_Tf, Pn_Prefix);
+    Add_Delta (Start, Pn_Char_Base_Without_Tfbp, Pn_Prefix);
+    Add_Delta (Start, 'B', Base_Declaration1);
+    Add_Delta (Start, 'b', Base_Declaration1);
+    Add_Delta (Start, 'P', Prefix_Declaration1);
+    Add_Delta (Start, 'p', Prefix_Declaration1);
     Add_Delta (Start, '_', Under);
     Add_Delta (Start, '#', Comment);
     Add_Delta (Start, '[', Bracket_Open);
@@ -493,5 +499,61 @@ begin
     Add_Delta (Sllsq_Uchar1b, Hexadecimal_Digit, Sllsq_Uchar1c);
     Add_Delta (Sllsq_Uchar1c, Hexadecimal_Digit, Sllsq_Uchar1d);
     Add_Delta (Sllsq_Uchar1d, Hexadecimal_Digit, Sllsq_E_Uchar);
+
+    Add_Delta (Base_Declaration1, 'a', Base_Declaration2);
+    Add_Delta (Base_Declaration1, 'A', Base_Declaration2);
+    Add_Delta (Base_Declaration1, '.', Pn_Prefix1);
+    Add_Delta (Base_Declaration1, ':', Pname_Ns);
+    Add_Delta (Base_Declaration1, Pn_Char_Base_Without_Aa, Pn_Prefix);
+
+    Add_Delta (Base_Declaration2, 's', Base_Declaration3);
+    Add_Delta (Base_Declaration2, 'S', Base_Declaration3);
+    Add_Delta (Base_Declaration2, '.', Pn_Prefix1);
+    Add_Delta (Base_Declaration2, ':', Pname_Ns);
+    Add_Delta (Base_Declaration2, Pn_Char_Base_Without_Ss, Pn_Prefix);
+
+    Add_Delta (Base_Declaration3, 'e', Base_Declaration);
+    Add_Delta (Base_Declaration3, 'E', Base_Declaration);
+    Add_Delta (Base_Declaration3, '.', Pn_Prefix1);
+    Add_Delta (Base_Declaration3, ':', Pname_Ns);
+    Add_Delta (Base_Declaration3, Pn_Char_Base_Without_Ee, Pn_Prefix);
+
+    Add_Delta (Base_Declaration, '.', Pn_Prefix1);
+    Add_Delta (Base_Declaration, ':', Pname_Ns);
+    Add_Delta (Base_Declaration, Pn_Chars, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration1, 'r', Prefix_Declaration2);
+    Add_Delta (Prefix_Declaration1, 'R', Prefix_Declaration2);
+    Add_Delta (Prefix_Declaration1, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration1, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration1, Pn_Char_Base_Without_Rr, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration2, 'e', Prefix_Declaration3);
+    Add_Delta (Prefix_Declaration2, 'E', Prefix_Declaration3);
+    Add_Delta (Prefix_Declaration2, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration2, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration2, Pn_Char_Base_Without_Ee, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration3, 'f', Prefix_Declaration4);
+    Add_Delta (Prefix_Declaration3, 'F', Prefix_Declaration4);
+    Add_Delta (Prefix_Declaration3, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration3, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration3, Pn_Char_Base_Without_Ff, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration4, 'i', Prefix_Declaration5);
+    Add_Delta (Prefix_Declaration4, 'I', Prefix_Declaration5);
+    Add_Delta (Prefix_Declaration4, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration4, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration4, Pn_Char_Base_Without_Ii, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration5, 'x', Prefix_Declaration);
+    Add_Delta (Prefix_Declaration5, 'X', Prefix_Declaration);
+    Add_Delta (Prefix_Declaration5, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration5, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration5, Pn_Char_Base_Without_Xx, Pn_Prefix);
+
+    Add_Delta (Prefix_Declaration, '.', Pn_Prefix1);
+    Add_Delta (Prefix_Declaration, ':', Pname_Ns);
+    Add_Delta (Prefix_Declaration, Pn_Chars, Pn_Prefix);
 
 end Lexical.Finite_Automata;

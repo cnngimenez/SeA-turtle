@@ -105,16 +105,12 @@ package body Lexical.Symbol_Sets is
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Hexadecimal_Digit);
             Possible_Sets.Set.Insert (Symbol_Set);
-            Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
-            Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Chars_U);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Chars);
             Possible_Sets.Set.Insert (Symbol_Set);
         when 'g' .. 'z' | 'G' .. 'Z' =>
             Symbol_Set.Initialize (Letter);
-            Possible_Sets.Set.Insert (Symbol_Set);
-            Symbol_Set.Initialize (Pn_Char_Base_Without_Tf);
             Possible_Sets.Set.Insert (Symbol_Set);
             Symbol_Set.Initialize (Pn_Chars_U);
             Possible_Sets.Set.Insert (Symbol_Set);
@@ -170,6 +166,62 @@ package body Lexical.Symbol_Sets is
 
         --  PN_CHARS
         --  #x00B7 | [#x0300-#x036F] | [#x203F-#x2040]
+
+        --  PN_Char_Base_Without_XX implementations:
+        Symbol_Set.Initialize (Pn_Chars);
+        if Possible_Sets.Set.Contains (Symbol_Set) then
+
+            if Symbol /= 'a' and then Symbol /= 'A' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Aa);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            --  Remember that "true" and "false" are case sensitive but
+            --  PREFIX and BASE are case insesitive.
+            if Symbol /= 'b' and then Symbol /= 'B' and then
+              Symbol /= 'p' and then Symbol /= 'P' and then
+              Symbol /= 't' and then Symbol /= 'f'
+            then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Tfbp);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'e' and then Symbol /= 'E' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Ee);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'f' and then Symbol /= 'F' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Ff);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'i' and then Symbol /= 'I' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Ii);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'p' and then Symbol /= 'P' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Pp);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'r' and then Symbol /= 'R' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Rr);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 's' and then Symbol /= 'S' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Ss);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'x' and then Symbol /= 'X' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_Xx);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+        end if;
 
         --  It is too difficult to add a "not" in the above "case" statement.
         if not (Symbol in Null_Char .. Space_Char or else Symbol = '<'
