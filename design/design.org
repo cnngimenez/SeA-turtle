@@ -83,6 +83,8 @@ Some EBNF rules are considered as character sets and are labelled between colon 
 ** Boolean literal parsing
 The following diagram shows how the automata should parse the boolean's "true" and "false" literals. In summary, when a letter that is not expected is red, the automata should change to ~pn_prefix~ state. The expected letters are represented as a greenish edges and grayish edges as the letters that are not part of the string.
 
+The ~boolean~ state is represented as ~Boolean_Tf~ in Ada code to avoid name clashing with the Boolean type.
+
 [[file:boolean.png]]
 * Meta     :noexport:
 

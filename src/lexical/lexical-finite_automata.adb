@@ -243,6 +243,7 @@ begin
     Acceptable_States.Insert (E_Sllsq);
     Acceptable_States.Insert (Base_Declaration);
     Acceptable_States.Insert (Prefix_Declaration);
+    Acceptable_States.Insert (Boolean_tf);
 
     Add_Delta (Start, '@', Arroba);
     Add_Delta (Start, '<', I_Iriref);
@@ -256,6 +257,8 @@ begin
     Add_Delta (Start, 'b', Base_Declaration1);
     Add_Delta (Start, 'P', Prefix_Declaration1);
     Add_Delta (Start, 'p', Prefix_Declaration1);
+    Add_Delta (Start, 't', Booleant1);
+    Add_Delta (Start, 'f', Booleanf1);
     Add_Delta (Start, '_', Under);
     Add_Delta (Start, '#', Comment);
     Add_Delta (Start, '[', Bracket_Open);
@@ -555,5 +558,41 @@ begin
     Add_Delta (Prefix_Declaration, '.', Pn_Prefix1);
     Add_Delta (Prefix_Declaration, ':', Pname_Ns);
     Add_Delta (Prefix_Declaration, Pn_Chars, Pn_Prefix);
+
+    --  Boolean literals
+    Add_Delta (Booleant1, 'r', Booleant2);
+    Add_Delta (Booleant1, '.', Pn_Prefix1);
+    Add_Delta (Booleant1, ':', Pname_Ns);
+    Add_Delta (Booleant1, Pn_Char_Base_Without_R, Pn_Prefix);
+
+    Add_Delta (Booleant2, 'u', Booleant3);
+    Add_Delta (Booleant2, '.', Pn_Prefix1);
+    Add_Delta (Booleant2, ':', Pname_Ns);
+    Add_Delta (Booleant2, Pn_Char_Base_Without_U, Pn_Prefix);
+
+    Add_Delta (Booleant3, 'e', Boolean_tf);
+    Add_Delta (Booleant3, '.', Pn_Prefix1);
+    Add_Delta (Booleant3, ':', Pname_Ns);
+    Add_Delta (Booleant3, Pn_Char_Base_Without_E, Pn_Prefix);
+
+    Add_Delta (Booleanf1, 'a', Booleanf2);
+    Add_Delta (Booleanf1, '.', Pn_Prefix1);
+    Add_Delta (Booleanf1, ':', Pname_Ns);
+    Add_Delta (Booleanf1, Pn_Char_Base_Without_A, Pn_Prefix);
+
+    Add_Delta (Booleanf2, 'l', Booleanf3);
+    Add_Delta (Booleanf2, '.', Pn_Prefix1);
+    Add_Delta (Booleanf2, ':', Pname_Ns);
+    Add_Delta (Booleanf2, Pn_Char_Base_Without_L, Pn_Prefix);
+
+    Add_Delta (Booleanf3, 's', Booleanf4);
+    Add_Delta (Booleanf3, '.', Pn_Prefix1);
+    Add_Delta (Booleanf3, ':', Pname_Ns);
+    Add_Delta (Booleanf3, Pn_Char_Base_Without_S, Pn_Prefix);
+
+    Add_Delta (Booleanf4, 'e', Boolean_tf);
+    Add_Delta (Booleanf4, '.', Pn_Prefix1);
+    Add_Delta (Booleanf4, ':', Pname_Ns);
+    Add_Delta (Booleanf4, Pn_Char_Base_Without_E, Pn_Prefix);
 
 end Lexical.Finite_Automata;

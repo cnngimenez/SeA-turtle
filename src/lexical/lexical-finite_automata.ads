@@ -123,7 +123,11 @@ package Lexical.Finite_Automata is
        Base_Declaration, Base_Declaration1, Base_Declaration2,
        Base_Declaration3,
        Prefix_Declaration, Prefix_Declaration1, Prefix_Declaration2,
-       Prefix_Declaration3, Prefix_Declaration4, Prefix_Declaration5
+       Prefix_Declaration3, Prefix_Declaration4, Prefix_Declaration5,
+
+       --  "true" and "false" boolean literals
+       Boolean_tf, Booleant1, Booleant2, Booleant3,
+       Booleanf1, Booleanf2, Booleanf3, Booleanf4
       );
 
     function Is_Final_State (State : State_Type) return Boolean;

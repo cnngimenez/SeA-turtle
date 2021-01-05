@@ -171,6 +171,11 @@ package body Lexical.Symbol_Sets is
         Symbol_Set.Initialize (Pn_Chars);
         if Possible_Sets.Set.Contains (Symbol_Set) then
 
+            if Symbol /= 'a' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_A);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
             if Symbol /= 'a' and then Symbol /= 'A' then
                 Symbol_Set.Initialize (Pn_Char_Base_Without_Aa);
                 Possible_Sets.Set.Insert (Symbol_Set);
@@ -183,6 +188,11 @@ package body Lexical.Symbol_Sets is
               Symbol /= 't' and then Symbol /= 'f'
             then
                 Symbol_Set.Initialize (Pn_Char_Base_Without_Tfbp);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'e' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_E);
                 Possible_Sets.Set.Insert (Symbol_Set);
             end if;
 
@@ -201,8 +211,18 @@ package body Lexical.Symbol_Sets is
                 Possible_Sets.Set.Insert (Symbol_Set);
             end if;
 
+            if Symbol /= 'l' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_L);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
             if Symbol /= 'p' and then Symbol /= 'P' then
                 Symbol_Set.Initialize (Pn_Char_Base_Without_Pp);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'r' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_R);
                 Possible_Sets.Set.Insert (Symbol_Set);
             end if;
 
@@ -211,8 +231,18 @@ package body Lexical.Symbol_Sets is
                 Possible_Sets.Set.Insert (Symbol_Set);
             end if;
 
+            if Symbol /= 's' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_S);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
             if Symbol /= 's' and then Symbol /= 'S' then
                 Symbol_Set.Initialize (Pn_Char_Base_Without_Ss);
+                Possible_Sets.Set.Insert (Symbol_Set);
+            end if;
+
+            if Symbol /= 'u' then
+                Symbol_Set.Initialize (Pn_Char_Base_Without_U);
                 Possible_Sets.Set.Insert (Symbol_Set);
             end if;
 
