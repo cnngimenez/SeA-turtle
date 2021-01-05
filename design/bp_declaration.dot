@@ -1,0 +1,83 @@
+// bp_declarations.dot
+
+// Copyright 2020 cnngimenez
+
+// Author: cnngimenez
+
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+digraph bp_declarations {
+        // rotate=90;
+        rankdir=LR;
+        node [];
+
+        base_declaration [style=filled, fillcolor="#88ff88"];
+	prefix_declaration [style=filled, fillcolor="#88ff88"];	
+        see_automata_png [shape=plaintext, label="See automata.png"];
+        see_automata_png2 [shape=plaintext, label="See automata.png"];
+	start [style=dotted];
+	pname_ns [style=dotted];
+	pn_prefix1 [style=dotted];
+	pn_prefix [style=dotted];
+
+        start -> base_declaration1 [label="[bB]", color="#008800"];
+	start -> see_automata_png2 [style=dashed];
+	  
+        base_declaration1 -> base_declaration2 [label="[aA]", color="#008800"];
+        base_declaration1 -> pn_prefix [label="[:PN_CHARS:]-aA",
+          color="#444444", fontcolor="#444444"];
+	  
+        base_declaration2 -> base_declaration3 [label="[sS]", color="#008800"];
+        base_declaration2 -> pn_prefix [label="[:PN_CHARS:]-sS"
+          color="#444444", fontcolor="#444444"];
+	  
+        base_declaration3 -> base_declaration [label="[eE]", color="#008800"];
+        base_declaration3 -> pn_prefix [label="[:PN_CHARS:]-eE"
+          color="#444444", fontcolor="#444444"];
+
+        base_declaration -> pn_prefix [label="[:PN_CHARS:]"];
+	base_declaration -> pn_prefix1 [label="."];
+	base_declaration -> pname_ns [label=":"];
+
+        start -> prefix_declaration1 [label="[pP]", color="#008800"];
+	  
+        prefix_declaration1 -> prefix_declaration2 [label="[rR]", color="#008800"];
+        prefix_declaration1 -> pn_prefix [label="[:PN_CHARS:]-rR",
+          color="#444444", fontcolor="#444444"];
+	  
+        prefix_declaration2 -> prefix_declaration3 [label="[eE]", color="#008800"];
+        prefix_declaration2 -> pn_prefix [label="[:PN_CHARS:]-eE",
+          color="#444444", fontcolor="#444444"];
+	  
+        prefix_declaration3 -> prefix_declaration4 [label="[fF]", color="#008800"];
+        prefix_declaration3 -> pn_prefix [label="[:PN_CHARS:]-fF",
+          color="#444444", fontcolor="#444444"];
+
+        prefix_declaration4 -> prefix_declaration5 [label="[iI]", color="#008800"];
+        prefix_declaration4 -> pn_prefix [label="[:PN_CHARS:]-iI",
+          color="#444444", fontcolor="#444444"];
+	  
+        prefix_declaration5 -> prefix_declaration [label="[xX]", color="#008800"];
+	prefix_declaration5 -> pn_prefix [label="[:PN_CHARS:]-xX",
+          color="#444444", fontcolor="#444444"];
+	
+	prefix_declaration -> pn_prefix [label="[:PN_CHARS:]"];
+	prefix_declaration -> pn_prefix1 [label="."];
+	prefix_declaration -> pname_ns [label=":"];
+
+
+        pn_prefix -> see_automata_png [style=dashed];
+	pn_prefix1 -> see_automata_png [style=dashed];
+	pname_ns -> see_automata_png [style=dashed];
+}
