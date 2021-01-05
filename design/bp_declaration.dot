@@ -35,16 +35,20 @@ digraph bp_declarations {
 	start -> see_automata_png2 [style=dashed];
 	  
         base_declaration1 -> base_declaration2 [label="[aA]", color="#008800"];
-        base_declaration1 -> pn_prefix [label="[:PN_CHARS:]-aA",
-          color="#444444", fontcolor="#444444"];
+        base_declaration1 -> pn_prefix [label="[:PN_CHARS:]-aA", color="#444444", fontcolor="#444444"];
+        base_declaration1 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        base_declaration1 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 	  
         base_declaration2 -> base_declaration3 [label="[sS]", color="#008800"];
-        base_declaration2 -> pn_prefix [label="[:PN_CHARS:]-sS"
-          color="#444444", fontcolor="#444444"];
+        base_declaration2 -> pn_prefix [label="[:PN_CHARS:]-sS", color="#444444", fontcolor="#444444"];
+	base_declaration2 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        base_declaration2 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
+
 	  
         base_declaration3 -> base_declaration [label="[eE]", color="#008800"];
-        base_declaration3 -> pn_prefix [label="[:PN_CHARS:]-eE"
-          color="#444444", fontcolor="#444444"];
+        base_declaration3 -> pn_prefix [label="[:PN_CHARS:]-eE", color="#444444", fontcolor="#444444"];
+	base_declaration3 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        base_declaration3 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 
         base_declaration -> pn_prefix [label="[:PN_CHARS:]"];
 	base_declaration -> pn_prefix1 [label="."];
@@ -53,24 +57,29 @@ digraph bp_declarations {
         start -> prefix_declaration1 [label="[pP]", color="#008800"];
 	  
         prefix_declaration1 -> prefix_declaration2 [label="[rR]", color="#008800"];
-        prefix_declaration1 -> pn_prefix [label="[:PN_CHARS:]-rR",
-          color="#444444", fontcolor="#444444"];
+        prefix_declaration1 -> pn_prefix [label="[:PN_CHARS:]-rR", color="#444444", fontcolor="#444444"];
+	prefix_declaration1 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        prefix_declaration1 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 	  
         prefix_declaration2 -> prefix_declaration3 [label="[eE]", color="#008800"];
-        prefix_declaration2 -> pn_prefix [label="[:PN_CHARS:]-eE",
-          color="#444444", fontcolor="#444444"];
-	  
+        prefix_declaration2 -> pn_prefix [label="[:PN_CHARS:]-eE", color="#444444", fontcolor="#444444"];
+	prefix_declaration2 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        prefix_declaration2 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
+	
         prefix_declaration3 -> prefix_declaration4 [label="[fF]", color="#008800"];
-        prefix_declaration3 -> pn_prefix [label="[:PN_CHARS:]-fF",
-          color="#444444", fontcolor="#444444"];
+        prefix_declaration3 -> pn_prefix [label="[:PN_CHARS:]-fF", color="#444444", fontcolor="#444444"];
+	prefix_declaration3 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+	prefix_declaration3 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 
         prefix_declaration4 -> prefix_declaration5 [label="[iI]", color="#008800"];
-        prefix_declaration4 -> pn_prefix [label="[:PN_CHARS:]-iI",
-          color="#444444", fontcolor="#444444"];
+        prefix_declaration4 -> pn_prefix [label="[:PN_CHARS:]-iI", color="#444444", fontcolor="#444444"];
+	prefix_declaration4 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+	prefix_declaration4 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 	  
         prefix_declaration5 -> prefix_declaration [label="[xX]", color="#008800"];
-	prefix_declaration5 -> pn_prefix [label="[:PN_CHARS:]-xX",
-          color="#444444", fontcolor="#444444"];
+	prefix_declaration5 -> pn_prefix [label="[:PN_CHARS:]-xX", color="#444444", fontcolor="#444444"];
+	prefix_declaration5 -> pn_prefix1 [label=".", color="#444444", fontcolor="#444444"];
+        prefix_declaration5 -> pname_ns [label=":", color="#444444", fontcolor="#444444"];
 	
 	prefix_declaration -> pn_prefix [label="[:PN_CHARS:]"];
 	prefix_declaration -> pn_prefix1 [label="."];
