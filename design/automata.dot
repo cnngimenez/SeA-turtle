@@ -143,7 +143,7 @@ digraph tokens {
         // PNAME_NS
         // [139s] PNAME_NS ::= PN_PREFIX? ':'                      
         start -> pname_ns [label=":"];
-        start -> pn_prefix [label="[:PN_CHAR_BASE:]-tf"];
+        start -> pn_prefix [label="[:PN_CHAR_BASE:]-tfbBpP"];
         // ^^ when "_" go to "under". when "t" or "f" go to boolean.        
         pn_prefix -> pname_ns [label=":"];
 
@@ -153,7 +153,15 @@ digraph tokens {
         start -> booleanf1 [label="f"];
         booleanf1 -> see_boolean_png [style=dashed];
         booleanf1 -> pn_prefix [style=dashed, label="See boolean.png"];
-        
+
+        start -> base_declaration1 [label="bB"];
+        base_declaration1 -> see_bp_declaration_png [style=dashed];
+        base_declaration1 -> pn_prefix [style=dashed, label="See bp_declaration.png"];
+        start -> prefix_declaration1 [label="pP"];
+        prefix_declaration1 -> see_bp_declaration_png [style=dashed];
+        prefix_declaration1 -> pn_prefix [style=dashed, label="See bp_declaration.png"];
+
+	
         // PN_PREFIX
         // [167s] PN_PREFIX ::= PN_CHARS_BASE ((PN_CHARS | '.')* PN_CHARS)?
 

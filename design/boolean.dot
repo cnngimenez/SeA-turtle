@@ -24,7 +24,14 @@ digraph booleans {
 
         boolean [style=filled, fillcolor="#88ff88"];
         see_automata_png [shape=plaintext, label="See automata.png"];
+        see_automata_png2 [shape=plaintext, label="See automata.png"];	
+	start [style=dotted];
+	pname_ns [style=dotted];
+	pn_prefix1 [style=dotted];
+	pn_prefix [style=dotted];
 
+	start -> see_automata_png2 [style=dashed];
+	
         start -> booleant1 [label="t", color="#008800"];
         booleant1 -> pn_prefix [label="[:PN_CHARS:]-r",
           color="#444444", fontcolor="#444444"];
@@ -52,5 +59,11 @@ digraph booleans {
           color="#444444", fontcolor="#444444"];
         booleanf4 -> boolean [label="e", color="#008800"];
 
+	boolean -> pn_prefix1 [label="."];
+	boolean -> pname_ns [label=":"];
+	
         pn_prefix -> see_automata_png [style=dashed];
+	pn_prefix1 -> see_automata_png [style=dashed];
+	pname_ns -> see_automata_png [style=dashed];
+
 }
