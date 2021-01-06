@@ -126,7 +126,7 @@ package Lexical.Finite_Automata is
        Prefix_Declaration3, Prefix_Declaration4, Prefix_Declaration5,
 
        --  "true" and "false" boolean literals
-       Boolean_tf, Booleant1, Booleant2, Booleant3,
+       Boolean_Tf, Booleant1, Booleant2, Booleant3,
        Booleanf1, Booleanf2, Booleanf3, Booleanf4
       );
 

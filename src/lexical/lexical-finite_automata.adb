@@ -243,7 +243,7 @@ begin
     Acceptable_States.Insert (E_Sllsq);
     Acceptable_States.Insert (Base_Declaration);
     Acceptable_States.Insert (Prefix_Declaration);
-    Acceptable_States.Insert (Boolean_tf);
+    Acceptable_States.Insert (Boolean_Tf);
 
     Add_Delta (Start, '@', Arroba);
     Add_Delta (Start, '<', I_Iriref);
@@ -570,7 +570,7 @@ begin
     Add_Delta (Booleant2, ':', Pname_Ns);
     Add_Delta (Booleant2, Pn_Char_Base_Without_U, Pn_Prefix);
 
-    Add_Delta (Booleant3, 'e', Boolean_tf);
+    Add_Delta (Booleant3, 'e', Boolean_Tf);
     Add_Delta (Booleant3, '.', Pn_Prefix1);
     Add_Delta (Booleant3, ':', Pname_Ns);
     Add_Delta (Booleant3, Pn_Char_Base_Without_E, Pn_Prefix);
@@ -590,7 +590,7 @@ begin
     Add_Delta (Booleanf3, ':', Pname_Ns);
     Add_Delta (Booleanf3, Pn_Char_Base_Without_S, Pn_Prefix);
 
-    Add_Delta (Booleanf4, 'e', Boolean_tf);
+    Add_Delta (Booleanf4, 'e', Boolean_Tf);
     Add_Delta (Booleanf4, '.', Pn_Prefix1);
     Add_Delta (Booleanf4, ':', Pname_Ns);
     Add_Delta (Booleanf4, Pn_Char_Base_Without_E, Pn_Prefix);

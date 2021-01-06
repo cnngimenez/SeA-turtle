@@ -82,6 +82,12 @@ package body Lexical.Token is
             return Anon;
         when Comment =>
             return Comment;
+        when Boolean_Tf =>
+            return Boolean_Literal;
+        when Prefix_Declaration =>
+            return Reserved_Word;
+        when Base_Declaration =>
+            return Reserved_Word;
         when others =>
             if Is_Final_State (State) then
                 return Not_Mapped;
