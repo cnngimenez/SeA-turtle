@@ -1,0 +1,82 @@
+* Linter
+The following rules are implemented on the ~Syntactical.Rules~ and ~Linter~ module. 
+
+There are types of rules implemented:
+
+- Warnings :: Are convenience features. Some of them are justified and others are suggestions.
+- Errors :: Are syntactic or semantic errors. This leads to a not-well formed Turtle document.
+
+
+* Prefixes and Base IRI
+
+** TODO Warning: Prefix IRI is not a valid IRI                     :warning:
+The prefix IRI is not a syntactical valid IRI.
+
+** TODO Warning: Base IRI is not a valid IRI                       :warning:
+The base IRI is not a syntactical valid IRI.
+
+** IMPLEMENTED Warning: Prefix IRI should end with slash or numeral :warning:
+Prefix IRIs should end with "#" and "/".
+
+This is a suggestion. There is no based documentation available.
+
+** IMPLEMENTED Warning: Base IRI should end with slash or numeral  :warning:
+Base IRIs should not end with "#" or "/".
+
+This is a suggestion. There is no based documentation available.
+
+** IMPLEMENTED Warning: Base IRI should not be a relative IRI      :warning:
+The base IRI should not contain "." or ".." paths.
+
+*** TODO Search for justification at RFC 3986
+
+** TODO Warning: It is recommended to use @base instead of BASE    :warning:
+
+Advice about not to use it. Note in [[https://www.w3.org/TR/turtle/#sec-iri][section 2.4 "IRI"]]:
+
+#+begin_quote
+The Turtle language originally permitted only the syntax including the '@' character for writing prefix and base directives. The case-insensitive 'PREFIX' and 'BASE' forms were added to align Turtle's syntax with that of SPARQL. It is advisable to serialize RDF using the '@prefix' and '@base' forms until RDF 1.1 Turtle parsers are widely deployed.
+#+end_quote
+
+** TODO Warning: It is recommended to use @prefix instead of PREFIX :warning:
+
+Same as [[*Warning: It is recommended to use @base instead of BASE][Warning: It is recommended to use @base instead of BASE]].
+
+** TODO Warn about the trailing "." in PREFIX and BASE
+
+There mustn't be a trailing "." on the PREFIX and BASE  directive. @base and @prefix requires it.
+
+The following note is in [[https://www.w3.org/TR/turtle/#sec-iri][section 2.4 "IRI"]]:
+
+#+begin_quote
+The '@prefix' and '@base' directives require a trailing '.' after the IRI, the equalivent 'PREFIX' and 'BASE' must not have a trailing '.' after the IRI part of the directive.
+#+end_quote
+
+
+
+* Meta     :noexport:
+
+  # ----------------------------------------------------------------------
+  #+TITLE:  Linter Documentation
+  #+AUTHOR: Christian Gimenez
+  #+DATE:   04 ene 2021
+  #+EMAIL:
+  #+DESCRIPTION: 
+  #+KEYWORDS: 
+
+  #+STARTUP: inlineimages hidestars content hideblocks entitiespretty
+  #+STARTUP: indent fninline latexpreview
+
+  #+TODO: TODO | IMPLEMENTED CANCELED
+
+  #+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+  #+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+  #+OPTIONS: tex:imagemagick
+
+  # Local Variables:
+  # org-hide-emphasis-markers: t
+  # org-use-sub-superscripts: "{}"
+  # fill-column: 80
+  # visual-line-fringe-indicators: t
+  # org-todo-keyword-faces: (("CANCELED" . 'error))
+  # End:
