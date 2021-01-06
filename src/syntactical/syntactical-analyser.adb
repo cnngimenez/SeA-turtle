@@ -19,6 +19,9 @@
 
 -------------------------------------------------------------------------
 
+with Ada.Characters;
+with Ada.Characters.Conversions;
+
 package body Syntactical.Analyser is
 
     procedure Add_Recursion_Level
@@ -58,6 +61,28 @@ package body Syntactical.Analyser is
     begin
         Analyser.Parser_State.Assign_Namespace (Prefix, Iri);
     end Assign_Namespace;
+
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return String is
+        Line_Number : constant Natural := Analyser.Get_Line_Number;
+        Column_Number : constant Natural  := Analyser.Get_Column_Number;
+    begin
+        return "(" & Line_Number'Image & " : "
+          & Column_Number'Image & "): ";
+    end Current_Position;
+
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return Wide_Wide_String is
+        use Ada.Characters;
+    begin
+        return Conversions.To_Wide_Wide_String (Current_Position (Analyser));
+    end Current_Position;
+
+    function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
+                                 return Universal_String is
+    begin
+        return To_Universal_String (Current_Position (Analyser));
+    end Current_Position_Us;
 
     function Emit_RDF_Triple (Analyser : in out Syntax_Analyser_Type;
                               Object_Value : Universal_String;

@@ -143,6 +143,13 @@ package Syntactical.Analyser is
     procedure Save_Cursubject (Analyser : in out Syntax_Analyser_Type);
     procedure Save_Curpredicate (Analyser : in out Syntax_Analyser_Type);
 
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return String;
+    function Current_Position (Analyser : in out Syntax_Analyser_Type)
+                              return Wide_Wide_String;
+    function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
+                                 return Universal_String;
+
 private
 
     type Subject_Element_Type is tagged record

@@ -20,11 +20,16 @@
 -------------------------------------------------------------------------
 
 with Ada.Strings.Unbounded;
-with Ada.Characters.Conversions;
 with Ada.Wide_Wide_Text_IO;
 use Ada.Wide_Wide_Text_IO;
 
+with Linterpkg.Config;
+with Linterpkg.Warnings;
+
 package body Syntactical.Rules is
+
+    package Linter_Pkg is new Linterpkg.Warnings
+      (Warning_Callback => Warning_Callback);
 
     function Accept_Token (Analyser : in out Syntax_Analyser_Type;
                            Token_Class : Token_Class_Type;
@@ -128,7 +133,9 @@ package body Syntactical.Rules is
 
             Base_Directive_Callback (IRI_Str);
 
-            Verify_Base_IRI (Analyser);
+            if Linterpkg.Config.Enabled then
+                Linter_Pkg.Check_Base_Iri (Analyser);
+            end if;
         end if;
 
         End_Rule (Analyser);
@@ -244,28 +251,6 @@ package body Syntactical.Rules is
         End_Rule (Analyser);
         return Ret;
     end Collection;
-
-    function Current_Position (Analyser : in out Syntax_Analyser_Type)
-                              return String is
-        Line_Number : constant Natural := Analyser.Get_Line_Number;
-        Column_Number : constant Natural  := Analyser.Get_Column_Number;
-    begin
-        return "(" & Line_Number'Image & " : "
-          & Column_Number'Image & "): ";
-    end Current_Position;
-
-    function Current_Position (Analyser : in out Syntax_Analyser_Type)
-                              return Wide_Wide_String is
-        use Ada.Characters;
-    begin
-        return Conversions.To_Wide_Wide_String (Current_Position (Analyser));
-    end Current_Position;
-
-    function Current_Position_Us (Analyser : in out Syntax_Analyser_Type)
-                              return Universal_String is
-    begin
-        return To_Universal_String (Current_Position (Analyser));
-    end Current_Position_Us;
 
     procedure Debug_Put (Analyser : in out Syntax_Analyser_Type;
                          S : Wide_Wide_String) is
@@ -576,7 +561,9 @@ package body Syntactical.Rules is
             Prefix.Initialize (Token_Prefix.Get_Value, IRI_Str);
             Prefix_Directive_Callback (Prefix);
 
-            Verify_Namespace_Prefix (Analyser, Prefix);
+            if Linterpkg.Config.Enabled then
+                Linter_Pkg.Check_Prefix_Iri (Analyser, Prefix);
+            end if;
         end if;
 
         End_Rule (Analyser);
@@ -632,11 +619,25 @@ package body Syntactical.Rules is
     function Sparql_Base (Analyser : in out Syntax_Analyser_Type)
                          return Boolean is
         Ret : Boolean;
+        Token : Token_Type;
+        Iri_Str : Universal_String;
     begin
         Begin_Rule (Analyser, "Sparql_Base");
 
         Ret := Accept_Token (Analyser, Reserved_Word, "BASE")
-          and then Expect_Token (Analyser, IRI_Reference);
+          and then Expect_Token (Analyser, IRI_Reference, Token);
+
+        if Ret then
+            Iri_Str := Extract_IRI (Token.Get_Value);
+            Analyser.Assign_Base_URI (Iri_Str);
+
+            Base_Directive_Callback (Iri_Str);
+
+            if Linterpkg.Config.Enabled then
+                Linter_Pkg.Warn_Base_Used (Analyser);
+                Linter_Pkg.Check_Base_Iri (Analyser);
+            end if;
+        end if;
 
         End_Rule (Analyser);
         return Ret;
@@ -646,18 +647,29 @@ package body Syntactical.Rules is
     function Sparql_Prefix (Analyser : in out Syntax_Analyser_Type)
                            return Boolean is
         Ret : Boolean;
+        Token_Prefix, Token_Iri : Token_Type;
+        Iri_Str : Universal_String;
+        Prefix : Prefix_Type;
     begin
         Begin_Rule (Analyser, "Sparql_Prefix");
 
         Ret := Accept_Token (Analyser, Reserved_Word, "PREFIX")
-          and then Expect_Token (Analyser, Prefix_Namespace)
-          and then Expect_Token (Analyser, IRI_Reference);
+          and then Expect_Token (Analyser, Prefix_Namespace, Token_Prefix)
+          and then Expect_Token (Analyser, IRI_Reference, Token_Iri);
 
-        --  if Ret then
-        --  TODO add the same as @prefix (Prefix_ID) rule.
+        if Ret then
+            Iri_Str := Extract_IRI (Token_Iri.Get_Value);
 
-        --  Verify_Namespace_Prefix (analyser, Prefix);
-        --  end if;
+            Analyser.Assign_Namespace (Token_Prefix.Get_Value, Iri_Str);
+
+            Prefix.Initialize (Token_Prefix.Get_Value, Iri_Str);
+            Prefix_Directive_Callback (Prefix);
+
+            if Linterpkg.Config.Enabled then
+                Linter_Pkg.Warn_Prefix_Used (Analyser);
+                Linter_Pkg.Check_Prefix_Iri (Analyser, Prefix);
+            end if;
+        end if;
 
         End_Rule (Analyser);
         return Ret;
@@ -789,65 +801,6 @@ package body Syntactical.Rules is
         End_Rule (Analyser);
         return False;
     end Verb;
-
-    procedure Verify_Base_IRI (Analyser : in out Syntax_Analyser_Type) is
-    begin
-        if not Analyser.Is_Base_IRI_Valid then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-                 & To_Universal_String
-                 ("The following base IRI is not a valid IRI: ")
-                 & Analyser.Get_Base_URI);
-        end if;
-        if not Analyser.Is_Base_IRI_Ending_Correctly then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-               & To_Universal_String
-                 ("The following base IRI should end with ""#"" or ""/"":")
-                 & Analyser.Get_Base_URI);
-        end if;
-        if Analyser.Is_Base_IRI_Relative then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-                 & To_Universal_String
-                 ("The following base IRI should not be a relative IRI "
-                    & "(Should not have ""/."" or ""/..""):")
-                 & Analyser.Get_Base_URI);
-        end if;
-    end Verify_Base_IRI;
-
-    procedure Verify_Namespace_Prefix (Analyser : in out Syntax_Analyser_Type;
-                                       Prefix : Prefix_Type) is
-    begin
-        if not Prefix.Is_IRI_Valid then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-                 & To_Universal_String
-                 ("The following prefix has not a valid IRI: ")
-                 & Prefix.Get_Name
-                 & To_Universal_String (" -> ")
-                 & Prefix.Get_IRI);
-        end if;
-        if not Prefix.Is_IRI_Ending_Correctly then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-                 & To_Universal_String
-                 ("The following prefix IRI should end with ""#"" or ""/"": ")
-                 & Prefix.Get_Name
-                 & To_Universal_String (" -> ")
-                 & Prefix.Get_IRI);
-        end if;
-        if Prefix.Is_Relative_IRI then
-            Warning_Callback
-              (Current_Position_Us (Analyser)
-                 & To_Universal_String
-                 ("The prefix IRI should not be a relative IRI "
-                    & "(Should not have ""/."" or ""/..""): ")
-                 & Prefix.Get_Name
-                 & To_Universal_String (" -> ")
-                 & Prefix.Get_IRI);
-        end if;
-    end Verify_Namespace_Prefix;
 
     --  Convert from Wide_Wide_String to String
     --

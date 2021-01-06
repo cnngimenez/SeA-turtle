@@ -1,4 +1,4 @@
---  turtle_lib.gpr ---  Project Manager File
+--  SeA_turtle.gpr ---  Project Manager File
 
 --  Copyright 2020 poo
 --
@@ -39,7 +39,8 @@ library project SeA_Turtle is
                        "src",
                        "src/lexical",
                        "src/turtle",
-                       "src/syntactical"
+                       "src/syntactical",
+                       "src/linter"
                       );
   package Compiler is
       for Default_Switches ("Ada") use
